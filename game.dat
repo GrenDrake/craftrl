@@ -1,0 +1,138 @@
+
+
+tile {
+    ident   -1
+    glyph   ' '
+    colour  0x000000
+    name    "nothing"
+    solid opaque
+};
+
+tile {
+    ident   0
+    glyph   '.'
+    colour  0x777777
+    name    "ground"
+};
+
+tile {
+    ident   1
+    glyph   '#'
+    colour  0xAAAAAA
+    name    "wall"
+    solid opaque
+};
+
+tile {
+    ident   2
+    glyph   ','
+    colour  0x007700
+    name    "grass"
+};
+
+tile {
+    ident   3
+    glyph   '~'
+    colour  0x0000FF
+    name    "water"
+    solid
+};
+
+
+
+
+actor {
+    ident   1
+    glyph   '@'
+    colour  0x7777FF
+    name    "player"
+    ai       0
+};
+
+actor {
+    ident   2
+    glyph   'k'
+    colour  0xFF77FF
+    name    "kobold"
+    ai      1
+};
+
+actor {
+    ident   3
+    glyph   'p'
+    colour  0xFF77FF
+    name    "pig"
+    ai          1
+};
+
+actor {
+    ident   4
+    glyph   'c'
+    colour  0xFF77FF
+    name    "chicken"
+    ai      1
+};
+
+actor {
+    ident   5
+    glyph   'g'
+    colour  0xFF77FF
+    name    "goat"
+    ai      1
+};
+
+actor {
+    ident   6
+    glyph   'w'
+    colour  0xFF77FF
+    name    "wolf"
+    ai      1
+};
+
+actor {
+    ident   1000
+    glyph   'T'
+    colour  0x77FF77
+    name    "tree"
+    ai      0
+};
+
+actor {
+    ident   1001
+    glyph   ';'
+    colour  0x77FF77
+    name    "shrub"
+    ai      0
+};
+
+
+
+
+
+item {
+    ident   0
+    glyph   '/'
+    colour  0xFFFFFFFF
+    name    "stick"
+};
+
+item {
+    ident   1
+    glyph   '*'
+    colour  0xFFFFFFFF
+    name    "rock"
+};
+
+item {
+    ident   2
+    glyph   '&'
+    colour  0xFFFFFFFF
+    name    "cord"
+};
+
+item {
+    ident   3
+    glyph   '='
+    colour  0xFFFFFFFF
+    name    "log"
+};

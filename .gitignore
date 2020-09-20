@@ -1,0 +1,5 @@
+BearLibTerminal.dll
+*.o
+*.exe
+craftrl
+map.png

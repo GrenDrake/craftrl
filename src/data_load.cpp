@@ -1,0 +1,206 @@
+#include <iostream>
+#include "data.h"
+#include "world.h"
+
+
+
+bool parseActor(World &w, TokenData &data) {
+    data.next(); // skip "tile"
+
+    if (!data.require(TokenType::OpenBrace)) return false;
+    data.next(); // skip "{"
+
+    // set up default actordef data
+    ActorDef actor;
+    actor.ident = -1;
+    actor.glyph = '?';
+    actor.colour = 0xFFFFFFFF;
+    actor.name = "unnamed actor";
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        if (!data.require(TokenType::Identifier)) return false;
+        const std::string &name = data.here().s;
+        data.next();
+
+        if (name == "ident") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.ident = data.here().i;
+            data.next();
+        } else if (name == "glyph") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.glyph = data.here().i;
+            data.next();
+        } else if (name == "colour") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            data.next();
+        } else if (name == "name") {
+            if (!data.require(TokenType::String)) return false;
+            actor.name = data.here().s;
+            data.next();
+        } else if (name == "ai") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.aiType = data.here().i;
+            data.next();
+        } else {
+            const Origin &origin = data.here().origin;
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            return false;
+        }
+    }
+
+    data.next(); // skip "}"
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next(); // skip ";"
+    w.addActorDef(actor);
+    return true;
+}
+
+bool parseItem(World &w, TokenData &data) {
+    data.next(); // skip "tile"
+
+    if (!data.require(TokenType::OpenBrace)) return false;
+    data.next(); // skip "{"
+
+    // set up default itemdef data
+    ItemDef item;
+    item.ident = -1;
+    item.glyph = '?';
+    item.colour = 0xFFFFFFFF;
+    item.name = "unnamed item";
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        if (!data.require(TokenType::Identifier)) return false;
+        const std::string &name = data.here().s;
+        data.next();
+
+        if (name == "ident") {
+            if (!data.require(TokenType::Integer)) return false;
+            item.ident = data.here().i;
+            data.next();
+        } else if (name == "glyph") {
+            if (!data.require(TokenType::Integer)) return false;
+            item.glyph = data.here().i;
+            data.next();
+        } else if (name == "colour") {
+            if (!data.require(TokenType::Integer)) return false;
+            item.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            data.next();
+        } else if (name == "name") {
+            if (!data.require(TokenType::String)) return false;
+            item.name = data.here().s;
+            data.next();
+        } else {
+            const Origin &origin = data.here().origin;
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            return false;
+        }
+    }
+
+    data.next(); // skip "}"
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next(); // skip ";"
+    w.addItemDef(item);
+    return true;
+}
+
+bool parseTile(World &w, TokenData &data) {
+    data.next(); // skip "tile"
+
+    if (!data.require(TokenType::OpenBrace)) return false;
+    data.next(); // skip "{"
+
+    // set up default tiledef data
+    TileDef tile;
+    tile.ident = -1;
+    tile.glyph = '?';
+    tile.colour = 0xFFFFFFFF;
+    tile.name = "unnamed tile";
+    tile.opaque = false;
+    tile.solid = false;
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        if (!data.require(TokenType::Identifier)) return false;
+        const std::string &name = data.here().s;
+        data.next();
+
+        if (name == "opaque") tile.opaque = true;
+        else if (name == "solid") tile.solid = true;
+        else if (name == "ident") {
+            if (!data.require(TokenType::Integer)) return false;
+            tile.ident = data.here().i;
+            data.next();
+        } else if (name == "glyph") {
+            if (!data.require(TokenType::Integer)) return false;
+            tile.glyph = data.here().i;
+            data.next();
+        } else if (name == "colour") {
+            if (!data.require(TokenType::Integer)) return false;
+            tile.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            data.next();
+        } else if (name == "name") {
+            if (!data.require(TokenType::String)) return false;
+            tile.name = data.here().s;
+            data.next();
+        } else {
+            const Origin &origin = data.here().origin;
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            return false;
+        }
+    }
+
+    data.next(); // skip "}"
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next(); // skip ";"
+    w.addTileDef(tile);
+    return true;
+}
+
+
+bool loadGameData(World &w) {
+    TokenData data = parseFile("game.dat");
+    if (!data.valid) return false;
+
+
+    int errorCount = 0;
+    while (!data.end()) {
+        if (data.matches(TokenType::Semicolon)) {
+            data.next();
+            continue;
+        }
+
+        if (!data.require(TokenType::Identifier)) { data.skipTo(TokenType::Semicolon); ++errorCount; continue; }
+
+        bool success = false;
+        if (data.matches("tile"))       success = parseTile(w, data);
+        else if (data.matches("item"))  success = parseItem(w, data);
+        else if (data.matches("actor")) success = parseActor(w, data);
+        else {
+            const Origin &origin = data.here().origin;
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().type << ".\n";
+            ++errorCount;
+            success = false;
+            data.next();
+        }
+
+        if (!success) {
+            ++errorCount;
+            data.skipTo(TokenType::Semicolon);
+        }
+    }
+
+    std::cerr << "Loaded " << w.actorDefCount() << " actors.\n";
+    std::cerr << "Loaded " << w.itemDefCount() << " items.\n";
+    std::cerr << "Loaded " << w.tileDefCount() << " tiles.\n";
+    if (errorCount > 0) {
+        std::cerr << "Found " << errorCount << " errors in data file.\n";
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+
