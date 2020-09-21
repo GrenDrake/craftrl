@@ -46,7 +46,9 @@ bool Inventory::remove(const ItemDef *def, int qty) {
 }
 
 
-
+void Actor::reset() {
+    health = def.health;
+}
 
 
 World::World()

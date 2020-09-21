@@ -32,6 +32,8 @@ struct ActorDef {
     unsigned colour;
     std::string name;
     int aiType;
+
+    int health;
 };
 
 struct ItemDef {
@@ -61,10 +63,14 @@ struct Inventory {
 
 struct Actor {
     Actor(const ActorDef &def) : type(def.ident), def(def) { }
+    void reset();
+
     int type;
     const ActorDef &def;
     Point pos;
     Inventory inventory;
+
+    int health;
 };
 
 struct Item {

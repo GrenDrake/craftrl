@@ -53,6 +53,7 @@ bool buildmap(World &w) {
     for (int i = 0; i < 100; ++i) {
         Point p = w.findOpenTile(false, false);
         Actor *actor = new Actor(w.getActorDef(w.getRandom().between(1000, 1001)));
+        actor->reset();
         w.moveActor(actor, p);
     }
 
@@ -62,6 +63,7 @@ bool buildmap(World &w) {
         Point p = w.findOpenTile(false, true);
         int type = w.getRandom().between(2, 6);
         Actor *actor = new Actor(w.getActorDef(type));
+        actor->reset();
         w.moveActor(actor, p);
     }
 

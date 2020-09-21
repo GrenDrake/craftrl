@@ -48,6 +48,7 @@ actor {
     colour  0x7777FF
     name    "player"
     ai       0
+    health  10
 };
 
 actor {

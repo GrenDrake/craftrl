@@ -184,6 +184,7 @@ bool actionDumpMap(World &w) {
 
 
 void redraw_main(World &w) {
+    const Actor *player = w.getPlayer();
     Point camera = w.getCamera();
     const int screenWidth = 80;
     const int screenHeight = 25;
@@ -220,6 +221,9 @@ void redraw_main(World &w) {
     }
 
     terminal_color(0xFFFFFFFF);
+
+    terminal_printf(logX + 2, logY - 1, " HP: %d/%d ", player->health, player->def.health);
+
     int iy = 0;
     for (auto iter : w.getPlayer()->inventory.mContents) {
         terminal_print(logX, iy, (iter.first->name + "  x" + std::to_string(iter.second)).c_str());
@@ -241,6 +245,7 @@ void gameloop(World &w) {
     buildmap(w);
     Actor *player = new Actor(w.getActorDef(1));
     Point starting = w.findOpenTile(false, true);
+    player->reset();
     w.moveActor(player, starting);
     actionCentrePan(w, player);
 
