@@ -109,8 +109,10 @@ bool actionMove(World &w, Actor *player, Dir dir) {
 
     Point dest = player->pos.shift(dir);
     const Tile &tile = w.at(dest);
-    if (!w.valid(dest) || tile.actor) return false;
-    if (w.getTileDef(tile.terrain).solid) return false;
+    if (!w.valid(dest) || tile.actor || w.getTileDef(tile.terrain).solid) {
+        w.addLogMsg("Blocked.");
+        return false;
+    }
     if (w.moveActor(player, dest)) {
         if (tile.item) {
             w.addLogMsg("Item here: " + tile.item->def.name);
