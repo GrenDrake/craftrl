@@ -20,6 +20,7 @@ tile {
     glyph   '#'
     colour  0xAAAAAA
     name    "wall"
+    breakTo 0
     solid opaque
 };
 

@@ -118,6 +118,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.name = "unnamed tile";
     tile.opaque = false;
     tile.solid = false;
+    tile.breakTo = -1;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -141,6 +142,10 @@ bool parseTile(World &w, TokenData &data) {
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
             tile.name = data.here().s;
+            data.next();
+        } else if (name == "breakTo") {
+            if (!data.require(TokenType::Integer)) return false;
+            tile.breakTo = data.here().i;
             data.next();
         } else {
             const Origin &origin = data.here().origin;

@@ -54,8 +54,9 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
 
     Point dest = player->pos.shift(dir);
     Tile &tile = w.at(dest);
-    if (tile.terrain != 0) {
-        tile.terrain = 0;
+    const TileDef &td = w.getTileDef(tile.terrain);
+    if (td.breakTo >= 0) {
+        tile.terrain = td.breakTo;
         w.addLogMsg("Broken.");
     } else {
         w.addLogMsg("Nothing to break.");

@@ -46,6 +46,7 @@ struct TileDef {
     int glyph;
     unsigned colour;
     std::string name;
+    int breakTo;
     bool opaque;
     bool solid;
 };
