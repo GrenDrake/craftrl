@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include <BearLibTerminal.h>
 
@@ -11,6 +12,7 @@ bool loadGameData(World &w);
 
 int main() {
     World w;
+    w.getRandom().seed(time(nullptr));
 
     if (!loadGameData(w)) return 1;
 
