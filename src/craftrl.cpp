@@ -337,7 +337,6 @@ void redraw_main(World &w) {
 
 
 void gameloop(World &w) {
-    int j = 0;
     w.mode = w.selection = 0;
     Actor *player = w.getPlayer();
     actionCentrePan(w, player);
@@ -354,11 +353,6 @@ void gameloop(World &w) {
             case TK_ESCAPE:
                 wantsToQuit = true;
                 break;
-            case TK_A: {
-                ++j;
-                std::string m = "Test Me " + std::to_string(j);
-                w.addLogMsg(LogMessage{m});
-                break; }
             case TK_MOUSE_RIGHT: {
                 const Point &camera = w.getCamera();
                 int mx = terminal_state(TK_MOUSE_X);
