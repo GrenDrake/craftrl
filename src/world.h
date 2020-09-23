@@ -57,6 +57,7 @@ struct ItemDef {
     int glyph;
     unsigned colour;
     std::string name;
+    int seedFor;
 };
 
 struct TileDef {

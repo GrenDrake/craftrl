@@ -187,6 +187,35 @@ bool actionDrop(World &w, Actor *player, Dir dir) {
     return true;
 }
 
+bool actionUse(World &w, Actor *player, Dir dir) {
+    if (w.selection < 0 || w.selection >= player->inventory.size()) {
+        w.addLogMsg("Nothing to drop.");
+        return false;
+    }
+
+    const ItemDef *def = player->inventory.mContents[w.selection].def;
+    if (def->seedFor >= 0) {
+        Dir d = getDir(w, "Plant");
+        if (d == Dir::None) return false;
+        Point dest = player->pos.shift(d);
+        const Tile &t = w.at(dest);
+        const TileDef &td = w.getTileDef(t.terrain);
+        if (td.solid || t.actor) {
+            w.addLogMsg("The space isn't clear.");
+            return false;
+        }
+        const ActorDef &actorDef = w.getActorDef(def->seedFor);
+        player->inventory.remove(def);
+        if (actorDef.ident < 0) return false;
+        Actor *actor = new Actor(actorDef);
+        w.moveActor(actor, dest);
+        return true;
+    } else {
+        w.addLogMsg("That's not something you can use.");
+        return false;
+    }
+}
+
 bool actionTake(World &w, Actor *player, Dir dir) {
     Item *item = w.at(player->pos).item;
     if (!item) {
@@ -354,6 +383,7 @@ void gameloop(World &w) {
             case TK_P:      wantTick = actionPan  (w, Dir::None);           break;
             case TK_R:      wantTick = actionCentrePan(w, player);          break;
             case TK_D:      wantTick = actionDrop(w, player, Dir::None);    break;
+            case TK_U:      wantTick = actionUse(w, player, Dir::None);     break;
             case TK_KP_5:
             case TK_SPACE:  wantTick = true;                                break;
             case TK_MINUS:

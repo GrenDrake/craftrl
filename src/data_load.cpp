@@ -88,6 +88,7 @@ bool parseItem(World &w, TokenData &data) {
     // set up default itemdef data
     ItemDef item;
     item.ident = -1;
+    item.seedFor = -1;
     item.glyph = '?';
     item.colour = 0xFFFFFFFF;
     item.name = "unnamed item";
@@ -108,6 +109,10 @@ bool parseItem(World &w, TokenData &data) {
         } else if (name == "colour") {
             if (!data.require(TokenType::Integer)) return false;
             item.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            data.next();
+        } else if (name == "seedFor") {
+            if (!data.require(TokenType::Integer)) return false;
+            item.seedFor = static_cast<unsigned>(data.here().i);
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
