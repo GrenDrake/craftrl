@@ -2,6 +2,7 @@
 #include "data.h"
 #include "world.h"
 
+LootTable* parseLootTable(World &w, TokenData &data);
 
 
 bool parseActor(World &w, TokenData &data) {
@@ -19,7 +20,7 @@ bool parseActor(World &w, TokenData &data) {
     actor.aiType = AI_NONE;
     actor.health = 1;
     actor.faction = 99;
-    actor.lootDrop = -1;
+    actor.loot = nullptr;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -55,9 +56,15 @@ bool parseActor(World &w, TokenData &data) {
             actor.health = data.here().i;
             data.next();
         } else if (name == "loot") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.lootDrop = data.here().i;
-            data.next();
+            LootTable *table = parseLootTable(w, data);
+            if (actor.loot) {
+            const Origin &origin = data.here().origin;
+                std::cerr << origin.filename << ':' << origin.line << "  multiple loot tables found.\n";
+                delete table;
+                return false;
+            } else {
+                actor.loot = table;
+            }
         } else {
             const Origin &origin = data.here().origin;
             std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
@@ -120,6 +127,39 @@ bool parseItem(World &w, TokenData &data) {
     return true;
 }
 
+LootTable* parseLootTable(World &w, TokenData &data) {
+    if (!data.require(TokenType::OpenBrace)) return nullptr;
+    data.next(); // skip "{"
+
+    // set up default LootTable data
+    LootTable *table = new LootTable;
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        LootRow row;
+
+        if (!data.require(TokenType::Integer)) return nullptr;
+        row.ident = data.here().i;
+        data.next();
+
+        if (!data.require(TokenType::Integer)) return nullptr;
+        row.chance = data.here().i;
+        data.next();
+
+        if (!data.require(TokenType::Integer)) return nullptr;
+        row.min = data.here().i;
+        data.next();
+
+        if (!data.require(TokenType::Integer)) return nullptr;
+        row.max = data.here().i;
+        data.next();
+
+        table->mRows.push_back(row);
+    }
+
+    data.next(); // skip "}"
+    return table;
+}
+
 bool parseTile(World &w, TokenData &data) {
     data.next(); // skip "tile"
 
@@ -135,6 +175,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.opaque = false;
     tile.solid = false;
     tile.breakTo = -1;
+    tile.loot = nullptr;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -163,6 +204,16 @@ bool parseTile(World &w, TokenData &data) {
             if (!data.require(TokenType::Integer)) return false;
             tile.breakTo = data.here().i;
             data.next();
+        } else if (name == "loot") {
+            LootTable *table = parseLootTable(w, data);
+            if (tile.loot) {
+            const Origin &origin = data.here().origin;
+                std::cerr << origin.filename << ':' << origin.line << "  multiple loot tables found.\n";
+                delete table;
+                return false;
+            } else {
+                tile.loot = table;
+            }
         } else {
             const Origin &origin = data.here().origin;
             std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";

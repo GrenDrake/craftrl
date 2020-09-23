@@ -31,6 +31,14 @@ struct Point {
     int x, y;
 };
 
+struct LootRow {
+    int ident;
+    int min, max;
+    int chance;
+};
+struct LootTable {
+    std::vector<LootRow> mRows;
+};
 
 struct ActorDef {
     int ident;
@@ -39,7 +47,7 @@ struct ActorDef {
     std::string name;
     int aiType;
     int faction;
-    int lootDrop;
+    LootTable *loot;
 
     int health;
 };
@@ -57,6 +65,7 @@ struct TileDef {
     unsigned colour;
     std::string name;
     int breakTo;
+    LootTable *loot;
     bool opaque;
     bool solid;
 };

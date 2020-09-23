@@ -45,6 +45,29 @@ Dir getDir(World &w, const std::string &reason) {
 }
 
 
+void makeLootAt(World &w, const LootTable *table, const Point &where) {
+    if (!table || table->mRows.empty()) return;
+
+    std::stringstream s;
+    for (const LootRow &row : table->mRows) {
+        if (row.ident < 0 || row.chance < 0 || row.max < 0) continue;
+        const ItemDef &def = w.getItemDef(row.ident);
+        if (def.ident < 0) continue;
+        int chance = w.getRandom().next32() % 100;
+        int qty = w.getRandom().between(row.min, row.max);
+        for (int i = 0; i < qty; ++i ) {
+            if (chance < row.chance) {
+                Point dest = w.findDropSpace(where);
+                if (w.valid(dest)) {
+                    s << "Dropped " << def.name << ". ";
+                    Item *item = new Item(def);
+                    if (!w.moveItem(item, dest)) delete item;
+                }
+            }
+        }
+    }
+    w.addLogMsg(s.str());
+}
 
 bool actionBreak(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
@@ -57,20 +80,11 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
 
     if (tile.actor) {
         if (tile.actor->def.faction == FAC_PLANT) {
-            std::stringstream s;
-            s << "Broke " << tile.actor->def.name << '.';
+            w.addLogMsg("Broke " + tile.actor->def.name + '.');
             Actor *actor = tile.actor;
             w.moveActor(actor, Point(-1, -1));
-            if (actor->def.lootDrop >= 0 && !tile.item) {
-                const ItemDef &def = w.getItemDef(actor->def.lootDrop);
-                if (def.ident >= 0) {
-                    Item *item = new Item(def);
-                    s << " Dropped " << def.name << '.';
-                    if (!w.moveItem(item, dest)) delete item;
-                }
-            }
+            makeLootAt(w, actor->def.loot, dest);
             delete actor;
-            w.addLogMsg(s.str());
             return true;
         } else {
             w.addLogMsg("Can't break that.");
@@ -81,6 +95,7 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
     if (td.breakTo >= 0) {
         tile.terrain = td.breakTo;
         w.addLogMsg("Broken.");
+        makeLootAt(w, td.loot, dest);
     } else {
         w.addLogMsg("Nothing to break.");
     }
