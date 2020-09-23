@@ -281,21 +281,23 @@ void redraw_main(World &w) {
     Point camera = w.getCamera();
     const int screenWidth = 80;
     const int screenHeight = 25;
-    const int logWidth = 30;
-    const int logHeight = 12;
-    const int logX = screenWidth - logWidth;
+    const int sidebarWidth = 30;
+    const int sidebarX = screenWidth - sidebarWidth;
+    const int logHeight = 3;
+    const int logX = 0;
     const int logY = screenHeight - logHeight;
-    const int viewWidth = screenWidth - logWidth - 1;
-    const int viewHeight = screenHeight;
+    const int viewWidth = screenWidth - sidebarWidth - 1;
+    const int viewHeight = screenHeight - logHeight - 1;
 
     terminal_clear();
     terminal_color(0xFFFFFFFF);
-    for (int i = 0; i < screenHeight; ++i) {
-        terminal_put(logX - 1, i, '|');
+    for (int i = 0; i < logY; ++i) {
+        terminal_put(sidebarX - 1, i, '|');
     }
     for (int i = logX; i < screenWidth; ++i) {
         terminal_put(i, logY - 1, '-');
     }
+    terminal_put(sidebarX - 1, logY - 1, '+');
 
     for (int y = 0; y < viewHeight; ++y) {
         for (int x = 0; x < viewWidth; ++x) {
@@ -321,7 +323,7 @@ void redraw_main(World &w) {
         const InventoryRow &row = player->inventory.mContents[i];
         if (i == w.selection)   terminal_color(0xFFFFFFFF);
         else                    terminal_color(0xFF777777);
-        terminal_print(logX, i, (row.def->name + "  x" + std::to_string(row.qty)).c_str());
+        terminal_print(sidebarX, i, (row.def->name + "  x" + std::to_string(row.qty)).c_str());
     }
 
     terminal_color(0xFFFFFFFF);
