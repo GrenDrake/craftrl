@@ -121,6 +121,7 @@ public:
 
     World();
     void allocMap(int width, int height);
+    void deallocMap();
     int width()  const { return mWidth; }
     int height() const { return mHeight; }
     bool valid(const Point &p) const;

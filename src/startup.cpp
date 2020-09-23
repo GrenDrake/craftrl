@@ -84,6 +84,7 @@ void mainmenu(World &w) {
                     seed = usedSeed;
                 }
             } else if (selection == 3) {
+                w.deallocMap();
                 return;
             }
         }

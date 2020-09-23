@@ -76,9 +76,21 @@ World::World()
 }
 
 void World::allocMap(int width, int height) {
+    deallocMap();
     mWidth = width;
     mHeight = height;
     mTiles = new Tile[width * height];
+}
+
+void World::deallocMap() {
+    if (!mTiles) return;
+
+    for (unsigned i = 0; i < mWidth * mHeight; ++i) {
+        delete mTiles->item;
+    }
+    for (Actor *actor : mActors) {
+        delete actor;
+    }
 }
 
 bool World::valid(const Point &p) const {
