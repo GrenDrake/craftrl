@@ -176,7 +176,6 @@ private:
     int mWidth, mHeight;
     Tile *mTiles;
     std::vector<Actor*> mActors;
-    std::vector<Item*> mItems;
     Actor *mPlayer;
 
     mutable Random mRandom;

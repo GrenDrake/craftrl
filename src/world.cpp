@@ -178,8 +178,6 @@ bool World::moveItem(Item *item, const Point &to) {
 
     if (valid(item->pos) && at(item->pos).item == item) {
         at(item->pos).item = nullptr;
-    } else {
-        mItems.push_back(item);
     }
 
     if (valid(to)) {
