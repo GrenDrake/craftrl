@@ -78,6 +78,7 @@ struct Inventory {
     bool add(const ItemDef*, int qty = 1);
     int qty(const ItemDef*) const;
     bool remove(const ItemDef*, int qty = 1);
+    int size() const { return mContents.size(); }
 
     std::vector<InventoryRow> mContents;
 };

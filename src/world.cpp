@@ -60,6 +60,7 @@ bool Inventory::remove(const ItemDef *def, int qty) {
                 return false;
             }
         }
+        ++iter;
     }
 
     return false;

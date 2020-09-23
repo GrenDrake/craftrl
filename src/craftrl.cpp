@@ -161,7 +161,7 @@ bool actionMove(World &w, Actor *player, Dir dir) {
 }
 
 bool actionDrop(World &w, Actor *player, Dir dir) {
-    if (w.selection < 0 || w.selection >= player->inventory.mContents.size()) {
+    if (w.selection < 0 || w.selection >= player->inventory.size()) {
         w.addLogMsg("Nothing to drop.");
         return false;
     }
@@ -172,11 +172,14 @@ bool actionDrop(World &w, Actor *player, Dir dir) {
         return false;
     }
 
-    const ItemDef *def = player->inventory.mContents[0].def;
+    const ItemDef *def = player->inventory.mContents[w.selection].def;
     Item *item = new Item(*def);
     if (w.moveItem(item, dropAt)) {
         player->inventory.remove(def);
         w.addLogMsg("Dropped " + def->name + ".");
+        if (w.selection > 0 && w.selection >= player->inventory.size()) {
+            w.selection = player->inventory.size() - 1;
+        }
     } else {
         delete item;
     }
@@ -283,15 +286,16 @@ void redraw_main(World &w) {
     }
 
     terminal_color(0xFFFFFFFF);
-
     terminal_printf(logX + 2, logY - 1, " HP: %d/%d ", player->health, player->def.health);
 
-    int iy = 0;
-    for (auto iter : w.getPlayer()->inventory.mContents) {
-        terminal_print(logX, iy, (iter.def->name + "  x" + std::to_string(iter.qty)).c_str());
-        ++iy;
+    for (int i = 0; i < player->inventory.size(); ++i) {
+        const InventoryRow &row = player->inventory.mContents[i];
+        if (i == w.selection)   terminal_color(0xFFFFFFFF);
+        else                    terminal_color(0xFF777777);
+        terminal_print(logX, i, (row.def->name + "  x" + std::to_string(row.qty)).c_str());
     }
 
+    terminal_color(0xFFFFFFFF);
     for (int i = 0; i < logHeight; ++i) {
         const LogMessage &msg = w.getLogMsg(i);
         terminal_print(logX, screenHeight - i - 1, "                                        ");
@@ -352,6 +356,13 @@ void gameloop(World &w) {
             case TK_D:      wantTick = actionDrop(w, player, Dir::None);    break;
             case TK_KP_5:
             case TK_SPACE:  wantTick = true;                                break;
+            case TK_MINUS:
+            case TK_KP_MINUS:
+                if (w.selection > 0) --w.selection;
+                break;
+            case TK_EQUALS:
+            case TK_KP_PLUS:
+                if (w.selection < player->inventory.size() - 1) ++w.selection;
 
             default: {
                 Dir d = keyToDir(key);
