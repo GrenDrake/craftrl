@@ -157,6 +157,7 @@ public:
     int tileDefCount() const { return mTileDefs.size(); }
 
     void tick();
+    unsigned getTurn() const { return turn; }
 
     bool inProgress;
     int mode, selection;
@@ -179,6 +180,8 @@ private:
     Tile *mTiles;
     std::vector<Actor*> mActors;
     Actor *mPlayer;
+
+    unsigned turn;
 
     mutable Random mRandom;
 };

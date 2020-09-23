@@ -73,7 +73,7 @@ void Actor::reset() {
 
 
 World::World()
-: inProgress(false), mTiles(nullptr), mPlayer(nullptr) {
+: inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0) {
 }
 
 void World::allocMap(int width, int height) {
@@ -81,6 +81,7 @@ void World::allocMap(int width, int height) {
     mWidth = width;
     mHeight = height;
     mTiles = new Tile[width * height];
+    turn = 0;
 }
 
 void World::deallocMap() {
@@ -245,6 +246,7 @@ const TileDef& World::getTileDef(int ident) const {
 
 
 void World::tick() {
+    ++turn;
     for (Actor *actor : mActors) {
         if (actor->def.aiType == AI_WANDER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
