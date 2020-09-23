@@ -11,6 +11,12 @@
 const int AI_NONE = 0;
 const int AI_WANDER = 1;
 
+const int FAC_PLAYER    = 0;
+const int FAC_VILLAGER  = 1;
+const int FAC_PLANT     = 2;
+const int FAC_ANIMAL    = 3;
+const int FAC_MONSTER   = 4;
+
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
     None, RequestQuit
@@ -32,6 +38,8 @@ struct ActorDef {
     unsigned colour;
     std::string name;
     int aiType;
+    int faction;
+    int lootDrop;
 
     int health;
 };

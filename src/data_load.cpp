@@ -18,6 +18,8 @@ bool parseActor(World &w, TokenData &data) {
     actor.name = "unnamed actor";
     actor.aiType = AI_NONE;
     actor.health = 1;
+    actor.faction = 99;
+    actor.lootDrop = -1;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -44,9 +46,17 @@ bool parseActor(World &w, TokenData &data) {
             if (!data.require(TokenType::Integer)) return false;
             actor.aiType = data.here().i;
             data.next();
+        } else if (name == "faction") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.faction = data.here().i;
+            data.next();
         } else if (name == "health") {
             if (!data.require(TokenType::Integer)) return false;
             actor.health = data.here().i;
+            data.next();
+        } else if (name == "loot") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.lootDrop = data.here().i;
             data.next();
         } else {
             const Origin &origin = data.here().origin;

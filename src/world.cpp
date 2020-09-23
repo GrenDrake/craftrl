@@ -110,6 +110,17 @@ bool World::moveActor(Actor *actor, const Point &to) {
 
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
         at(actor->pos).actor = nullptr;
+        if (!valid(to)) {
+            auto iter = mActors.begin();
+            while (iter != mActors.cend()) {
+                if (*iter == actor) {
+                    iter = mActors.erase(iter);
+                } else {
+                    ++iter;
+                }
+            }
+            return true;
+        }
     } else {
         mActors.push_back(actor);
     }

@@ -54,6 +54,29 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
 
     Point dest = player->pos.shift(dir);
     Tile &tile = w.at(dest);
+
+    if (tile.actor) {
+        if (tile.actor->def.faction == FAC_PLANT) {
+            std::stringstream s;
+            s << "Broke " << tile.actor->def.name << '.';
+            Actor *actor = tile.actor;
+            w.moveActor(actor, Point(-1, -1));
+            if (actor->def.lootDrop >= 0 && !tile.item) {
+                const ItemDef &def = w.getItemDef(actor->def.lootDrop);
+                if (def.ident >= 0) {
+                    Item *item = new Item(def);
+                    s << " Dropped " << def.name << '.';
+                    if (!w.moveItem(item, dest)) delete item;
+                }
+            }
+            delete actor;
+            w.addLogMsg(s.str());
+            return true;
+        } else {
+            w.addLogMsg("Can't break that.");
+        }
+    }
+
     const TileDef &td = w.getTileDef(tile.terrain);
     if (td.breakTo >= 0) {
         tile.terrain = td.breakTo;
@@ -76,18 +99,17 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
     const Tile &tile = w.at(dest);
     if (tile.actor) {
         std::stringstream s;
-        switch (tile.actor->def.aiType) {
-            case AI_NONE:
+        switch (tile.actor->def.faction) {
+            case FAC_ANIMAL:
                 s << tile.actor->def.name << ": It has nothing to say.";
                 w.addLogMsg(s.str());
                 break;
-            case AI_WANDER:
+            case FAC_VILLAGER:
                 s << tile.actor->def.name << ": \"Hello!\"";
                 w.addLogMsg(s.str());
                 break;
             default:
-                w.addLogMsg("Unknown actor type");
-                break;
+                return false;
         }
         return true;
     } else {
