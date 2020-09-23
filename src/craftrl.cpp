@@ -302,15 +302,8 @@ void redraw_main(World &w) {
 
 void gameloop(World &w) {
     int j = 0;
-
-    w.allocMap(80, 80);
-    buildmap(w);
-    Actor *player = new Actor(w.getActorDef(1));
-    Point starting = w.findOpenTile(false, true);
-    player->reset();
-    w.moveActor(player, starting);
+    Actor *player = w.getPlayer();
     actionCentrePan(w, player);
-    w.mode = w.selection = 0;
 
     bool wantsToQuit = false;
     bool wantTick = false;
@@ -321,6 +314,7 @@ void gameloop(World &w) {
         switch (key) {
             case TK_CLOSE:
             case TK_Q:
+            case TK_ESCAPE:
                 wantsToQuit = true;
                 break;
             case TK_A: {

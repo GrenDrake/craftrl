@@ -72,7 +72,7 @@ void Actor::reset() {
 
 
 World::World()
-: mTiles(nullptr), mPlayer(nullptr) {
+: inProgress(false), mTiles(nullptr), mPlayer(nullptr) {
 }
 
 void World::allocMap(int width, int height) {

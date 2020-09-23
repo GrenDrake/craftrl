@@ -156,6 +156,7 @@ public:
 
     void tick();
 
+    bool inProgress;
     int mode, selection;
 
 private:
