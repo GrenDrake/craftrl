@@ -7,6 +7,7 @@
 void mainmenu(World &w);
 void gameloop(World &w);
 bool loadGameData(World &w);
+bool buildmap(World &w, unsigned long seed);
 
 
 
@@ -42,6 +43,7 @@ void mainmenu(World &w) {
 
     int selection = 0;
     unsigned long seed = w.getRandom().next64();
+    unsigned long usedSeed = 0;
     while (1) {
         terminal_clear();
         terminal_color(0xFFFFFFFF);
@@ -70,19 +72,16 @@ void mainmenu(World &w) {
         if (key == TK_ENTER || key == TK_KP_ENTER || key == TK_SPACE) {
             if (selection == 0) {
                 w.allocMap(80, 80);
-                buildmap(w);
-                Actor *player = new Actor(w.getActorDef(1));
-                Point starting = w.findOpenTile(false, true);
-                player->reset();
-                w.moveActor(player, starting);
-                w.mode = w.selection = 0;
+                usedSeed = seed;
+                buildmap(w, usedSeed);
                 w.inProgress = true;
-                ++selection;
+                selection = 2;
 
                 gameloop(w);
             } else if (selection == 2) {
                 if (w.inProgress) {
                     gameloop(w);
+                    seed = usedSeed;
                 }
             } else if (selection == 3) {
                 return;

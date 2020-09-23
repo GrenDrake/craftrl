@@ -1,8 +1,23 @@
 #include "world.h"
 
+Point findOpenTile(World &w, Random &rng, bool allowActor, bool allowItem) {
+    Point p;
+    do {
+        p.x = rng.next32() % w.width();
+        p.y = rng.next32() % w.height();
+        bool valid = true;
+        const auto &t = w.at(p);
+        if (w.getTileDef(t.terrain).solid) valid = false;
+        if (!allowActor && t.actor) break;
+        if (valid) break;
+    } while (1);
+    return p;
+}
 
-bool buildmap(World &w) {
-    Random &rng = w.getRandom();
+
+bool buildmap(World &w, unsigned long seed) {
+    Random rng;
+    rng.seed(seed);
 
     for (int y = 0; y < w.height(); ++y) {
         for (int x = 0; x < w.width(); ++x) {
@@ -43,33 +58,35 @@ bool buildmap(World &w) {
 
     // add plants
     for (int i = 0; i < 100; ++i) {
-        Point p = w.findOpenTile(true, false);
-        Item *item = new Item(w.getItemDef(w.getRandom().between(0, 3)));
+        Point p = findOpenTile(w, rng, true, false);
+        Item *item = new Item(w.getItemDef(rng.between(0, 3)));
         w.moveItem(item, p);
     }
 
 
     // add plants
     for (int i = 0; i < 100; ++i) {
-        Point p = w.findOpenTile(false, false);
-        Actor *actor = new Actor(w.getActorDef(w.getRandom().between(1000, 1001)));
+        Point p = findOpenTile(w, rng, false, false);
+        Actor *actor = new Actor(w.getActorDef(rng.between(1000, 1001)));
         actor->reset();
         w.moveActor(actor, p);
     }
 
 
-    // add characters
+    // add NPCs
     for (int i = 0; i < 25; ++i) {
-        Point p = w.findOpenTile(false, true);
-        int type = w.getRandom().between(2, 6);
+        Point p = findOpenTile(w, rng, false, true);
+        int type = rng.between(2, 6);
         Actor *actor = new Actor(w.getActorDef(type));
         actor->reset();
         w.moveActor(actor, p);
     }
 
-
-
-
+    // add player
+    Actor *player = new Actor(w.getActorDef(1));
+    Point starting = findOpenTile(w, rng, false, true);
+    player->reset();
+    w.moveActor(player, starting);
 
     return true;
 }

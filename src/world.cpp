@@ -99,20 +99,6 @@ void World::setCamera(const Point &to) {
 
 
 
-Point World::findOpenTile(bool allowActor, bool allowItem) const {
-    Point p;
-    do {
-        p.x = mRandom.next32() % mWidth;
-        p.y = mRandom.next32() % mHeight;
-        bool valid = true;
-        const auto &t = at(p);
-        if (getTileDef(t.terrain).solid) valid = false;
-        if (!allowActor && t.actor) break;
-        if (valid) break;
-    } while (1);
-    return p;
-}
-
 Point World::findDropSpace(const Point &near) const {
     if (at(near).item == nullptr) return near;
     for (int i = 0; i < 8; ++i) {

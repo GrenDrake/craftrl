@@ -302,6 +302,7 @@ void redraw_main(World &w) {
 
 void gameloop(World &w) {
     int j = 0;
+    w.mode = w.selection = 0;
     Actor *player = w.getPlayer();
     actionCentrePan(w, player);
 

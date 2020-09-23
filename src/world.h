@@ -129,7 +129,6 @@ public:
     const Point& getCamera() const;
     void setCamera(const Point &to);
 
-    Point findOpenTile(bool allowActor, bool allowItem) const;
     Point findDropSpace(const Point &near) const;
     const Tile& at(const Point &p) const;
     Tile& at(const Point &p);
@@ -185,8 +184,5 @@ private:
 
 std::ostream& operator<<(std::ostream &out, const Point &p);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
-
-bool buildmap(World &w);
-
 
 #endif
