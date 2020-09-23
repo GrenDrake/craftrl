@@ -145,6 +145,30 @@ bool actionMove(World &w, Actor *player, Dir dir) {
     return false;
 }
 
+bool actionDrop(World &w, Actor *player, Dir dir) {
+    if (w.selection < 0 || w.selection >= player->inventory.mContents.size()) {
+        w.addLogMsg("Nothing to drop.");
+        return false;
+    }
+
+    Point dropAt = w.findDropSpace(player->pos);
+    if (!w.valid(dropAt) || w.at(dropAt).item) {
+        w.addLogMsg("No space to drop item.");
+        return false;
+    }
+
+    const ItemDef *def = player->inventory.mContents[0].def;
+    Item *item = new Item(*def);
+    if (w.moveItem(item, dropAt)) {
+        player->inventory.remove(def);
+        w.addLogMsg("Dropped " + def->name + ".");
+    } else {
+        delete item;
+    }
+
+    return true;
+}
+
 bool actionTake(World &w, Actor *player, Dir dir) {
     Item *item = w.at(player->pos).item;
     if (!item) {
@@ -217,6 +241,7 @@ void redraw_main(World &w) {
     const int viewWidth = screenWidth - logWidth - 1;
     const int viewHeight = screenHeight;
 
+    terminal_clear();
     terminal_color(0xFFFFFFFF);
     for (int i = 0; i < screenHeight; ++i) {
         terminal_put(logX - 1, i, '|');
@@ -248,7 +273,7 @@ void redraw_main(World &w) {
 
     int iy = 0;
     for (auto iter : w.getPlayer()->inventory.mContents) {
-        terminal_print(logX, iy, (iter.first->name + "  x" + std::to_string(iter.second)).c_str());
+        terminal_print(logX, iy, (iter.def->name + "  x" + std::to_string(iter.qty)).c_str());
         ++iy;
     }
 
@@ -270,6 +295,7 @@ void gameloop(World &w) {
     player->reset();
     w.moveActor(player, starting);
     actionCentrePan(w, player);
+    w.mode = w.selection = 0;
 
     bool wantsToQuit = false;
     bool wantTick = false;
@@ -313,6 +339,7 @@ void gameloop(World &w) {
             case TK_M:      wantTick = actionMove (w, player, Dir::None);   break;
             case TK_P:      wantTick = actionPan  (w, Dir::None);           break;
             case TK_R:      wantTick = actionCentrePan(w, player);          break;
+            case TK_D:      wantTick = actionDrop(w, player, Dir::None);    break;
             case TK_KP_5:
             case TK_SPACE:  wantTick = true;                                break;
 

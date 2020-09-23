@@ -61,12 +61,16 @@ struct TileDef {
     bool solid;
 };
 
+struct InventoryRow {
+    int qty;
+    const ItemDef *def;
+};
 struct Inventory {
     bool add(const ItemDef*, int qty = 1);
     int qty(const ItemDef*) const;
     bool remove(const ItemDef*, int qty = 1);
 
-    std::map<const ItemDef*, int> mContents;
+    std::vector<InventoryRow> mContents;
 };
 
 struct Actor {
@@ -117,6 +121,7 @@ public:
     void setCamera(const Point &to);
 
     Point findOpenTile(bool allowActor, bool allowItem) const;
+    Point findDropSpace(const Point &near) const;
     const Tile& at(const Point &p) const;
     Tile& at(const Point &p);
 
@@ -141,6 +146,8 @@ public:
     int tileDefCount() const { return mTileDefs.size(); }
 
     void tick();
+
+    int mode, selection;
 
 private:
     static LogMessage BAD_LOGMESSAGE;

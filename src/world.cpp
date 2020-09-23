@@ -26,22 +26,42 @@ Point Point::shift(Dir dir, int amnt) const {
 
 
 bool Inventory::add(const ItemDef *def, int qty) {
-    auto iter = mContents.find(def);
-    if (iter == mContents.end()) {
-        mContents.insert(std::make_pair(def, qty));
-    } else {
-        iter->second += qty;
+    for (unsigned i = 0; i < mContents.size(); ++i) {
+        if (mContents[i].def == def) {
+            mContents[i].qty += qty;
+            return true;
+        }
     }
+
+    mContents.push_back(InventoryRow{qty, def});
     return true;
 }
 
 int Inventory::qty(const ItemDef *def) const {
-    auto iter = mContents.find(def);
-    if (iter == mContents.end()) return 0;
-    return iter->second;
+    for (unsigned i = 0; i < mContents.size(); ++i) {
+        if (mContents[i].def == def) {
+            return mContents[i].qty;
+        }
+    }
+    return 0;
 }
 
 bool Inventory::remove(const ItemDef *def, int qty) {
+    auto iter = mContents.begin();
+    while (iter != mContents.end()) {
+        if (iter->def == def) {
+            if (iter->qty > qty) {
+                iter->qty -= qty;
+                return true;
+            } else if (iter->qty == qty) {
+                mContents.erase(iter);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     return false;
 }
 
@@ -92,6 +112,20 @@ Point World::findOpenTile(bool allowActor, bool allowItem) const {
     } while (1);
     return p;
 }
+
+Point World::findDropSpace(const Point &near) const {
+    if (at(near).item == nullptr) return near;
+    for (int i = 0; i < 8; ++i) {
+        Dir d = static_cast<Dir>(i);
+        Point p = near.shift(d);
+        const Tile &t = at(p);
+        if (getTileDef(t.terrain).solid) continue;
+        if (at(p).item) continue;
+        return p;
+    }
+    return Point(-1, -1);
+}
+
 
 const Tile& World::at(const Point &p) const {
     if (!valid(p)) return BAD_TILE;
