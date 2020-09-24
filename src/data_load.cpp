@@ -165,6 +165,54 @@ LootTable* parseLootTable(World &w, TokenData &data) {
     return table;
 }
 
+
+bool parseRecipe(World &w, TokenData &data) {
+    data.next(); // skip "tile"
+
+    if (!data.require(TokenType::OpenBrace)) return false;
+    data.next(); // skip "{"
+
+    // set up default recipedef data
+    RecipeDef recipe;
+    recipe.makeQty = 1;
+    recipe.makeIdent = -1;
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        if (!data.require(TokenType::Identifier)) return false;
+        const std::string &name = data.here().s;
+        data.next();
+
+        if (name == "makeQty") {
+            if (!data.require(TokenType::Integer)) return false;
+            recipe.makeQty = data.here().i;
+            data.next();
+        } else if (name == "makeIdent") {
+            if (!data.require(TokenType::Integer)) return false;
+            recipe.makeIdent = data.here().i;
+            data.next();
+        } else if (name == "part") {
+            RecipeRow row;
+            if (!data.require(TokenType::Integer)) return false;
+            row.qty = data.here().i;
+            data.next();
+            if (!data.require(TokenType::Integer)) return false;
+            row.ident = data.here().i;
+            data.next();
+            recipe.mRows.push_back(row);
+        } else {
+            const Origin &origin = data.here().origin;
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            return false;
+        }
+    }
+
+    data.next(); // skip "}"
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next(); // skip ";"
+    w.addRecipeDef(recipe);
+    return true;
+}
+
 bool parseTile(World &w, TokenData &data) {
     data.next(); // skip "tile"
 
@@ -252,6 +300,7 @@ bool loadGameData(World &w) {
         if (data.matches("tile"))       success = parseTile(w, data);
         else if (data.matches("item"))  success = parseItem(w, data);
         else if (data.matches("actor")) success = parseActor(w, data);
+        else if (data.matches("recipe"))success = parseRecipe(w, data);
         else {
             const Origin &origin = data.here().origin;
             std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().type << ".\n";
@@ -269,6 +318,7 @@ bool loadGameData(World &w) {
     std::cerr << "Loaded " << w.actorDefCount() << " actors.\n";
     std::cerr << "Loaded " << w.itemDefCount() << " items.\n";
     std::cerr << "Loaded " << w.tileDefCount() << " tiles.\n";
+    std::cerr << "Loaded " << w.recipeDefCount() << " recipes.\n";
     if (errorCount > 0) {
         std::cerr << "Found " << errorCount << " errors in data file.\n";
         return false;

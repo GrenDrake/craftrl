@@ -32,6 +32,7 @@ const int CMD_QUIT              = 10;
 const int CMD_NEXT_SELECT       = 11;
 const int CMD_PREV_SELECT       = 12;
 const int CMD_CANCEL            = 13;
+const int CMD_CRAFT             = 14;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -92,6 +93,16 @@ struct TileDef {
     LootTable *loot;
     bool opaque;
     bool solid;
+};
+
+struct RecipeRow {
+    int qty;
+    int ident;
+};
+struct RecipeDef {
+    int makeIdent;
+    int makeQty;
+    std::vector<RecipeRow> mRows;
 };
 
 struct InventoryRow {
@@ -178,6 +189,10 @@ public:
     void addTileDef(const TileDef &td);
     const TileDef& getTileDef(int ident) const;
     int tileDefCount() const { return mTileDefs.size(); }
+    void addRecipeDef(const RecipeDef &td);
+    const RecipeDef& getRecipeDef(int ident) const;
+    int recipeDefCount() const { return mRecipeDefs.size(); }
+    std::vector<const RecipeDef*> getRecipeList() const;
 
     void tick();
     unsigned getTurn() const { return turn; }
@@ -191,10 +206,12 @@ private:
     static const ActorDef BAD_ACTORDEF;
     static const ItemDef BAD_ITEMDEF;
     static const TileDef BAD_TILEDEF;
+    static const RecipeDef BAD_RECIPEDEF;
 
     std::vector<ActorDef> mActorDefs;
     std::vector<ItemDef> mItemDefs;
     std::vector<TileDef> mTileDefs;
+    std::vector<RecipeDef> mRecipeDefs;
 
     Point mCamera;
     std::vector<LogMessage> mLog;

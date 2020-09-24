@@ -8,6 +8,7 @@ Tile World::BAD_TILE(-1);
 const ActorDef World::BAD_ACTORDEF = { -1 };
 const ItemDef World::BAD_ITEMDEF = { -1 };
 const TileDef World::BAD_TILEDEF = { -1 };
+const RecipeDef World::BAD_RECIPEDEF = { -1 };
 
 
 Point Point::shift(Dir dir, int amnt) const {
@@ -243,6 +244,17 @@ const TileDef& World::getTileDef(int ident) const {
     return BAD_TILEDEF;
 }
 
+void World::addRecipeDef(const RecipeDef &td) {
+    mRecipeDefs.push_back(td);
+}
+
+std::vector<const RecipeDef*> World::getRecipeList() const {
+    std::vector<const RecipeDef*> list;
+    for (const RecipeDef &td : mRecipeDefs) {
+        list.push_back(&td);
+    }
+    return list;
+}
 
 
 void World::tick() {

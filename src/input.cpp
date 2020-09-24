@@ -21,6 +21,7 @@ const Command gameCommands[] = {
     {   TK_KP_MINUS,false,  false,  false,  CMD_PREV_SELECT,    Dir::None },
     {   TK_EQUALS,  false,  false,  false,  CMD_NEXT_SELECT,    Dir::None },
     {   TK_KP_PLUS, false,  false,  false,  CMD_NEXT_SELECT,    Dir::None },
+    {   TK_C,       false,  false,  false,  CMD_CRAFT,          Dir::None },
 
     {   TK_UP,      false,  false,  false,  CMD_CONTEXTMOVE,    Dir::North },
     {   TK_RIGHT,   false,  false,  false,  CMD_CONTEXTMOVE,    Dir::East },

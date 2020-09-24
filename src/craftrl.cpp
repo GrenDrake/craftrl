@@ -9,6 +9,7 @@
 
 Dir getDir(World &w, const std::string &reason);
 void redraw_main(World &w);
+void doCrafting(World &w, Actor *player);
 
 
 Dir getDir(World &w, const std::string &reason) {
@@ -128,6 +129,11 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
         }
         return false;
     }
+}
+
+bool actionCraft(World &w, Actor *player, Dir dir) {
+    doCrafting(w, player);
+    return false;
 }
 
 bool actionMove(World &w, Actor *player, Dir dir) {
@@ -401,6 +407,7 @@ void gameloop(World &w) {
                 case CMD_QUIT:          wantTick = actionQuit(w, player, command.dir);  break;
                 case CMD_NEXT_SELECT:   wantTick = actionNextSelect(w, player, command.dir); break;
                 case CMD_PREV_SELECT:   wantTick = actionPrevSelect(w, player, command.dir); break;
+                case CMD_CRAFT:         wantTick = actionCraft(w, player, command.dir); break;
 
             }
         }

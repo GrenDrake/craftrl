@@ -173,3 +173,17 @@ item {
     name    "shrub seed"
     seedFor 1001
 };
+
+
+recipe {
+    makeIdent   2
+    part        1 1
+    part        2 3
+};
+
+recipe {
+    makeIdent   3
+    makeQty     2
+    part        1 1
+    part        2 2
+};
