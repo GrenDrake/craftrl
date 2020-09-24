@@ -344,7 +344,8 @@ void redraw_main(World &w) {
     }
 
     terminal_color(0xFFFFFFFF);
-    terminal_printf(logX + 2, logY - 1, " HP: %d/%d ", player->health, player->def.health);
+    terminal_printf(0, logY - 1, " HP: %d/%d ", player->health, player->def.health);
+    terminal_printf(15, logY - 1, " POS:%d,%d ", player->pos.x, player->pos.y);
     terminal_printf(screenWidth - 15, logY - 1, " Turn: %u ", w.getTurn());
 
     for (int i = 0; i < player->inventory.size(); ++i) {
