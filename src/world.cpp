@@ -129,13 +129,19 @@ Point World::findDropSpace(const Point &near) const {
 
 
 const Tile& World::at(const Point &p) const {
-    if (!valid(p)) return BAD_TILE;
+    if (!valid(p)) {
+        BAD_TILE.terrain = -1;
+        return BAD_TILE;
+    }
     int c = p.x + p.y * mWidth;
     return mTiles[c];
 }
 
 Tile& World::at(const Point &p) {
-    if (!valid(p)) return BAD_TILE;
+    if (!valid(p)) {
+        BAD_TILE.terrain = -1;
+        return BAD_TILE;
+    }
     int c = p.x + p.y * mWidth;
     return mTiles[c];
 }

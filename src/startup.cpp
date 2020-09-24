@@ -71,7 +71,7 @@ void mainmenu(World &w) {
         }
         if (key == TK_ENTER || key == TK_KP_ENTER || key == TK_SPACE) {
             if (selection == 0) {
-                w.allocMap(80, 80);
+                w.allocMap(160, 160);
                 usedSeed = seed;
                 buildmap(w, usedSeed);
                 w.inProgress = true;

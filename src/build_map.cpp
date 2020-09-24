@@ -1,3 +1,4 @@
+#include <cmath>
 #include "world.h"
 
 Point findOpenTile(World &w, Random &rng, bool allowActor, bool allowItem) {
@@ -19,24 +20,61 @@ bool buildmap(World &w, unsigned long seed) {
     Random rng;
     rng.seed(seed);
 
+    // ensure all ground is grass
     for (int y = 0; y < w.height(); ++y) {
         for (int x = 0; x < w.width(); ++x) {
-            int tile = rng.between(0, 8);
-            switch (tile) {
-                case 0: tile = 0; break;
-                case 1: tile = 1; break;
-                case 2: tile = 1; break;
-                case 3: tile = 1; break;
-                case 4: tile = 2; break;
-                case 5: tile = 2; break;
-                case 6: tile = 2; break;
-                case 7: tile = 2; break;
-                case 8: tile = 3; break;
-            }
-            w.at(Point(x, y)).terrain = tile;
+            w.at(Point(x, y)).terrain = 2;
         }
     }
 
+    // add lakes
+    for (int i = 0; i < 20; ++i) {
+        int radius = rng.between(4, 20);
+        int cx = rng.next32() % w.width();
+        int cy = rng.next32() % w.height();
+        for (int y = cy - radius; y <= cy + radius; ++y) {
+            for (int x = cx - radius; x <= cx + radius; ++x) {
+                int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+                if (dist <= radius) {
+                    w.at(Point(x, y)).terrain = 3;
+                }
+            }
+        }
+    }
+
+    // add mountains
+    for (int i = 0; i < 40; ++i) {
+        int radius = rng.between(2, 12);
+        int cx = rng.next32() % w.width();
+        int cy = rng.next32() % w.height();
+        for (int y = cy - radius; y <= cy + radius; ++y) {
+            for (int x = cx - radius; x <= cx + radius; ++x) {
+                int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+                if (dist <= radius) {
+                    w.at(Point(x, y)).terrain = 1;
+                }
+            }
+        }
+    }
+
+
+    // add dirt patches
+    for (int i = 0; i < 40; ++i) {
+        int radius = rng.between(6, 12);
+        int cx = rng.next32() % w.width();
+        int cy = rng.next32() % w.height();
+        for (int y = cy - radius; y <= cy + radius; ++y) {
+            for (int x = cx - radius; x <= cx + radius; ++x) {
+                int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+                Tile &tile = w.at(Point(x, y));
+                if (dist <= radius && tile.terrain == 2) {
+                    tile.terrain = 0;
+                }
+            }
+        }
+    }
+
+    // build map borders
     for (int x = 0; x < w.width(); ++x) {
         int size = rng.between(3, 5);
         for (int y = 0; y < size; ++y) {
@@ -56,25 +94,17 @@ bool buildmap(World &w, unsigned long seed) {
         }
     }
 
-    // add plants
-    for (int i = 0; i < 100; ++i) {
-        Point p = findOpenTile(w, rng, true, false);
-        Item *item = new Item(w.getItemDef(rng.between(0, 3)));
-        w.moveItem(item, p);
-    }
-
 
     // add plants
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 1600; ++i) {
         Point p = findOpenTile(w, rng, false, false);
         Actor *actor = new Actor(w.getActorDef(rng.between(1000, 1001)));
         actor->reset();
         w.moveActor(actor, p);
     }
 
-
     // add NPCs
-    for (int i = 0; i < 25; ++i) {
+    for (int i = 0; i < 100; ++i) {
         Point p = findOpenTile(w, rng, false, true);
         int type = rng.between(2, 6);
         Actor *actor = new Actor(w.getActorDef(type));
