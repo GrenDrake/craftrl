@@ -417,7 +417,6 @@ void redraw_main(World &w) {
     terminal_color(0xFFFFFFFF);
     for (int i = 0; i < logHeight; ++i) {
         const LogMessage &msg = w.getLogMsg(i);
-        terminal_print(logX, screenHeight - i - 1, "                                        ");
         terminal_print(logX, screenHeight - i - 1, msg.msg.c_str());
     }
 }
