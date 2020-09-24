@@ -56,6 +56,24 @@ void makeLootAt(World &w, const LootTable *table, const Point &where) {
     w.addLogMsg(s.str());
 }
 
+
+void shiftCameraForMove(World &w, Actor *player) {
+    const int screenWidth = 80;
+    const int screenHeight = 25;
+    const int sidebarWidth = 30;
+    const int logHeight = 3;
+    const int viewWidth = screenWidth - sidebarWidth - 1;
+    const int viewHeight = screenHeight - logHeight - 1;
+    Point dest = player->pos;
+    Point p = w.getCamera();
+    if (dest.x < p.x + 10) p.x -= 10;
+    if (dest.y < p.y + 5)  p.y -= 5;
+    if (dest.x > p.x + viewWidth - 10) p.x += 10;
+    if (dest.y > p.y + viewHeight - 5) p.y += 5;
+    w.setCamera(p);
+
+}
+
 bool actionBreak(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Break");
@@ -126,6 +144,7 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
             if (tile.item) {
                 w.addLogMsg("Item here: " + tile.item->def.name);
             }
+            shiftCameraForMove(w, player);
             return true;
         }
         return false;
@@ -156,6 +175,7 @@ bool actionMove(World &w, Actor *player, Dir dir) {
         if (tile.item) {
             w.addLogMsg("Item here: " + tile.item->def.name);
         }
+        shiftCameraForMove(w, player);
         return true;
     }
     return false;
