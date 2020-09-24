@@ -88,7 +88,7 @@ void World::allocMap(int width, int height) {
 void World::deallocMap() {
     if (!mTiles) return;
 
-    for (unsigned i = 0; i < mWidth * mHeight; ++i) {
+    for (int i = 0; i < mWidth * mHeight; ++i) {
         delete mTiles->item;
     }
     for (Actor *actor : mActors) {
