@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ctime>
 #include <BearLibTerminal.h>
 
@@ -76,11 +77,14 @@ void mainmenu(World &w) {
                 buildmap(w, usedSeed);
                 w.inProgress = true;
                 selection = 2;
-
+                std::cerr << "mainmenu (info): created new map (size " << w.width() << ',' << w.height() << ", seed " << seed << ").\n";
                 gameloop(w);
+                std::cerr << "mainmenu (info): returned to menu.\n";
             } else if (selection == 2) {
                 if (w.inProgress) {
+                    std::cerr << "mainmenu (info): resuming on previous map.\n";
                     gameloop(w);
+                    std::cerr << "mainmenu (info): returned to menu.\n";
                     seed = usedSeed;
                 }
             } else if (selection == 3) {
