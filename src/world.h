@@ -159,7 +159,7 @@ public:
     void tick();
     unsigned getTurn() const { return turn; }
 
-    bool inProgress;
+    bool inProgress, wantsToQuit;
     int mode, selection;
 
 private:
