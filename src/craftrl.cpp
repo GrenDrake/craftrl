@@ -221,7 +221,7 @@ bool actionUse(World &w, Actor *player, Dir dir) {
     const ItemDef *def = player->inventory.mContents[w.selection].def;
     if (def->seedFor >= 0) {
         Dir d = getDir(w, "Plant");
-        if (dir == Dir::None) {
+        if (d == Dir::None) {
             w.addLogMsg("Canceled.");
             return false;
         }
