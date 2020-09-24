@@ -17,9 +17,25 @@ const int FAC_PLANT     = 2;
 const int FAC_ANIMAL    = 3;
 const int FAC_MONSTER   = 4;
 
+const int CMD_NONE              = -1;
+const int CMD_DUMPMAP           = 0;
+const int CMD_TAKE              = 1;
+const int CMD_BREAK             = 2;
+const int CMD_MOVE              = 3;
+const int CMD_PAN               = 4;
+const int CMD_RESETVIEW         = 5;
+const int CMD_DROP              = 6;
+const int CMD_USE               = 7;
+const int CMD_WAIT              = 8;
+const int CMD_CONTEXTMOVE       = 9;
+const int CMD_QUIT              = 10;
+const int CMD_NEXT_SELECT       = 11;
+const int CMD_PREV_SELECT       = 12;
+const int CMD_CANCEL            = 13;
+
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
-    None, RequestQuit
+    None
 };
 
 struct Point {
@@ -29,6 +45,13 @@ struct Point {
     Point shift(Dir dir, int amnt = 1) const;
 
     int x, y;
+};
+
+struct Command {
+    int key;
+    bool ctrl, alt, shift;
+    int command;
+    Dir dir;
 };
 
 struct LootRow {
@@ -185,6 +208,10 @@ private:
 
     mutable Random mRandom;
 };
+
+
+extern const Command gameCommands[];
+const Command& findCommand(int key, const Command *commandList);
 
 
 std::ostream& operator<<(std::ostream &out, const Point &p);

@@ -7,107 +7,25 @@
 #include "world.h"
 
 
-const int CMD_DUMPMAP           = 0;
-const int CMD_TAKE              = 1;
-const int CMD_BREAK             = 2;
-const int CMD_MOVE              = 3;
-const int CMD_PAN               = 4;
-const int CMD_RESETVIEW         = 5;
-const int CMD_DROP              = 6;
-const int CMD_USE               = 7;
-const int CMD_WAIT              = 8;
-const int CMD_CONTEXTMOVE       = 9;
-const int CMD_QUIT              = 10;
-const int CMD_NEXT_SELECT       = 11;
-const int CMD_PREV_SELECT       = 12;
-
-struct Command {
-    int key;
-    bool ctrl, alt, shift;
-    int command;
-    Dir dir;
-};
-
-Command gameCommands[] = {
-    {   TK_CLOSE,   false,  false,  false,  CMD_QUIT,           Dir::None },
-    {   TK_ESCAPE,  false,  false,  false,  CMD_QUIT,           Dir::None },
-    {   TK_Q,       false,  false,  false,  CMD_QUIT,           Dir::None },
-
-    {   TK_F5,      false,  false,  false,  CMD_DUMPMAP,        Dir::None },
-    {   TK_G,       false,  false,  false,  CMD_TAKE,           Dir::None },
-    {   TK_B,       false,  false,  false,  CMD_BREAK,          Dir::None },
-    {   TK_M,       false,  false,  false,  CMD_MOVE,           Dir::None },
-    {   TK_P,       false,  false,  false,  CMD_PAN,            Dir::None },
-    {   TK_R,       false,  false,  false,  CMD_RESETVIEW,      Dir::None },
-    {   TK_D,       false,  false,  false,  CMD_DROP,           Dir::None },
-    {   TK_U,       false,  false,  false,  CMD_USE,            Dir::None },
-    {   TK_KP_5,    false,  false,  false,  CMD_WAIT,           Dir::None },
-    {   TK_SPACE,   false,  false,  false,  CMD_WAIT,           Dir::None },
-    {   TK_MINUS,   false,  false,  false,  CMD_PREV_SELECT,    Dir::None },
-    {   TK_KP_MINUS,false,  false,  false,  CMD_PREV_SELECT,    Dir::None },
-    {   TK_EQUALS,  false,  false,  false,  CMD_NEXT_SELECT,    Dir::None },
-    {   TK_KP_PLUS, false,  false,  false,  CMD_NEXT_SELECT,    Dir::None },
-
-    {   TK_UP,      false,  false,  false,  CMD_CONTEXTMOVE,    Dir::North },
-    {   TK_RIGHT,   false,  false,  false,  CMD_CONTEXTMOVE,    Dir::East },
-    {   TK_DOWN,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::South },
-    {   TK_LEFT,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::West },
-    {   TK_K,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::North },
-    {   TK_L,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::East },
-    {   TK_J,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::South },
-    {   TK_H,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::West },
-    {   TK_B,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Southwest },
-    {   TK_N,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Southeast },
-    {   TK_Y,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Northeast },
-    {   TK_U,       false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Northwest },
-
-    {   TK_KP_1,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Southwest },
-    {   TK_KP_2,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::South },
-    {   TK_KP_3,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Southeast },
-    {   TK_KP_6,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::East },
-    {   TK_KP_9,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Northeast },
-    {   TK_KP_8,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::North },
-    {   TK_KP_7,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Northwest },
-    {   TK_KP_4,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::West },
-
-    {   0,          false,  false,  false,  -1,                 Dir::None }
-};
-
-
-
 Dir getDir(World &w, const std::string &reason);
 void redraw_main(World &w);
 
 
-Dir keyToDir(int key) {
-    switch (key) {
-        case TK_UP:     return Dir::North;
-        case TK_LEFT:   return Dir::West;
-        case TK_DOWN:   return Dir::South;
-        case TK_RIGHT:  return Dir::East;
-
-        case TK_KP_1:   return Dir::Southwest;
-        case TK_KP_2:   return Dir::South;
-        case TK_KP_3:   return Dir::Southeast;
-        case TK_KP_4:   return Dir::West;
-        case TK_KP_6:   return Dir::East;
-        case TK_KP_7:   return Dir::Northwest;
-        case TK_KP_8:   return Dir::North;
-        case TK_KP_9:   return Dir::Northeast;
-        default:        return Dir::None;
-    }
-}
-
 Dir getDir(World &w, const std::string &reason) {
-    w.addLogMsg(reason + ". Which way?");
+    w.addLogMsg(reason + ". Which way? (Z to cancel)");
     redraw_main(w);
     terminal_refresh();
     while (1) {
         int key = terminal_read();
-        if (key == TK_CLOSE)    return Dir::RequestQuit;
-        if (key == TK_Z)        return Dir::None;
-        Dir d = keyToDir(key);
-        if (d != Dir::None) return d;
+        const Command &command = findCommand(key, gameCommands);
+        if (command.command == CMD_CONTEXTMOVE) {
+            return command.dir;
+        }
+        if (command.command == CMD_QUIT) {
+            w.wantsToQuit = true;
+            return Dir::None;
+        }
+        if (command.command == CMD_CANCEL) return Dir::None;
     }
 }
 
@@ -140,7 +58,10 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Break");
     }
-    if (dir == Dir::None || dir == Dir::RequestQuit) return false;
+    if (dir == Dir::None) {
+        w.addLogMsg("Canceled.");
+        return false;
+    }
 
     Point dest = player->pos.shift(dir);
     Tile &tile = w.at(dest);
@@ -173,7 +94,10 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Move");
     }
-    if (dir == Dir::None || dir == Dir::RequestQuit) return false;
+    if (dir == Dir::None) {
+        w.addLogMsg("Canceled.");
+        return false;
+    }
 
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
@@ -210,7 +134,10 @@ bool actionMove(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Move");
     }
-    if (dir == Dir::None || dir == Dir::RequestQuit) return false;
+    if (dir == Dir::None) {
+        w.addLogMsg("Canceled.");
+        return false;
+    }
 
     Point dest = player->pos.shift(dir);
     const Tile &tile = w.at(dest);
@@ -267,7 +194,10 @@ bool actionUse(World &w, Actor *player, Dir dir) {
     const ItemDef *def = player->inventory.mContents[w.selection].def;
     if (def->seedFor >= 0) {
         Dir d = getDir(w, "Plant");
-        if (d == Dir::None) return false;
+        if (dir == Dir::None) {
+            w.addLogMsg("Canceled.");
+            return false;
+        }
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
@@ -307,7 +237,10 @@ bool actionPan(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Pan");
     }
-    if (dir == Dir::None || dir == Dir::RequestQuit) return false;
+    if (dir == Dir::None) {
+        w.addLogMsg("Canceled.");
+        return false;
+    }
 
     Point dest = w.getCamera().shift(dir, 5);
     w.setCamera(dest);
@@ -453,30 +386,22 @@ void gameloop(World &w) {
             }
 
         } else {
-            for (unsigned int i = 0; gameCommands[i].command >= 0; ++i) {
-                // int ctrl = terminal_check(TK_CTRL);
-                // int shift = terminal_check(TK_SHIFT);
-                // int alt = terminal_check(TK_ALT);
+            const Command &command = findCommand(key, gameCommands);
+            switch(command.command) {
+                case CMD_DUMPMAP:       wantTick = actionDumpMap(w, player, command.dir);  break;
+                case CMD_TAKE:          wantTick = actionTake(w, player, command.dir);  break;
+                case CMD_BREAK:         wantTick = actionBreak(w, player, command.dir);  break;
+                case CMD_MOVE:          wantTick = actionMove(w, player, command.dir);  break;
+                case CMD_PAN:           wantTick = actionPan(w, player, command.dir);  break;
+                case CMD_RESETVIEW:     wantTick = actionCentrePan(w, player, command.dir);  break;
+                case CMD_DROP:          wantTick = actionDrop(w, player, command.dir);  break;
+                case CMD_USE:           wantTick = actionUse(w, player, command.dir);  break;
+                case CMD_WAIT:          wantTick = actionWait(w, player, command.dir);  break;
+                case CMD_CONTEXTMOVE:   wantTick = actionContextMove(w, player, command.dir);  break;
+                case CMD_QUIT:          wantTick = actionQuit(w, player, command.dir);  break;
+                case CMD_NEXT_SELECT:   wantTick = actionNextSelect(w, player, command.dir); break;
+                case CMD_PREV_SELECT:   wantTick = actionPrevSelect(w, player, command.dir); break;
 
-                if (gameCommands[i].key == key) {
-                    switch(gameCommands[i].command) {
-                        case CMD_DUMPMAP:       wantTick = actionDumpMap(w, player, gameCommands[i].dir);  break;
-                        case CMD_TAKE:          wantTick = actionTake(w, player, gameCommands[i].dir);  break;
-                        case CMD_BREAK:         wantTick = actionBreak(w, player, gameCommands[i].dir);  break;
-                        case CMD_MOVE:          wantTick = actionMove(w, player, gameCommands[i].dir);  break;
-                        case CMD_PAN:           wantTick = actionPan(w, player, gameCommands[i].dir);  break;
-                        case CMD_RESETVIEW:     wantTick = actionCentrePan(w, player, gameCommands[i].dir);  break;
-                        case CMD_DROP:          wantTick = actionDrop(w, player, gameCommands[i].dir);  break;
-                        case CMD_USE:           wantTick = actionUse(w, player, gameCommands[i].dir);  break;
-                        case CMD_WAIT:          wantTick = actionWait(w, player, gameCommands[i].dir);  break;
-                        case CMD_CONTEXTMOVE:   wantTick = actionContextMove(w, player, gameCommands[i].dir);  break;
-                        case CMD_QUIT:          wantTick = actionQuit(w, player, gameCommands[i].dir);  break;
-                        case CMD_NEXT_SELECT:   wantTick = actionNextSelect(w, player, gameCommands[i].dir); break;
-                        case CMD_PREV_SELECT:   wantTick = actionPrevSelect(w, player, gameCommands[i].dir); break;
-
-                    }
-                    break;
-                }
             }
         }
 
