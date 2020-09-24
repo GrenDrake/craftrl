@@ -1,4 +1,4 @@
-#include <ostream>
+#include <iostream>
 #include <sstream>
 #include "world.h"
 
@@ -92,8 +92,12 @@ void World::deallocMap() {
         delete mTiles->item;
     }
     for (Actor *actor : mActors) {
-        delete actor;
+        if (!actor) std::cerr << "deallocMap: Found null actor in actor list.\n";
+        else        delete actor;
     }
+    mActors.clear();
+    mLog.clear();
+    mPlayer = nullptr;
 }
 
 bool World::valid(const Point &p) const {

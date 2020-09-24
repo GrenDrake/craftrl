@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cmath>
 #include "world.h"
 
@@ -114,9 +115,12 @@ bool buildmap(World &w, unsigned long seed) {
 
     // add player
     Actor *player = new Actor(w.getActorDef(1));
+    std::cerr << "YY\n";
     Point starting = findOpenTile(w, rng, false, true);
     player->reset();
     w.moveActor(player, starting);
+    if (player->def.ident != 1) std::cerr << "XX\n";
+    std::cerr << starting << "\n";
 
     return true;
 }

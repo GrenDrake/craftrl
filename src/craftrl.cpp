@@ -1,3 +1,4 @@
+#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -364,6 +365,10 @@ void gameloop(World &w) {
     w.mode = w.selection = 0;
     w.wantsToQuit = false;
     Actor *player = w.getPlayer();
+    if (player->def.ident != 1) {
+        std::cerr << "gameloop: player is not of type player.\n";
+        return;
+    }
     actionCentrePan(w, player, Dir::None);
 
     bool wantTick = false;
