@@ -33,6 +33,7 @@ const int CMD_NEXT_SELECT       = 11;
 const int CMD_PREV_SELECT       = 12;
 const int CMD_CANCEL            = 13;
 const int CMD_CRAFT             = 14;
+const int CMD_SAVE              = 15;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -159,6 +160,7 @@ class World {
 public:
 
     World();
+    ~World();
     void allocMap(int width, int height);
     void deallocMap();
     int width()  const { return mWidth; }
@@ -200,6 +202,9 @@ public:
     void tick();
     unsigned getTurn() const { return turn; }
     void getTime(int *day, int *hour, int *minute) const;
+
+    bool savegame(const std::string &filename) const;
+    bool loadgame(const std::string &filename);
 
     bool inProgress, wantsToQuit;
     int mode, selection;

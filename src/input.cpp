@@ -45,6 +45,8 @@ const Command gameCommands[] = {
     {   TK_KP_7,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::Northwest },
     {   TK_KP_4,    false,  false,  false,  CMD_CONTEXTMOVE,    Dir::West },
 
+    {   TK_F2,      false,  false,  false,  CMD_SAVE,           Dir::None },
+
     {   0,          false,  false,  false,  CMD_NONE,           Dir::None }
 };
 

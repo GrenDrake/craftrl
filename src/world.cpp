@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include "world.h"
@@ -77,6 +78,16 @@ World::World()
 : inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0), day(1), hour(12), minute(0) {
 }
 
+World::~World() {
+    deallocMap();
+    for (ActorDef &def : mActorDefs) {
+        if (def.loot) delete def.loot;
+    }
+    for (TileDef &def : mTileDefs) {
+        if (def.loot) delete def.loot;
+    }
+}
+
 void World::allocMap(int width, int height) {
     deallocMap();
     mWidth = width;
@@ -91,6 +102,9 @@ void World::deallocMap() {
     for (int i = 0; i < mWidth * mHeight; ++i) {
         delete mTiles->item;
     }
+    delete[] mTiles;
+    mTiles = nullptr;
+
     for (Actor *actor : mActors) {
         if (!actor) std::cerr << "deallocMap: Found null actor in actor list.\n";
         else        delete actor;
@@ -316,6 +330,191 @@ void World::getTime(int *day, int *hour, int *minute) const {
     *day    = this->day;
     *hour   = this->hour;
     *minute = this->minute;
+}
+
+void write8(std::ostream &out, uint8_t value) {
+    out.write(reinterpret_cast<char*>(&value), 1);
+}
+void write32(std::ostream &out, uint32_t value) {
+    out.write(reinterpret_cast<char*>(&value), 4);
+}
+void writeString(std::ostream &out, const std::string &s) {
+    for (char c : s) {
+        write8(out, c);
+    }
+    write8(out, 0);
+}
+
+bool World::savegame(const std::string &filename) const {
+    std::cerr << "savegame (info): saving game.\n";
+    std::ofstream out(filename, std::ios_base::binary);
+    if (!out) {
+        std::cerr << "savegame: Failed to open save file.\n";
+        return false;
+    }
+
+    write32(out, 0x4C5243); // magic number
+    write32(out, 0);        // version #
+    write32(out, mWidth);
+    write32(out, mHeight);
+
+    write32(out, turn);
+    write32(out, day);
+    write32(out, hour);
+    write32(out, minute);
+
+
+    int itemCount = 0;
+    // write tiles
+    write32(out, 0x454C4954);
+    for (int i = 0; i < mWidth * mHeight; ++i) {
+        write32(out, mTiles[i].terrain);
+        if (mTiles[i].item) ++itemCount;
+    }
+    // write items on ground
+    write32(out, 0x4D455449);
+    write32(out, itemCount);
+    for (int i = 0; i < mWidth * mHeight; ++i) {
+        if (!mTiles[i].item) continue;
+        const Item *item = mTiles[i].item;
+        write32(out, item->def.ident);
+        write32(out, item->pos.x);
+        write32(out, item->pos.y);
+    }
+    // write actors
+    write32(out, 0x52544341);
+    write32(out, mActors.size());
+    for (const Actor *actor : mActors) {
+        write32(out, actor->def.ident);
+        write32(out, actor->pos.x);
+        write32(out, actor->pos.y);
+        write32(out, actor->age);
+        write32(out, actor->health);
+        write32(out, actor->inventory.size());
+        for (const InventoryRow &row : actor->inventory.mContents) {
+            write32(out, row.qty);
+            write32(out, row.def->ident);
+        }
+    }
+    // write log
+    write32(out, 0x00474F4C);
+    write32(out, mLog.size());
+    for (const LogMessage &msg : mLog) {
+        writeString(out, msg.msg);
+    }
+
+    return true;
+}
+
+uint8_t read8(std::istream &inf) {
+    uint8_t value = 0;
+    inf.read(reinterpret_cast<char*>(&value), 1);
+    return value;
+}
+uint32_t read32(std::istream &inf) {
+    uint32_t value = 0;
+    inf.read(reinterpret_cast<char*>(&value), 4);
+    return value;
+}
+std::string readString(std::istream &inf) {
+    std::string s;
+    char c = read8(inf);
+    while (c != 0) {
+        s += c;
+        c = read8(inf);
+    }
+    return s;
+}
+
+bool World::loadgame(const std::string &filename) {
+    std::cerr << "loadgame (info): loading game.\n";
+    std::ifstream inf(filename, std::ios_base::binary);
+    if (!inf) {
+        std::cerr << "loadgame: Failed to open save file.\n";
+        return false;
+    }
+
+    if (read32(inf) != 0x4C5243) {
+        std::cerr << "loadgame: bad magic number.\n";
+        return false;
+    }
+    if (read32(inf) != 0) {
+        std::cerr << "loadgame: incompatable save version.\n";
+        return false;
+    }
+    int width = read32(inf);
+    int height = read32(inf);
+    allocMap(width, height);
+
+    turn    = read32(inf);
+    day     = read32(inf);
+    hour    = read32(inf);
+    minute  = read32(inf);
+
+    // read tiles
+    if (read32(inf) != 0x454C4954) {
+        std::cerr << "loadgame: expected start of tile data.\n";
+        return false;
+    }
+    for (int i = 0; i < mWidth * mHeight; ++i) {
+        int t = read32(inf);
+        mTiles[i].terrain = t;
+    }
+
+    // read items on ground
+    if (read32(inf) != 0x4D455449) {
+        std::cerr << "loadgame: expected start of item data.\n";
+        return false;
+    }
+    int itemCount = read32(inf);
+    for (int i = 0; i < itemCount; ++i) {
+        int ident = read32(inf);
+        Item *item = new Item(getItemDef(ident));
+        int x = read32(inf);
+        int y = read32(inf);
+        Point pos(x, y);
+        moveItem(item, pos);
+    }
+
+    // read actors
+    if (read32(inf) != 0x52544341) {
+        std::cerr << "loadgame: expected start of actor data.\n";
+        return false;
+    }
+    int actorCount = read32(inf);
+    for (int i = 0; i < actorCount; ++i) {
+        if (inf.eof()) {
+            std::cerr << "loadgame: unexpected end of file (actors).\n";
+            return false;
+        }
+        int ident = read32(inf);
+        Actor *actor = new Actor(getActorDef(ident));
+        int x = read32(inf);
+        int y = read32(inf);
+        Point pos(x, y);
+        moveActor(actor, pos);
+        actor->age = read32(inf);
+        actor->health = read32(inf);
+        int invCount = read32(inf);
+        for (int j = 0; j < invCount; ++j) {
+            int qty = read32(inf);
+            int itemIdent = read32(inf);
+            const ItemDef &idef = getItemDef(itemIdent);
+            actor->inventory.add(&idef, qty);
+        }
+    }
+    // read log
+    if (read32(inf) != 0x00474F4C) {
+        std::cerr << "loadgame: expected start of log data.\n";
+        return false;
+    }
+    int logCount = read32(inf);
+    for (int i = 0; i < logCount; ++i) {
+        std::string msg = readString(inf);
+        addLogMsg(msg);
+    }
+
+    return true;
 }
 
 

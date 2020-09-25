@@ -74,6 +74,15 @@ void shiftCameraForMove(World &w, Actor *player) {
 
 }
 
+bool actionSavegame(World &w, Actor *player, Dir dir) {
+    if (w.savegame("game.sav")) {
+        w.addLogMsg("Game saved.");
+    } else {
+        w.addLogMsg("Save failed.");
+    }
+    return false;
+}
+
 bool actionBreak(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Break");
@@ -453,6 +462,7 @@ void gameloop(World &w) {
                 case CMD_NEXT_SELECT:   wantTick = actionNextSelect(w, player, command.dir); break;
                 case CMD_PREV_SELECT:   wantTick = actionPrevSelect(w, player, command.dir); break;
                 case CMD_CRAFT:         wantTick = actionCraft(w, player, command.dir); break;
+                case CMD_SAVE:          actionSavegame(w, player, Dir::None); break;
 
             }
         }

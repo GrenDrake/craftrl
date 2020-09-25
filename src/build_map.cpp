@@ -10,7 +10,7 @@ Point findOpenTile(World &w, Random &rng, bool allowActor, bool allowItem) {
         bool valid = true;
         const auto &t = w.at(p);
         if (w.getTileDef(t.terrain).solid) valid = false;
-        if (!allowActor && t.actor) break;
+        if (!allowActor && t.actor) continue;
         if (valid) break;
     } while (1);
     return p;
@@ -101,7 +101,10 @@ bool buildmap(World &w, unsigned long seed) {
         Point p = findOpenTile(w, rng, false, false);
         Actor *actor = new Actor(w.getActorDef(rng.between(1000, 1001)));
         actor->reset();
-        w.moveActor(actor, p);
+        if (!w.moveActor(actor, p)) {
+            std::cerr << "Failed to place plant at " << p << ".\n";
+            delete actor;
+        }
     }
 
     // add NPCs
@@ -110,7 +113,10 @@ bool buildmap(World &w, unsigned long seed) {
         int type = rng.between(2, 6);
         Actor *actor = new Actor(w.getActorDef(type));
         actor->reset();
-        w.moveActor(actor, p);
+        if (!w.moveActor(actor, p)) {
+            std::cerr << "Failed to place actor at " << p << ".\n";
+            delete actor;
+        }
     }
 
     // add player
@@ -118,7 +124,6 @@ bool buildmap(World &w, unsigned long seed) {
     Point starting = findOpenTile(w, rng, false, true);
     player->reset();
     w.moveActor(player, starting);
-    std::cerr << "buildmap (info): player starting position is " << starting << ".\n";
 
     return true;
 }

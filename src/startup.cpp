@@ -53,22 +53,24 @@ void mainmenu(World &w) {
         setColourIfSelected(selection, 0, true);
         terminal_print(5, 6, "New Game");
         setColourIfSelected(selection, 1, true);
-        terminal_printf(5, 7, "Seed: %lu", seed);
-        setColourIfSelected(selection, 2, w.inProgress);
-        terminal_print(5, 8, "Continue Game");
-        setColourIfSelected(selection, 3, true);
-        terminal_print(5, 9, "Quit");
+        terminal_print(5, 7, "Load Game");
+        setColourIfSelected(selection, 2, true);
+        terminal_printf(5, 8, "Seed: %lu", seed);
+        setColourIfSelected(selection, 3, w.inProgress);
+        terminal_print(5, 9, "Continue Game");
+        setColourIfSelected(selection, 4, true);
+        terminal_print(5, 10, "Quit");
         terminal_refresh();
 
         int key = terminal_read();
         if (key == TK_CLOSE || key == TK_ESCAPE || key == TK_Q) return;
-        if (key == TK_DOWN && selection < 3) {
+        if (key == TK_DOWN && selection < 4) {
             ++selection;
-            if (selection == 2 && !w.inProgress) ++selection;
+            if (selection == 3 && !w.inProgress) ++selection;
         }
         if (key == TK_UP && selection > 0) {
             --selection;
-            if (selection == 2 && !w.inProgress) --selection;
+            if (selection == 3 && !w.inProgress) --selection;
         }
         if (key == TK_ENTER || key == TK_KP_ENTER || key == TK_SPACE) {
             if (selection == 0) {
@@ -76,23 +78,34 @@ void mainmenu(World &w) {
                 usedSeed = seed;
                 buildmap(w, usedSeed);
                 w.inProgress = true;
-                selection = 2;
+                selection = 3;
                 std::cerr << "mainmenu (info): created new map (size " << w.width() << ',' << w.height() << ", seed " << seed << ").\n";
+                std::cerr << "mainmenu (info): player starting position is " << w.getPlayer()->pos << ".\n";
                 gameloop(w);
                 std::cerr << "mainmenu (info): returned to menu.\n";
-            } else if (selection == 2) {
+            } else if (selection == 1) {
+                if (w.loadgame("game.sav")) {
+                    w.inProgress = true;
+                    selection = 3;
+                    std::cerr << "mainmenu (info): loaded game from save.\n";
+                    std::cerr << "mainmenu (info): initial player position is " << w.getPlayer()->pos << ".\n";
+                    gameloop(w);
+                    std::cerr << "mainmenu (info): returned to menu.\n";
+                } else {
+                    std::cerr << "mainmenu: failed to load save game.\n";
+                }
+            } else if (selection == 3) {
                 if (w.inProgress) {
                     std::cerr << "mainmenu (info): resuming on previous map.\n";
                     gameloop(w);
                     std::cerr << "mainmenu (info): returned to menu.\n";
                     seed = usedSeed;
                 }
-            } else if (selection == 3) {
-                w.deallocMap();
+            } else if (selection == 4) {
                 return;
             }
         }
-        if (selection == 1) {
+        if (selection == 2) {
             if (key == TK_R) seed = w.getRandom().next64();
             if (key == TK_C) seed = 0;
             if (key == TK_LEFT) --seed;
