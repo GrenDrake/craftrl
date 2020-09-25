@@ -228,7 +228,7 @@ bool actionUse(World &w, Actor *player, Dir dir) {
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (td.solid || t.actor) {
+        if (td.solid || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
@@ -237,6 +237,22 @@ bool actionUse(World &w, Actor *player, Dir dir) {
         if (actorDef.ident < 0) return false;
         Actor *actor = new Actor(actorDef);
         w.moveActor(actor, dest);
+        return true;
+    } else if (def->constructs >= 0) {
+        Dir d = getDir(w, "Construct");
+        if (d == Dir::None) {
+            w.addLogMsg("Canceled.");
+            return false;
+        }
+        Point dest = player->pos.shift(d);
+        Tile &t = w.at(dest);
+        const TileDef &td = w.getTileDef(t.terrain);
+        if (td.solid || t.actor || t.item) {
+            w.addLogMsg("The space isn't clear.");
+            return false;
+        }
+        t.terrain = def->constructs;
+        player->inventory.remove(def);
         return true;
     } else {
         w.addLogMsg("That's not something you can use.");

@@ -11,15 +11,15 @@ tile {
 tile {
     ident   0
     glyph   '.'
-    colour  0x777777
-    name    "ground"
+    colour  0x633a0b
+    name    "dirt"
 };
 
 tile {
     ident   1
     glyph   '#'
     colour  0xAAAAAA
-    name    "wall"
+    name    "stone"
     breakTo 0
     solid opaque
     loot {
@@ -40,6 +40,53 @@ tile {
     colour  0x0000FF
     name    "water"
     solid
+};
+
+tile {
+    ident   4
+    glyph   '#'
+    colour  0x855723
+    name    "wood wall"
+    solid opaque
+    breakTo 0
+    loot {
+        6 100 2 2
+    }
+};
+
+tile {
+    ident   5
+    glyph   '#'
+    colour  0x777777
+    name    "stone wall"
+    solid opaque
+    breakTo 0
+    loot {
+        1 100 2 2
+    }
+};
+
+
+tile {
+    ident   6
+    glyph   '.'
+    colour  0x855723
+    name    "wood floor"
+    breakTo 0
+    loot {
+        6 100 1 1
+    }
+};
+
+tile {
+    ident   7
+    glyph   '.'
+    colour  0x777777
+    name    "stone floor"
+    breakTo 0
+    loot {
+        1 100 1 1
+    }
 };
 
 
@@ -161,14 +208,14 @@ actor {
 item {
     ident   0
     glyph   '/'
-    colour  0xFFFFFFFF
+    colour  0x855723
     name    "stick"
 };
 
 item {
     ident   1
     glyph   '*'
-    colour  0xFFFFFFFF
+    colour  0x777777
     name    "rock"
 };
 
@@ -182,7 +229,7 @@ item {
 item {
     ident   3
     glyph   '='
-    colour  0xFFFFFFFF
+    colour  0x855723
     name    "log"
 };
 
@@ -202,6 +249,48 @@ item {
     seedFor 1003
 };
 
+item {
+    ident   6
+    glyph   '-'
+    colour  0x855723
+    name    "plank"
+};
+
+item {
+    ident   7
+    glyph   '*'
+    colour  0x855723
+    name    "wood wall kit"
+    constructs  4
+};
+
+item {
+    ident   8
+    glyph   '*'
+    colour  0x777777
+    name    "stone wall kit"
+    constructs  5
+};
+
+item {
+    ident   9
+    glyph   '*'
+    colour  0x855723
+    name    "wood floor kit"
+    constructs  6
+};
+
+item {
+    ident   10
+    glyph   '*'
+    colour  0x777777
+    name    "stone floor kit"
+    constructs  7
+};
+
+
+
+
 
 recipe {
     makeIdent   2
@@ -214,4 +303,34 @@ recipe {
     makeQty     2
     part        1 1
     part        2 2
+};
+
+recipe {
+    makeIdent   6
+    makeQty     4
+    part        1 3
+};
+
+recipe {
+    makeIdent   7
+    makeQty     5
+    part        10 6
+};
+
+recipe {
+    makeIdent   8
+    makeQty     5
+    part        10 1
+};
+
+recipe {
+    makeIdent   9
+    makeQty     5
+    part        5 6
+};
+
+recipe {
+    makeIdent   10
+    makeQty     5
+    part        5 1
 };

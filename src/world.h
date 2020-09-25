@@ -83,6 +83,7 @@ struct ItemDef {
     unsigned colour;
     std::string name;
     int seedFor;
+    int constructs;
 };
 
 struct TileDef {
