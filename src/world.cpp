@@ -269,7 +269,11 @@ std::vector<const RecipeDef*> World::getRecipeList() const {
 
 void World::tick() {
     ++turn;
-    for (Actor *actor : mActors) {
+    for (unsigned i = 0; i < mActors.size(); ++i) {
+        Actor *actor = mActors[i];
+
+        ++actor->age;
+
         if (actor->def.aiType == AI_WANDER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
 
@@ -279,6 +283,21 @@ void World::tick() {
                 moveActor(actor, dest);
             }
 
+        } else if (actor->def.faction == FAC_PLANT) {
+            if (actor->def.growTo >= 0 && actor->age >= actor->def.growTime) {
+                const ActorDef &def = getActorDef(actor->def.growTo);
+                if (def.ident == -1) {
+                    actor->age = -9999;
+                    std::cerr << actor->def.name << " at " << actor->pos << " has invalid next growth state.\n";
+                } else {
+                    std::cerr << actor->def.name << " at " << actor->pos << " has grown into " << def.name << ".\n";
+                    Actor *newActor = new Actor(def);
+                    mActors[i] = newActor;
+                    newActor->pos = actor->pos;
+                    at(actor->pos).actor = newActor;
+                    delete actor;
+                }
+            }
         }
     }
 }

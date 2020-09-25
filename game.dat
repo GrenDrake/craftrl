@@ -127,6 +127,33 @@ actor {
     }
 };
 
+actor {
+    ident       1002
+    glyph       't'
+    colour      0x77FF77
+    name        "sapling"
+    ai          0
+    faction     2
+    growTo      1000
+    growTime    20
+    loot {
+        4   100 1   1
+    }
+};
+
+actor {
+    ident   1003
+    glyph   ','
+    colour  0x77FF77
+    name    "sprout"
+    ai      0
+    faction 2
+    growTo      1001
+    growTime    15
+    loot {
+        5 100 1 1
+    }
+};
 
 
 
@@ -164,7 +191,7 @@ item {
     glyph   '/'
     colour  0x00FF00
     name    "sapling"
-    seedFor 1000
+    seedFor 1002
 };
 
 item {
@@ -172,7 +199,7 @@ item {
     glyph   '.'
     colour  0x00FF00
     name    "shrub seed"
-    seedFor 1001
+    seedFor 1003
 };
 
 

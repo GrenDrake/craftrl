@@ -20,6 +20,8 @@ bool parseActor(World &w, TokenData &data) {
     actor.aiType = AI_NONE;
     actor.health = 1;
     actor.faction = 99;
+    actor.growTo = -1;
+    actor.growTime = 100;
     actor.loot = nullptr;
 
     while (!data.matches(TokenType::CloseBrace)) {
@@ -54,6 +56,14 @@ bool parseActor(World &w, TokenData &data) {
         } else if (name == "health") {
             if (!data.require(TokenType::Integer)) return false;
             actor.health = data.here().i;
+            data.next();
+        } else if (name == "growTo") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.growTo = data.here().i;
+            data.next();
+        } else if (name == "growTime") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.growTime = data.here().i;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);

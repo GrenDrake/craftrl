@@ -72,7 +72,8 @@ struct ActorDef {
     int aiType;
     int faction;
     LootTable *loot;
-
+    int growTo;
+    int growTime;
     int health;
 };
 
@@ -119,7 +120,7 @@ struct Inventory {
 };
 
 struct Actor {
-    Actor(const ActorDef &def) : type(def.ident), def(def) { }
+    Actor(const ActorDef &def) : type(def.ident), def(def), age(0) { }
     void reset();
 
     int type;
@@ -128,6 +129,7 @@ struct Actor {
     Inventory inventory;
 
     int health;
+    int age;
 };
 
 struct Item {
