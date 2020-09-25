@@ -199,6 +199,7 @@ public:
 
     void tick();
     unsigned getTurn() const { return turn; }
+    void getTime(int *day, int *hour, int *minute) const;
 
     bool inProgress, wantsToQuit;
     int mode, selection;
@@ -225,6 +226,7 @@ private:
     Actor *mPlayer;
 
     unsigned turn;
+    unsigned day, hour, minute;
 
     mutable Random mRandom;
 };

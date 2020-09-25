@@ -74,7 +74,7 @@ void Actor::reset() {
 
 
 World::World()
-: inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0) {
+: inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0), day(1), hour(12), minute(0) {
 }
 
 void World::allocMap(int width, int height) {
@@ -269,6 +269,16 @@ std::vector<const RecipeDef*> World::getRecipeList() const {
 
 void World::tick() {
     ++turn;
+    minute += 3;
+    while (minute >= 60) {
+        minute -= 60;
+        ++hour;
+    }
+    while (hour >= 24) {
+        hour -= 24;
+        ++day;
+    }
+
     for (unsigned i = 0; i < mActors.size(); ++i) {
         Actor *actor = mActors[i];
 
@@ -300,6 +310,12 @@ void World::tick() {
             }
         }
     }
+}
+
+void World::getTime(int *day, int *hour, int *minute) const {
+    *day    = this->day;
+    *hour   = this->hour;
+    *minute = this->minute;
 }
 
 
