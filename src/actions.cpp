@@ -263,6 +263,7 @@ bool actionPrevSelect(World &w, Actor *player, const Command &command, bool sile
 
 bool actionQuit(World &w, Actor *player, const Command &command, bool silent) {
     w.wantsToQuit = true;
+    actionSavegame(w, player, command, silent);
     return false;
 }
 
