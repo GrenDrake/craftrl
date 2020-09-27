@@ -237,7 +237,7 @@ bool actionUse(World &w, Actor *player, Dir dir) {
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (td.solid || t.actor || t.item) {
+        if (!td.ground || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
@@ -256,7 +256,7 @@ bool actionUse(World &w, Actor *player, Dir dir) {
         Point dest = player->pos.shift(d);
         Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (td.solid || t.actor || t.item) {
+        if (!td.ground || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }

@@ -96,6 +96,7 @@ struct TileDef {
     LootTable *loot;
     bool opaque;
     bool solid;
+    bool ground;
 };
 
 struct RecipeRow {

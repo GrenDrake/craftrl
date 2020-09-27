@@ -242,6 +242,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.name = "unnamed tile";
     tile.opaque = false;
     tile.solid = false;
+    tile.ground = false;
     tile.breakTo = -1;
     tile.loot = nullptr;
 
@@ -252,6 +253,7 @@ bool parseTile(World &w, TokenData &data) {
 
         if (name == "opaque") tile.opaque = true;
         else if (name == "solid") tile.solid = true;
+        else if (name == "ground") tile.ground = true;
         else if (name == "ident") {
             if (!data.require(TokenType::Integer)) return false;
             tile.ident = data.here().i;

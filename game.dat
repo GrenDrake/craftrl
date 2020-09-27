@@ -13,6 +13,7 @@ tile {
     glyph   '.'
     colour  0x633a0b
     name    "dirt"
+    ground
 };
 
 tile {
@@ -32,6 +33,7 @@ tile {
     glyph   ','
     colour  0x007700
     name    "grass"
+    ground
 };
 
 tile {
