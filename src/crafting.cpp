@@ -121,6 +121,20 @@ void doCrafting(World &w, Actor *player) {
             case TK_UP:
                 if (selection > 0) --selection;
                 break;
+            case TK_END:
+                selection = static_cast<int>(list.size()) - 1;
+                break;
+            case TK_HOME:
+                selection = 0;
+                break;
+            case TK_PAGEUP:
+                selection -= 10;
+                if (selection < 0) selection = 0;
+                break;
+            case TK_PAGEDOWN:
+                selection += 10;
+                if (selection >= static_cast<int>(list.size())) selection = static_cast<int>(list.size()) - 1;
+                break;
             case TK_ENTER:
             case TK_KP_ENTER:
             case TK_C:

@@ -143,6 +143,28 @@ tile {
 };
 
 
+tile {
+    ident   12
+    glyph   '='
+    colour  0x7777FF
+    name    "window"
+    breakTo 0
+    solid
+};
+
+tile {
+    ident   13
+    glyph   '^'
+    colour  0x855723
+    name    "fence"
+    breakTo 0
+    loot {
+        6 100 1 1
+    }
+    solid
+};
+
+
 
 actor {
     ident   1
@@ -254,7 +276,31 @@ actor {
     }
 };
 
+actor {
+    ident   1004
+    glyph   ','
+    colour  0x77FF77
+    name    "wheat seedling"
+    ai      0
+    faction 2
+    growTo      1005
+    growTime    15
+    loot {
+        15 100 1 1
+    }
+};
 
+actor {
+    ident   1005
+    glyph   ';'
+    colour  0x77FF77
+    name    "grown wheat"
+    ai      0
+    faction 2
+    loot {
+        15 100 1 3
+    }
+};
 
 
 item {
@@ -356,21 +402,31 @@ item {
     constructs  10
 };
 
-
-
-
-recipe {
-    makeIdent   2
-    part        1 1
-    part        2 3
+item {
+    ident       13
+    glyph       '*'
+    colour      0x7777FF
+    name        "window kit"
+    constructs  12
 };
 
-recipe {
-    makeIdent   3
-    makeQty     2
-    part        1 1
-    part        2 2
+item {
+    ident       14
+    glyph       '*'
+    colour      0x855723
+    name        "fence kit"
+    constructs  13
 };
+
+item {
+    ident       15
+    glyph       '.'
+    colour      0x00FF00
+    name        "wheat seed"
+    seedFor     1004
+};
+
+
 
 recipe {
     makeIdent   6
@@ -412,4 +468,21 @@ recipe {
     makeIdent   12
     makeQty     1
     part        1 1
+};
+
+recipe {
+    makeIdent   13
+    makeQty     1
+};
+
+recipe {
+    makeIdent   14
+    makeQty     5
+    part        5 6
+};
+
+recipe {
+    makeIdent   15
+    makeQty     1
+    part        2 5
 };
