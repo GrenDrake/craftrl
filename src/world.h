@@ -38,6 +38,10 @@ const int CMD_CRAFT             = 14;
 const int CMD_SAVE              = 15;
 const int CMD_DO                = 16;
 const int CMD_TALK              = 17;
+const int CMD_SELECT_PGDN       = 18;
+const int CMD_SELECT_PGUP       = 19;
+const int CMD_SELECT_HOME       = 20;
+const int CMD_SELECT_END        = 21;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -261,6 +265,10 @@ bool actionPan(World &w, Actor *player, const Command &command, bool silent);
 bool actionPrevSelect(World &w, Actor *player, const Command &command, bool silent);
 bool actionQuit(World &w, Actor *player, const Command &command, bool silent);
 bool actionSavegame(World &w, Actor *player, const Command &command, bool silent);
+bool actionSelectEnd(World &w, Actor *player, const Command &command, bool silent);
+bool actionSelectHome(World &w, Actor *player, const Command &command, bool silent);
+bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool silent);
+bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent);
 bool actionTake(World &w, Actor *player, const Command &command, bool silent);
 bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);

@@ -18,9 +18,13 @@ const Command gameCommands[] = {
     {   CMD_USE,            Dir::None,      { { TK_ENTER,    }, { TK_KP_ENTER} } },
     {   CMD_WAIT,           Dir::None,      { { TK_SPACE     }, { TK_KP_5 } } },
     {   CMD_CRAFT,          Dir::None,      { { TK_C,        },  } },
+    {   CMD_SAVE,           Dir::None,      { { TK_F2,       },  } },
     {   CMD_PREV_SELECT,    Dir::None,      { { TK_LBRACKET, }, { TK_KP_MINUS } } },
     {   CMD_NEXT_SELECT,    Dir::None,      { { TK_RBRACKET, }, { TK_KP_PLUS  } } },
-    {   CMD_SAVE,           Dir::None,      { { TK_F2,       },  } },
+    {   CMD_SELECT_PGDN,    Dir::None,      { { TK_PAGEDOWN  } } },
+    {   CMD_SELECT_PGUP,    Dir::None,      { { TK_PAGEUP    } } },
+    {   CMD_SELECT_HOME,    Dir::None,      { { TK_HOME      } } },
+    {   CMD_SELECT_END,     Dir::None,      { { TK_END       } } },
 
     {   CMD_CONTEXTMOVE,    Dir::North,     { { TK_UP,       }, { TK_K }, { TK_KP_8 } } },
     {   CMD_CONTEXTMOVE,    Dir::East,      { { TK_RIGHT,    }, { TK_L }, { TK_KP_6 } } },
@@ -69,12 +73,16 @@ std::string commandName(int command) {
         case CMD_WAIT:          return "Wait";
         case CMD_CONTEXTMOVE:   return "Context-Sensitive Move";
         case CMD_QUIT:          return "Quit";
-        case CMD_NEXT_SELECT:   return "Next Inventory";
-        case CMD_PREV_SELECT:   return "Previous Inventory";
+        case CMD_NEXT_SELECT:   return "Inventory Down";
+        case CMD_PREV_SELECT:   return "Inventory Up";
         case CMD_CANCEL:        return "Cancel";
         case CMD_CRAFT:         return "Craft";
         case CMD_SAVE:          return "Save Game";
         case CMD_DO:            return "Do";
+        case CMD_SELECT_PGDN:   return "Pagedown Inventory";
+        case CMD_SELECT_PGUP:   return "Pageup Inventory";
+        case CMD_SELECT_HOME:   return "Inventory First";
+        case CMD_SELECT_END:    return "Inventory Last";
         default: {
             std::stringstream s;
             s << "(Unknown Command " << command << ')';
@@ -101,6 +109,10 @@ ActionHandler commandAction(int command) {
         case CMD_CRAFT:         return actionCraft;
         case CMD_DO:            return actionDo;
         case CMD_SAVE:          return actionSavegame;
+        case CMD_SELECT_PGDN:   return actionSelectPagedown;
+        case CMD_SELECT_PGUP:   return actionSelectPageup;
+        case CMD_SELECT_HOME:   return actionSelectHome;
+        case CMD_SELECT_END:    return actionSelectEnd;
         default:                return nullptr;
     }
 }

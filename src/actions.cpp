@@ -389,3 +389,37 @@ bool actionWait(World &w, Actor *player, const Command &command, bool silent) {
     return true;
 }
 
+
+
+bool actionSelectEnd(World &w, Actor *player, const Command &command, bool silent) {
+    if (player->inventory.size() > 0) {
+        w.selection = player->inventory.size() - 1;
+    } else {
+        w.selection = 0;
+    }
+    return false;
+}
+
+bool actionSelectHome(World &w, Actor *player, const Command &command, bool silent) {
+    w.selection = 0;
+    return false;
+}
+
+bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool silent) {
+    if (player->inventory.size() == 0) {
+        w.selection = 0;
+        return false;
+    }
+
+    w.selection += 10;
+    if (w.selection >= player->inventory.size()) {
+        w.selection = player->inventory.size() - 1;
+    }
+    return false;
+}
+
+bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent) {
+    w.selection -= 10;
+    if (w.selection < 0) w.selection = 0;
+    return false;
+}

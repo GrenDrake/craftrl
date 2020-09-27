@@ -156,6 +156,15 @@ void doCrafting(World &w, Actor *player) {
             case TK_LEFT:
                 if (count > 1) --count;
                 break;
+            case TK_M: {
+                int maxCount = 0;
+                for (int i = 1; i < 99; ++i) {
+                    if (canMakeRecipe(w, current, i, player->inventory)) {
+                        maxCount = i;
+                    }
+                }
+                if (maxCount > 0) count = maxCount;
+                break; }
             case TK_1:
                 count *= 10;
                 count += 1;

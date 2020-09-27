@@ -324,6 +324,12 @@ void World::tick() {
             }
         }
     }
+
+    if (selection >= mPlayer->inventory.size()) {
+        selection = mPlayer->inventory.size() - 1;
+    }
+    if (selection < 0) selection = 0;
+
 }
 
 void World::getTime(int *day, int *hour, int *minute) const {

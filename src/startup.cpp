@@ -246,6 +246,10 @@ std::string keyName(int key) {
         case TK_DOWN:       return "Down";
         case TK_ENTER:      return "Enter";
         case TK_SPACE:      return "Space";
+        case TK_PAGEDOWN:   return "Pagedown";
+        case TK_PAGEUP:     return "Pageup";
+        case TK_HOME:       return "Home";
+        case TK_END:        return "End";
 
         case TK_KP_1:       return "KP 1";
         case TK_KP_2:       return "KP 2";

@@ -24,7 +24,7 @@ tile {
     breakTo 0
     solid opaque
     loot {
-        1 75 1 3
+        1 100 1 3
     }
 };
 
