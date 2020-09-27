@@ -44,7 +44,7 @@ void setColourIfSelected(int selection, int position, bool enabled) {
 }
 void mainmenu(World &w) {
 
-    int selection = 0;
+    int selection = 1;
     unsigned long seed = w.getRandom().next64();
     unsigned long usedSeed = 0;
     while (1) {
