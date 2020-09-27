@@ -231,7 +231,8 @@ bool actionMove(World &w, Actor *player, const Command &command, bool silent) {
     }
     if (w.moveActor(player, dest)) {
         if (tile.item) {
-            w.addLogMsg("Item here: " + tile.item->def.name);
+            actionTake(w, player, command, true);
+            // w.addLogMsg("Item here: " + tile.item->def.name);
         }
         shiftCameraForMove(w, player);
         return true;
