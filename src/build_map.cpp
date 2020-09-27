@@ -97,9 +97,11 @@ bool buildmap(World &w, unsigned long seed) {
 
 
     // add plants
+    int plantList[] = { 1000, 1000, 1001, 1005, 1007, 1009 };
     for (int i = 0; i < 1600; ++i) {
         Point p = findOpenTile(w, rng, false, false);
-        Actor *actor = new Actor(w.getActorDef(rng.between(1000, 1001)));
+        int plantNum = rng.next32() % 6;
+        Actor *actor = new Actor(w.getActorDef(plantList[plantNum]));
         actor->reset();
         if (!w.moveActor(actor, p)) {
             std::cerr << "Failed to place plant at " << p << ".\n";
@@ -108,9 +110,11 @@ bool buildmap(World &w, unsigned long seed) {
     }
 
     // add NPCs
-    for (int i = 0; i < 100; ++i) {
+    int npcList[] = { 2, 3, 3, 4, 4, 4, 5, 5, 6, 3, 3, 4, 4, 4, 5, 5, 6};
+    for (int i = 0; i < 75; ++i) {
         Point p = findOpenTile(w, rng, false, true);
-        int type = rng.between(2, 6);
+        int npcNum = rng.next32() % 9;
+        int type = npcList[npcNum];
         Actor *actor = new Actor(w.getActorDef(type));
         actor->reset();
         if (!w.moveActor(actor, p)) {

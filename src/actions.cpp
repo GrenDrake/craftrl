@@ -71,6 +71,13 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
             makeLootAt(w, actor->def.loot, dest);
             delete actor;
             return true;
+        } else if (tile.actor->def.faction == FAC_ANIMAL) {
+            w.addLogMsg("Killed " + tile.actor->def.name + '.');
+            Actor *actor = tile.actor;
+            w.moveActor(actor, Point(-1, -1));
+            makeLootAt(w, actor->def.loot, dest);
+            delete actor;
+            return true;
         } else {
             w.addLogMsg("Can't attack that.");
         }
