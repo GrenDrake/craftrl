@@ -1,12 +1,14 @@
 #include <BearLibTerminal.h>
 #include "world.h"
 
-bool canMakeRecipe(World &w, const RecipeDef *def, const Inventory &inventory) {
+const int MAX_CRAFT = 1000000;
+
+bool canMakeRecipe(World &w, const RecipeDef *def, int qty, const Inventory &inventory) {
     if (!def) return false;
 
     for (const RecipeRow &row : def->mRows) {
         const ItemDef &partDef = w.getItemDef(row.ident);
-        if (inventory.qty(&partDef) < row.qty) {
+        if (inventory.qty(&partDef) < row.qty * qty) {
             return false;
         }
     }
@@ -28,7 +30,7 @@ void doCrafting(World &w, Actor *player) {
 
     const auto list = w.getRecipeList();
 
-    int selection = 0;
+    int selection = 0, count = 1;
     while (1) {
         const RecipeDef *current = nullptr;
 
@@ -57,14 +59,14 @@ void doCrafting(World &w, Actor *player) {
                 terminal_color(textFG);
                 terminal_bkcolor(textBG);
             }
-            if (canMakeRecipe(w, row, player->inventory))  {
+            if (canMakeRecipe(w, row, count, player->inventory))  {
                 terminal_color(0xFFAAFFAA);
                 terminal_put(0, cy, '+');
             } else {
                 terminal_color(0xFFFFAAAA);
             }
             if (makeDef.ident >= 0) {
-                terminal_printf(4, cy, "%d %s", row->makeQty, makeDef.name.c_str());
+                terminal_printf(4, cy, "%d %s", row->makeQty * count, makeDef.name.c_str());
             } else {
                 terminal_printf(4, cy, "Bad item ident: %s", row->makeIdent);
             }
@@ -73,6 +75,7 @@ void doCrafting(World &w, Actor *player) {
 
         terminal_color(textFG);
         terminal_bkcolor(textBG);
+        terminal_printf(35, inventoryY - 1, " Crafting: %d ", count);
         int top = 0;
         for (unsigned i = 0; i < inventoryHeight; ++i) {
             unsigned index = i + top;
@@ -86,19 +89,19 @@ void doCrafting(World &w, Actor *player) {
             }
         }
 
-        bool canMake = canMakeRecipe(w, current, player->inventory);
+        bool canMake = canMakeRecipe(w, current, count, player->inventory);
         if (current) {
             cy = 0;
             for (const RecipeRow &row : current->mRows) {
                 const ItemDef &partDef = w.getItemDef(row.ident);
-                if (player->inventory.qty(&partDef) < row.qty) {
+                if (player->inventory.qty(&partDef) < row.qty * count) {
                     terminal_color(invalidFG);
                 } else {
                     terminal_color(validFG);
                     terminal_put(30, cy, '+');
                 }
                 if (partDef.ident >= 0) {
-                    terminal_printf(32, cy, "%d %s", row.qty, partDef.name.c_str());
+                    terminal_printf(32, cy, "%d %s", row.qty * count, partDef.name.c_str());
                 } else {
                     terminal_printf(32, cy, "Bad item ident: %s", row.ident);
                 }
@@ -135,16 +138,89 @@ void doCrafting(World &w, Actor *player) {
                 selection += 10;
                 if (selection >= static_cast<int>(list.size())) selection = static_cast<int>(list.size()) - 1;
                 break;
+            case TK_BACKSPACE:
+                count /= 10;
+                if (count <= 0) count = 1;
+                break;
+            case TK_KP_PLUS:
+            case TK_EQUALS:
+            case TK_RIGHT:
+                if (count < MAX_CRAFT) ++count;
+                break;
+            case TK_MINUS:
+            case TK_KP_MINUS:
+            case TK_LEFT:
+                if (count > 1) --count;
+                break;
+            case TK_1:
+            case TK_KP_1:
+                count *= 10;
+                count += 1;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_2:
+            case TK_KP_2:
+                count *= 10;
+                count += 2;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_3:
+            case TK_KP_3:
+                count *= 10;
+                count += 3;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_4:
+            case TK_KP_4:
+                count *= 10;
+                count += 4;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_5:
+            case TK_KP_5:
+                count *= 10;
+                count += 5;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_6:
+            case TK_KP_6:
+                count *= 10;
+                count += 6;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_7:
+            case TK_KP_7:
+                count *= 10;
+                count += 7;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_8:
+            case TK_KP_8:
+                count *= 10;
+                count += 8;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_9:
+            case TK_KP_9:
+                count *= 10;
+                count += 9;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
+            case TK_0:
+            case TK_KP_0:
+                count *= 10;
+                if (count > MAX_CRAFT) count = MAX_CRAFT;
+                break;
             case TK_ENTER:
             case TK_KP_ENTER:
             case TK_C:
                 if (current && canMake) {
                     for (const RecipeRow &row : current->mRows) {
                         const ItemDef &partDef = w.getItemDef(row.ident);
-                        player->inventory.remove(&partDef, row.qty);
+                        player->inventory.remove(&partDef, row.qty * count);
                     }
                     const ItemDef &makeDef = w.getItemDef(current->makeIdent);
-                    player->inventory.add(&makeDef, current->makeQty);
+                    player->inventory.add(&makeDef, current->makeQty * count);
 
                 }
                 break;
