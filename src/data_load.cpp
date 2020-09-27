@@ -244,6 +244,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.solid = false;
     tile.ground = false;
     tile.breakTo = -1;
+    tile.doorTo = -1;
     tile.loot = nullptr;
 
     while (!data.matches(TokenType::CloseBrace)) {
@@ -273,6 +274,10 @@ bool parseTile(World &w, TokenData &data) {
         } else if (name == "breakTo") {
             if (!data.require(TokenType::Integer)) return false;
             tile.breakTo = data.here().i;
+            data.next();
+        } else if (name == "doorTo") {
+            if (!data.require(TokenType::Integer)) return false;
+            tile.doorTo = data.here().i;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);

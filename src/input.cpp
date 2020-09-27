@@ -10,6 +10,7 @@ const Command gameCommands[] = {
     {   TK_F5,          false,  false,  false,  CMD_DUMPMAP,        Dir::None },
     {   TK_G,           false,  false,  false,  CMD_TAKE,           Dir::None },
     {   TK_A,           false,  false,  false,  CMD_BREAK,          Dir::None },
+    {   TK_E,           false,  false,  false,  CMD_DO,             Dir::None },
     {   TK_M,           false,  false,  false,  CMD_MOVE,           Dir::None },
     {   TK_P,           false,  false,  false,  CMD_PAN,            Dir::None },
     {   TK_R,           false,  false,  false,  CMD_RESETVIEW,      Dir::None },

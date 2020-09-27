@@ -119,6 +119,33 @@ bool actionBreak(World &w, Actor *player, Dir dir) {
     return true;
 }
 
+bool actionDo(World &w, Actor *player, Dir dir) {
+    if (dir == Dir::None) {
+        dir = getDir(w, "Do");
+    }
+    if (dir == Dir::None) {
+        w.addLogMsg("Canceled.");
+        return false;
+    }
+
+    Point dest = player->pos.shift(dir);
+    Tile &tile = w.at(dest);
+
+    if (tile.actor) {
+        w.addLogMsg(tile.actor->def.name + " is in the way.");
+        return false;
+    }
+
+    const TileDef &td = w.getTileDef(tile.terrain);
+    if (td.doorTo >= 0) {
+        tile.terrain = td.doorTo;
+        w.addLogMsg("Done.");
+        return true;
+    }
+    w.addLogMsg("Nothing to do.");
+    return true;
+}
+
 bool actionContextMove(World &w, Actor *player, Dir dir) {
     if (dir == Dir::None) {
         dir = getDir(w, "Move");
@@ -462,6 +489,7 @@ void gameloop(World &w) {
                 case CMD_NEXT_SELECT:   wantTick = actionNextSelect(w, player, command.dir); break;
                 case CMD_PREV_SELECT:   wantTick = actionPrevSelect(w, player, command.dir); break;
                 case CMD_CRAFT:         wantTick = actionCraft(w, player, command.dir); break;
+                case CMD_DO:            wantTick = actionDo(w, player, command.dir); break;
                 case CMD_SAVE:          actionSavegame(w, player, Dir::None); break;
 
             }

@@ -91,6 +91,31 @@ tile {
     }
 };
 
+tile {
+    ident   8
+    glyph   '+'
+    colour  0x855723
+    name    "wood door (closed)"
+    breakTo 0
+    doorTo  9
+    loot {
+        6 100 2 2
+    }
+    solid opaque
+};
+
+tile {
+    ident   9
+    glyph   '/'
+    colour  0x855723
+    name    "wood door (open)"
+    breakTo 0
+    doorTo  8
+    loot {
+        6 100 2 2
+    }
+};
+
 
 
 
@@ -290,6 +315,13 @@ item {
     constructs  7
 };
 
+item {
+    ident       11
+    glyph       '*'
+    colour      0x855723
+    name        "wood door kit"
+    constructs  8
+};
 
 
 
@@ -335,4 +367,10 @@ recipe {
     makeIdent   10
     makeQty     5
     part        5 1
+};
+
+recipe {
+    makeIdent   11
+    makeQty     1
+    part        2 6
 };

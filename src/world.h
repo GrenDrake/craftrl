@@ -34,6 +34,7 @@ const int CMD_PREV_SELECT       = 12;
 const int CMD_CANCEL            = 13;
 const int CMD_CRAFT             = 14;
 const int CMD_SAVE              = 15;
+const int CMD_DO                = 16;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -93,6 +94,7 @@ struct TileDef {
     unsigned colour;
     std::string name;
     int breakTo;
+    int doorTo;
     LootTable *loot;
     bool opaque;
     bool solid;
