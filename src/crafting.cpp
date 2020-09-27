@@ -118,9 +118,11 @@ void doCrafting(World &w, Actor *player) {
             case TK_Z:
             case TK_Q:
                 return;
+            case TK_KP_2:
             case TK_DOWN:
                 if (selection < static_cast<int>(list.size()) - 1) ++selection;
                 break;
+            case TK_KP_8:
             case TK_UP:
                 if (selection > 0) --selection;
                 break;
@@ -144,70 +146,62 @@ void doCrafting(World &w, Actor *player) {
                 break;
             case TK_KP_PLUS:
             case TK_EQUALS:
+            case TK_KP_6:
             case TK_RIGHT:
                 if (count < MAX_CRAFT) ++count;
                 break;
             case TK_MINUS:
             case TK_KP_MINUS:
+            case TK_KP_4:
             case TK_LEFT:
                 if (count > 1) --count;
                 break;
             case TK_1:
-            case TK_KP_1:
                 count *= 10;
                 count += 1;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_2:
-            case TK_KP_2:
                 count *= 10;
                 count += 2;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_3:
-            case TK_KP_3:
                 count *= 10;
                 count += 3;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_4:
-            case TK_KP_4:
                 count *= 10;
                 count += 4;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_5:
-            case TK_KP_5:
                 count *= 10;
                 count += 5;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_6:
-            case TK_KP_6:
                 count *= 10;
                 count += 6;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_7:
-            case TK_KP_7:
                 count *= 10;
                 count += 7;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_8:
-            case TK_KP_8:
                 count *= 10;
                 count += 8;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_9:
-            case TK_KP_9:
                 count *= 10;
                 count += 9;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
             case TK_0:
-            case TK_KP_0:
                 count *= 10;
                 if (count > MAX_CRAFT) count = MAX_CRAFT;
                 break;
