@@ -3,7 +3,7 @@ BEARLIBTERM=../lib/BearLibTerminal
 
 CXXFLAGS=-std=c++11 -Wall -g -I$(BEARLIBTERM)/Include/C
 LIBS=-L$(BEARLIBTERM)/Windows32 -lBearLibTerminal
-OBJS=src/startup.o src/craftrl.o src/build_map.o src/world.o src/lodepng.o src/data_lexer.o src/data_load.o src/input.o src/crafting.o
+OBJS=src/startup.o src/craftrl.o src/build_map.o src/world.o src/lodepng.o src/data_lexer.o src/data_load.o src/input.o src/crafting.o src/actions.o
 TARGET=craftrl
 
 TEST_SYS_OBJS=src/build_map.o src/world.o src/lodepng.o src/data_lexer.o src/data_load.o

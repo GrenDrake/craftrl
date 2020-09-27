@@ -2,8 +2,9 @@
 #include <BearLibTerminal.h>
 #include "world.h"
 
+
 const Command gameCommands[] = {
-    {   CMD_QUIT,           Dir::None,      { { TK_Q,    }, { TK_ESCAPE }, { TK_CLOSE } } },
+    {   CMD_QUIT,           Dir::None,      { { TK_Q,        }, { TK_ESCAPE } } },
     {   CMD_CANCEL,         Dir::None,      { { TK_Z,        },  } },
     {   CMD_DUMPMAP,        Dir::None,      { { TK_F5,       },  } },
     {   CMD_TAKE,           Dir::None,      { { TK_G,        },  } },
@@ -13,6 +14,7 @@ const Command gameCommands[] = {
     {   CMD_PAN,            Dir::None,      { { TK_P,        },  } },
     {   CMD_RESETVIEW,      Dir::None,      { { TK_R,        },  } },
     {   CMD_DROP,           Dir::None,      { { TK_D,        },  } },
+    {   CMD_TALK,           Dir::None,      { { TK_T,        },  } },
     {   CMD_USE,            Dir::None,      { { TK_ENTER,    }, { TK_KP_ENTER} } },
     {   CMD_WAIT,           Dir::None,      { { TK_SPACE     }, { TK_KP_5 } } },
     {   CMD_CRAFT,          Dir::None,      { { TK_C,        },  } },
@@ -32,8 +34,11 @@ const Command gameCommands[] = {
     {   CMD_NONE,           Dir::None,      { { 0,           },  } },
 };
 
-const Command BAD_COMMAND = {   CMD_NONE, Dir::None, { { TK_INPUT_NONE, false, false, false } } };
+const Command BAD_COMMAND  = { CMD_NONE };
+const Command QUIT_COMMAND = { CMD_QUIT };
 const Command& findCommand(int key, const Command *commandList) {
+    if (key == TK_CLOSE) return QUIT_COMMAND;
+
     // int ctrl = terminal_check(TK_CTRL);
     // int shift = terminal_check(TK_SHIFT);
     // int alt = terminal_check(TK_ALT);
@@ -74,5 +79,28 @@ std::string commandName(int command) {
             std::stringstream s;
             s << "(Unknown Command " << command << ')';
             return s.str(); }
+    }
+}
+
+ActionHandler commandAction(int command) {
+    switch (command) {
+        case CMD_DUMPMAP:       return actionDumpMap;
+        case CMD_TAKE:          return actionTake;
+        case CMD_BREAK:         return actionAttack;
+        case CMD_MOVE:          return actionMove;
+        case CMD_PAN:           return actionPan;
+        case CMD_RESETVIEW:     return actionCentrePan;
+        case CMD_DROP:          return actionDrop;
+        case CMD_USE:           return actionUse;
+        case CMD_WAIT:          return actionWait;
+        case CMD_TALK:          return actionTalkActor;
+        case CMD_CONTEXTMOVE:   return actionContextMove;
+        case CMD_QUIT:          return actionQuit;
+        case CMD_NEXT_SELECT:   return actionNextSelect;
+        case CMD_PREV_SELECT:   return actionPrevSelect;
+        case CMD_CRAFT:         return actionCraft;
+        case CMD_DO:            return actionDo;
+        case CMD_SAVE:          return actionSavegame;
+        default:                return nullptr;
     }
 }

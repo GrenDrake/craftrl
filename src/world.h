@@ -37,6 +37,7 @@ const int CMD_CANCEL            = 13;
 const int CMD_CRAFT             = 14;
 const int CMD_SAVE              = 15;
 const int CMD_DO                = 16;
+const int CMD_TALK              = 17;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -245,10 +246,31 @@ private:
     mutable Random mRandom;
 };
 
+typedef bool (*ActionHandler)(World&, Actor*, const Command&, bool);
+
+bool actionAttack(World &w, Actor *player, const Command &command, bool silent);
+bool actionCentrePan(World &w, Actor *player, const Command &command, bool silent);
+bool actionContextMove(World &w, Actor *player, const Command &command, bool silent);
+bool actionCraft(World &w, Actor *player, const Command &command, bool silent);
+bool actionDo(World &w, Actor *player, const Command &command, bool silent);
+bool actionDrop(World &w, Actor *player, const Command &command, bool silent);
+bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent);
+bool actionMove(World &w, Actor *player, const Command &command, bool silent);
+bool actionNextSelect(World &w, Actor *player, const Command &command, bool silent);
+bool actionPan(World &w, Actor *player, const Command &command, bool silent);
+bool actionPrevSelect(World &w, Actor *player, const Command &command, bool silent);
+bool actionQuit(World &w, Actor *player, const Command &command, bool silent);
+bool actionSavegame(World &w, Actor *player, const Command &command, bool silent);
+bool actionTake(World &w, Actor *player, const Command &command, bool silent);
+bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
+bool actionUse(World &w, Actor *player, const Command &command, bool silent);
+bool actionWait(World &w, Actor *player, const Command &command, bool silent);
+
 
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);
 std::string commandName(int command);
+ActionHandler commandAction(int command);
 
 
 std::ostream& operator<<(std::ostream &out, const Point &p);
