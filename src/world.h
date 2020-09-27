@@ -8,6 +8,8 @@
 
 #include "random.h"
 
+const int INPUT_KEY_COUNT = 3;
+
 const int AI_NONE = 0;
 const int AI_WANDER = 1;
 
@@ -50,11 +52,15 @@ struct Point {
     int x, y;
 };
 
-struct Command {
+
+struct InputKey {
     int key;
     bool ctrl, alt, shift;
+};
+struct Command {
     int command;
     Dir dir;
+    InputKey key[INPUT_KEY_COUNT];
 };
 
 struct LootRow {
@@ -242,9 +248,11 @@ private:
 
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);
+std::string commandName(int command);
 
 
 std::ostream& operator<<(std::ostream &out, const Point &p);
+std::string directionName(Dir d);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
 
 #endif

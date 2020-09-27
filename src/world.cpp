@@ -525,20 +525,26 @@ std::ostream& operator<<(std::ostream &out, const Point &p) {
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const Dir &d) {
+std::string directionName(Dir d) {
     switch(d) {
-        case Dir::North:        out << "north";     break;
-        case Dir::Northeast:    out << "northeast"; break;
-        case Dir::East:         out << "east";      break;
-        case Dir::Southeast:    out << "southeast"; break;
-        case Dir::South:        out << "south";     break;
-        case Dir::Southwest:    out << "southwest"; break;
-        case Dir::West:         out << "west";      break;
-        case Dir::Northwest:    out << "northwest"; break;
-        case Dir::None:         out << "none";      break;
-        default:
-            out << "(bad dir " << static_cast<int>(d) << ')';
+        case Dir::North:        return "north";     break;
+        case Dir::Northeast:    return "northeast"; break;
+        case Dir::East:         return "east";      break;
+        case Dir::Southeast:    return "southeast"; break;
+        case Dir::South:        return "south";     break;
+        case Dir::Southwest:    return "southwest"; break;
+        case Dir::West:         return "west";      break;
+        case Dir::Northwest:    return "northwest"; break;
+        case Dir::None:         return "none";      break;
+        default: {
+            std::stringstream s;
+            s << "(bad dir " << static_cast<int>(d) << ')';
+            return s.str(); }
     }
+}
+
+std::ostream& operator<<(std::ostream &out, const Dir &d) {
+    out << directionName(d);
     return out;
 }
 
