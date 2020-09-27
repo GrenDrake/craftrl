@@ -117,6 +117,31 @@ tile {
 };
 
 
+tile {
+    ident   10
+    glyph   '+'
+    colour  0x777777
+    name    "stone door (closed)"
+    breakTo 0
+    doorTo  11
+    loot {
+        1 100 1 1
+    }
+    solid opaque
+};
+
+tile {
+    ident   11
+    glyph   '/'
+    colour  0x777777
+    name    "stone door (open)"
+    breakTo 0
+    doorTo  10
+    loot {
+        1 100 1 1
+    }
+};
+
 
 
 actor {
@@ -323,6 +348,14 @@ item {
     constructs  8
 };
 
+item {
+    ident       12
+    glyph       '*'
+    colour      0x855723
+    name        "stone door kit"
+    constructs  10
+};
+
 
 
 
@@ -373,4 +406,10 @@ recipe {
     makeIdent   11
     makeQty     1
     part        2 6
+};
+
+recipe {
+    makeIdent   12
+    makeQty     1
+    part        1 1
 };
