@@ -158,7 +158,7 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
 
-    const Tile &tile = w.at(dest);
+    Tile &tile = w.at(dest);
     if (tile.actor) {
         std::stringstream s;
         switch (tile.actor->def.faction) {
@@ -175,7 +175,14 @@ bool actionContextMove(World &w, Actor *player, Dir dir) {
         }
         return true;
     } else {
-        if (w.getTileDef(tile.terrain).solid) return false;
+        const TileDef &tdef = w.getTileDef(tile.terrain);
+        if (tdef.solid) {
+            if (tdef.doorTo) {
+                tile.terrain = tdef.doorTo;
+                return true;
+            }
+            return false;
+        }
         if (w.moveActor(player, dest)) {
             if (tile.item) {
                 w.addLogMsg("Item here: " + tile.item->def.name);
