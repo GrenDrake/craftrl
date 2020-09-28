@@ -91,6 +91,7 @@ struct ActorDef {
     int growTime;
     int health;
     int foodItem;
+    int moveChance;
 };
 
 struct ItemDef {

@@ -182,6 +182,7 @@ actor {
     colour  0xFF77FF
     name    "kobold"
     ai      1
+    moveChance  333
     faction 1
 };
 
@@ -193,6 +194,7 @@ actor {
     ai      1
     faction 3
     foodItem    18
+    moveChance  500
     loot {
         21  100  2 3
     }
@@ -206,6 +208,7 @@ actor {
     ai      1
     faction 3
     foodItem    15
+    moveChance  666
     loot {
         21  100  1 2
     }
@@ -219,6 +222,7 @@ actor {
     ai      1
     faction 3
     foodItem    17
+    moveChance  500
     loot {
         21  100  2 3
     }
@@ -232,6 +236,7 @@ actor {
     ai      1
     faction 3
     foodItem    21
+    moveChance  500
     loot {
         21  100  2 3
     }
