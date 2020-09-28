@@ -381,7 +381,7 @@ void World::tick() {
 
     for (unsigned i = 0; i < mActors.size(); ++i) {
         Actor *actor = mActors[i];
-        if (mRandom.next32() % 1000 >= actor->def.moveChance) continue;
+        if (mRandom.next32() % 1000 >= static_cast<unsigned>(actor->def.moveChance)) continue;
 
         ++actor->age;
 
