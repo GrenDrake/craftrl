@@ -190,7 +190,8 @@ Point World::findDropSpace(const Point &near) const {
         Point p = near.shift(d);
         const Tile &t = at(p);
         if (getTileDef(t.terrain).solid) continue;
-        if (at(p).item) continue;
+        if (t.item) continue;
+        if (t.actor && t.actor->def.faction == FAC_PLANT) continue;
         return p;
     }
     return Point(-1, -1);
