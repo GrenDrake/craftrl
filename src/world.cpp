@@ -1,3 +1,4 @@
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -24,6 +25,56 @@ Point Point::shift(Dir dir, int amnt) const {
         case Dir::Northwest:    return Point(x - amnt,  y - amnt);
         default:                return *this;
     }
+}
+
+Dir Point::directionTo(const Point &rhs) const {
+    if (rhs.x < x) {
+        if (rhs.y < y)      return Dir::Northwest;
+        else if (rhs.y > y) return Dir::Southwest;
+        else                return Dir::West;
+    } else if (rhs.x > x) {
+        if (rhs.y < y)      return Dir::Northeast;
+        else if (rhs.y > y) return Dir::Southeast;
+        else                return Dir::East;
+    } else {
+        if (rhs.y < y)      return Dir::North;
+        else if (rhs.y > y) return Dir::South;
+        else                return Dir::None;
+    }
+}
+
+double Point::distance(const Point &rhs) const {
+    return sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));
+}
+
+Dir rotate45(Dir d) {
+    switch(d) {
+        case Dir::North:        return Dir::Northeast;
+        case Dir::Northeast:    return Dir::East;
+        case Dir::East:         return Dir::Southeast;
+        case Dir::Southeast:    return Dir::South;
+        case Dir::South:        return Dir::Southwest;
+        case Dir::Southwest:    return Dir::West;
+        case Dir::West:         return Dir::Northwest;
+        case Dir::Northwest:    return Dir::North;
+        default:                return Dir::None;
+    }
+    return Dir::None;
+}
+
+Dir unrotate45(Dir d) {
+    switch(d) {
+        case Dir::North:        return Dir::Northwest;
+        case Dir::Northeast:    return Dir::North;
+        case Dir::East:         return Dir::Northeast;
+        case Dir::Southeast:    return Dir::East;
+        case Dir::South:        return Dir::Southeast;
+        case Dir::Southwest:    return Dir::South;
+        case Dir::West:         return Dir::Southwest;
+        case Dir::Northwest:    return Dir::West;
+        default:                return Dir::None;
+    }
+    return Dir::None;
 }
 
 
@@ -214,6 +265,24 @@ bool World::moveItem(Item *item, const Point &to) {
     return true;
 }
 
+Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
+    Point result(-1, -1);
+    double distance = 999999.0;
+    for (int y = to.y - radius; y <= to.y + radius; ++y) {
+        for (int x = to.x - radius; x <= to.x + radius; ++x) {
+            Point here(x, y);
+            const Tile &tile = at(here);
+            if (tile.item && tile.item->def.ident == itemIdent) {
+                double myDist = here.distance(to);
+                if (myDist < distance) {
+                    result = here;
+                    distance = myDist;
+                }
+            }
+        }
+    }
+    return result;
+}
 
 void World::addLogMsg(const LogMessage &msg) {
     mLog.push_back(msg);
@@ -280,6 +349,22 @@ std::vector<const RecipeDef*> World::getRecipeList() const {
     return list;
 }
 
+bool World::tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep) {
+    Point dest = actor->pos.shift(baseDir);
+
+    const Tile &tile = at(dest);
+    if (valid(dest) && !tile.actor && !getTileDef(tile.terrain).solid) {
+        moveActor(actor, dest);
+        return true;
+    }
+
+    if (!allowSidestep) return false;
+    if (!tryMoveActor(actor, rotate45(baseDir), false)) {
+        return tryMoveActor(actor, unrotate45(baseDir), false);
+    }
+
+    return false;
+}
 
 void World::tick() {
     ++turn;
@@ -298,14 +383,33 @@ void World::tick() {
 
         ++actor->age;
 
-        if (actor->def.aiType == AI_WANDER) {
+        if (actor->def.faction == FAC_VILLAGER || actor->def.faction == FAC_MONSTER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
+            tryMoveActor(actor, dir);
 
-            Point dest = actor->pos.shift(dir);
-            const Tile tile = at(dest);
-            if (valid(dest) && !tile.actor && !getTileDef(tile.terrain).solid) {
-                moveActor(actor, dest);
+        } else if (actor->def.faction == FAC_ANIMAL) {
+            if (actor->def.foodItem >= 0) {
+                Point foodPos = findItemNearest(actor->pos, actor->def.foodItem, 8);
+                if (valid(foodPos)) {
+                    Dir d = actor->pos.directionTo(foodPos);
+                    if (d == Dir::None) {
+                        // on food item, eat it
+                        Tile &tile = at(foodPos);
+                        Item *item = tile.item;
+                        if (item) {
+                            moveItem(item, Point(-1, -1));
+                            delete item;
+                        }
+                    } else {
+                        // move towards food
+                        tryMoveActor(actor, d);
+                    }
+                    continue;
+                }
             }
+
+            Dir dir = static_cast<Dir>(mRandom.next32() % 8);
+            tryMoveActor(actor, dir);
 
         } else if (actor->def.faction == FAC_PLANT) {
             if (actor->def.growTo >= 0 && actor->age >= actor->def.growTime) {

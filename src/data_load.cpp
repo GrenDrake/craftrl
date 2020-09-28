@@ -23,6 +23,7 @@ bool parseActor(World &w, TokenData &data) {
     actor.growTo = -1;
     actor.growTime = 100;
     actor.loot = nullptr;
+    actor.foodItem = -1;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -64,6 +65,10 @@ bool parseActor(World &w, TokenData &data) {
         } else if (name == "growTime") {
             if (!data.require(TokenType::Integer)) return false;
             actor.growTime = data.here().i;
+            data.next();
+        } else if (name == "foodItem") {
+            if (!data.require(TokenType::Integer)) return false;
+            actor.foodItem = data.here().i;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);

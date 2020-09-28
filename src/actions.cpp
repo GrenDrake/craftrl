@@ -223,16 +223,13 @@ bool actionMove(World &w, Actor *player, const Command &command, bool silent) {
         return false;
     }
 
-    Point dest = player->pos.shift(dir);
-    const Tile &tile = w.at(dest);
-    if (!w.valid(dest) || tile.actor || w.getTileDef(tile.terrain).solid) {
+    if (!w.tryMoveActor(player, dir, false)) {
         w.addLogMsg("Blocked.");
         return false;
-    }
-    if (w.moveActor(player, dest)) {
+    } else {
+        const Tile &tile = w.at(player->pos);
         if (tile.item) {
             actionTake(w, player, command, true);
-            // w.addLogMsg("Item here: " + tile.item->def.name);
         }
         shiftCameraForMove(w, player);
         return true;

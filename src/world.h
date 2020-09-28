@@ -53,6 +53,8 @@ struct Point {
     Point(int x, int y) : x(x), y(y) {};
 
     Point shift(Dir dir, int amnt = 1) const;
+    Dir directionTo(const Point &rhs) const;
+    double distance(const Point &rhs) const;
 
     int x, y;
 };
@@ -88,6 +90,7 @@ struct ActorDef {
     int growTo;
     int growTime;
     int health;
+    int foodItem;
 };
 
 struct ItemDef {
@@ -190,9 +193,12 @@ public:
     Tile& at(const Point &p);
 
     bool moveActor(Actor *actor, const Point &to);
+    bool tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep = true);
     const Actor* getPlayer() const;
     Actor* getPlayer();
     bool moveItem(Item *item, const Point &to);
+
+    Point findItemNearest(const Point &to, int itemIdent, int radius) const;
 
     void addLogMsg(const LogMessage &msg);
     void addLogMsg(const std::string &msg);
@@ -281,6 +287,9 @@ std::string commandName(int command);
 ActionHandler commandAction(int command);
 
 void ui_MessageBox(const std::string &title, const std::string &message);
+
+Dir rotate45(Dir d);
+Dir unrotate45(Dir d);
 
 std::ostream& operator<<(std::ostream &out, const Point &p);
 std::string directionName(Dir d);
