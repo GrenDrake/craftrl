@@ -13,11 +13,11 @@ const int INPUT_KEY_COUNT = 3;
 const int AI_NONE = 0;
 const int AI_WANDER = 1;
 
-const int FAC_PLAYER    = 0;
-const int FAC_VILLAGER  = 1;
-const int FAC_PLANT     = 2;
-const int FAC_ANIMAL    = 3;
-const int FAC_MONSTER   = 4;
+const int TYPE_PLAYER    = 0;
+const int TYPE_VILLAGER  = 1;
+const int TYPE_PLANT     = 2;
+const int TYPE_ANIMAL    = 3;
+const int TYPE_MONSTER   = 4;
 
 const int CMD_NONE              = -1;
 const int CMD_DUMPMAP           = 0;
@@ -85,7 +85,7 @@ struct ActorDef {
     unsigned colour;
     std::string name;
     int aiType;
-    int faction;
+    int type;
     LootTable *loot;
     int growTo;
     int growTime;

@@ -19,7 +19,7 @@ bool parseActor(World &w, TokenData &data) {
     actor.name = "unnamed actor";
     actor.aiType = AI_NONE;
     actor.health = 1;
-    actor.faction = 99;
+    actor.type = 99;
     actor.growTo = -1;
     actor.growTime = 100;
     actor.loot = nullptr;
@@ -51,9 +51,9 @@ bool parseActor(World &w, TokenData &data) {
             if (!data.require(TokenType::Integer)) return false;
             actor.aiType = data.here().i;
             data.next();
-        } else if (name == "faction") {
+        } else if (name == "type") {
             if (!data.require(TokenType::Integer)) return false;
-            actor.faction = data.here().i;
+            actor.type = data.here().i;
             data.next();
         } else if (name == "health") {
             if (!data.require(TokenType::Integer)) return false;

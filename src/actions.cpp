@@ -64,14 +64,14 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     Tile &tile = w.at(dest);
 
     if (tile.actor) {
-        if (tile.actor->def.faction == FAC_PLANT) {
+        if (tile.actor->def.type == TYPE_PLANT) {
             w.addLogMsg("Broke " + tile.actor->def.name + '.');
             Actor *actor = tile.actor;
             w.moveActor(actor, Point(-1, -1));
             makeLootAt(w, actor->def.loot, dest);
             delete actor;
             return true;
-        } else if (tile.actor->def.faction == FAC_ANIMAL) {
+        } else if (tile.actor->def.type == TYPE_ANIMAL) {
             w.addLogMsg("Killed " + tile.actor->def.name + '.');
             Actor *actor = tile.actor;
             w.moveActor(actor, Point(-1, -1));
@@ -316,8 +316,8 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
     Tile &tile = w.at(dest);
     if (tile.actor) {
         std::stringstream s;
-        switch (tile.actor->def.faction) {
-            case FAC_VILLAGER:
+        switch (tile.actor->def.type) {
+            case TYPE_VILLAGER:
                 s << tile.actor->def.name << ": \"Hello!\"";
                 w.addLogMsg(s.str());
                 return false;

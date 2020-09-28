@@ -191,7 +191,7 @@ Point World::findDropSpace(const Point &near) const {
         const Tile &t = at(p);
         if (getTileDef(t.terrain).solid) continue;
         if (t.item) continue;
-        if (t.actor && t.actor->def.faction == FAC_PLANT) continue;
+        if (t.actor && t.actor->def.type == TYPE_PLANT) continue;
         return p;
     }
     return Point(-1, -1);
@@ -385,11 +385,11 @@ void World::tick() {
 
         ++actor->age;
 
-        if (actor->def.faction == FAC_VILLAGER || actor->def.faction == FAC_MONSTER) {
+        if (actor->def.type == TYPE_VILLAGER || actor->def.type == TYPE_MONSTER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
             tryMoveActor(actor, dir);
 
-        } else if (actor->def.faction == FAC_ANIMAL) {
+        } else if (actor->def.type == TYPE_ANIMAL) {
             if (actor->def.foodItem >= 0) {
                 Point foodPos = findItemNearest(actor->pos, actor->def.foodItem, 8);
                 if (valid(foodPos)) {
@@ -413,7 +413,7 @@ void World::tick() {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
             tryMoveActor(actor, dir);
 
-        } else if (actor->def.faction == FAC_PLANT) {
+        } else if (actor->def.type == TYPE_PLANT) {
             if (actor->def.growTo >= 0 && actor->age >= actor->def.growTime) {
                 const ActorDef &def = getActorDef(actor->def.growTo);
                 if (def.ident == -1) {
