@@ -22,7 +22,7 @@ int main() {
 
     terminal_open();
     terminal_set("window: size=80x25; window.title='CraftRL'");
-    terminal_set("input.filter=keyboard,mouse");
+    terminal_set("input.filter=keyboard,mouse_left,mouse_middle,mouse_right");
 
     mainmenu(w);
 
@@ -48,8 +48,9 @@ void mainmenu(World &w) {
     unsigned long seed = w.getRandom().next64();
     unsigned long usedSeed = 0;
     while (1) {
-        terminal_clear();
+        terminal_bkcolor(0xFF000000);
         terminal_color(0xFFFFFFFF);
+        terminal_clear();
         terminal_print(5, 3, "CraftRL Tech Demo");
 
         setColourIfSelected(selection, 0, true);
@@ -97,6 +98,7 @@ void mainmenu(World &w) {
                     std::cerr << "mainmenu (info): returned to menu.\n";
                 } else {
                     std::cerr << "mainmenu: failed to load save game.\n";
+                    ui_MessageBox("Error", "Failed to load game.");
                 }
             } else if (selection == 3) {
                 if (w.inProgress) {

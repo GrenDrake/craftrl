@@ -280,6 +280,7 @@ const Command& findCommand(int key, const Command *commandList);
 std::string commandName(int command);
 ActionHandler commandAction(int command);
 
+void ui_MessageBox(const std::string &title, const std::string &message);
 
 std::ostream& operator<<(std::ostream &out, const Point &p);
 std::string directionName(Dir d);
