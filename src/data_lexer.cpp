@@ -23,7 +23,7 @@ bool is_alnum(int c) {
 }
 
 bool is_identifier(int c) {
-    return is_digit(c) || is_alpha(c) || c == '-';
+    return is_digit(c) || is_alpha(c) || c == '-' || c == '_';
 }
 
 std::ostream& operator<<(std::ostream &out, const TokenType &type) {
@@ -93,6 +93,25 @@ bool TokenData::matches(const std::string &identifier) const {
     return true;
 }
 
+bool TokenData::asInt(int &value) const {
+    if (matches(TokenType::Integer)) {
+        value = here().i;
+        return true;
+    }
+
+    if (matches(TokenType::Identifier)) {
+        auto iter = symbols.find(here().s);
+        if (iter == symbols.end()) {
+            std::cerr << here().origin.filename << ':' << here().origin.line << "  Undefined symbol " << here().s << ".\n";
+            return false;
+        }
+        value = iter->second;
+        return true;
+    }
+
+    std::cerr << here().origin.filename << ':' << here().origin.line << "  Expected Integer but found " << here().type << ".\n";
+    return false;
+}
 
 
 

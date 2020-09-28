@@ -1,165 +1,227 @@
+define TYPE_PLAYER              0;
+define TYPE_VILLAGER            1;
+define TYPE_PLANT               2;
+define TYPE_ANIMAL              3;
+
+
+define TILE_INVALID             -1;
+define TILE_DIRT                0;
+define TILE_STONE               1;
+define TILE_GRASS               2;
+define TILE_WATER               3;
+define TILE_WOOD_WALL           4;
+define TILE_STONE_WALL          5;
+define TILE_WOOD_FLOOR          6;
+define TILE_STONE_FLOOR         7;
+define TILE_WOOD_DOOR_CLOSED    8;
+define TILE_WOOD_DOOR_OPEN      9;
+define TILE_STONE_DOOR_CLOSED   10;
+define TILE_STONE_DOOR_OPEN     11;
+define TILE_WINDOW              12;
+define TILE_FENCE               13;
+
+define ACTOR_PLAYER             1;
+define ACTOR_KOBOLD             2;
+define ACTOR_PIG                3;
+define ACTOR_CHICKEN            4;
+define ACTOR_GOAT               5;
+define ACTOR_WOLF               6;
+define ACTOR_TREE               1000;
+define ACTOR_SHRUB              1001;
+define ACTOR_SAPLING            1002;
+define ACTOR_SPROUT             1003;
+define ACTOR_WHEAT_SEEDLING     1004;
+define ACTOR_GROWN_WHEAT        1005;
+define ACTOR_CARROT_SEEDLING    1006;
+define ACTOR_GROWN_CARROT       1007;
+define ACTOR_TURNIP_SEEDLING    1008;
+define ACTOR_GROWN_TURNIP       1009;
+
+define ITEM_STICK               0;
+define ITEM_ROCK                1;
+define ITEM_CORD                2;
+define ITEM_LOG                 3;
+define ITEM_SAPLING             4;
+define ITEM_SHRUB_SEED          5;
+define ITEM_PLANK               6;
+define ITEM_WOOD_WALL_KIT       7;
+define ITEM_STONE_WALL_KIT      8;
+define ITEM_WOOD_FLOOR_KIT      9;
+define ITEM_STONE_FLOOR_KIT     10;
+define ITEM_WOOD_DOOR_KIT       11;
+define ITEM_STONE_DOOR_KIT      12;
+define ITEM_WINDOW_KIT          13;
+define ITEM_FENCE_KIT           14;
+define ITEM_WHEAT_SEED          15;
+define ITEM_CARROT_SEED         16;
+define ITEM_SHEAF_OF_WHEAT      17;
+define ITEM_CARROT              18;
+define ITEM_TURNIP_SEED         19;
+define ITEM_TURNIP              20;
+define ITEM_MEAT                21;
+
 
 
 tile {
-    ident   -1
-    glyph   ' '
-    colour  0x000000
-    name    "nothing"
+    ident       TILE_INVALID
+    glyph       ' '
+    colour      0x000000
+    name        "nothing"
     solid opaque
 };
 
 tile {
-    ident   0
-    glyph   '.'
-    colour  0x633a0b
-    name    "dirt"
+    ident       TILE_DIRT
+    glyph       '.'
+    colour      0x633a0b
+    name        "dirt"
     ground
 };
 
 tile {
-    ident   1
-    glyph   '#'
-    colour  0xAAAAAA
-    name    "stone"
-    breakTo 0
-    solid opaque
+    ident       TILE_STONE
+    glyph       '#'
+    colour      0xAAAAAA
+    name        "stone"
+    breakTo     TILE_DIRT
     loot {
-        1 100 1 3
+        ITEM_ROCK 100 1 3
     }
+    solid opaque
 };
 
 tile {
-    ident   2
-    glyph   ','
-    colour  0x007700
-    name    "grass"
+    ident       TILE_GRASS
+    glyph       ','
+    colour      0x007700
+    name        "grass"
     ground
 };
 
 tile {
-    ident   3
-    glyph   '~'
-    colour  0x0000FF
-    name    "water"
+    ident       TILE_WATER
+    glyph       '~'
+    colour      0x0000FF
+    name        "water"
     solid
 };
 
 tile {
-    ident   4
-    glyph   '#'
-    colour  0x855723
-    name    "wood wall"
-    solid opaque
-    breakTo 0
+    ident       TILE_WOOD_WALL
+    glyph       '#'
+    colour      0x855723
+    name        "wood wall"
+    breakTo     TILE_DIRT
     loot {
-        6 100 2 2
-    }
-};
-
-tile {
-    ident   5
-    glyph   '#'
-    colour  0x777777
-    name    "stone wall"
-    solid opaque
-    breakTo 0
-    loot {
-        1 100 2 2
-    }
-};
-
-
-tile {
-    ident   6
-    glyph   '.'
-    colour  0x855723
-    name    "wood floor"
-    breakTo 0
-    loot {
-        6 100 1 1
-    }
-};
-
-tile {
-    ident   7
-    glyph   '.'
-    colour  0x777777
-    name    "stone floor"
-    breakTo 0
-    loot {
-        1 100 1 1
-    }
-};
-
-tile {
-    ident   8
-    glyph   '+'
-    colour  0x855723
-    name    "wood door (closed)"
-    breakTo 0
-    doorTo  9
-    loot {
-        6 100 2 2
+        ITEM_PLANK 100 2 2
     }
     solid opaque
 };
 
 tile {
-    ident   9
-    glyph   '/'
-    colour  0x855723
-    name    "wood door (open)"
-    breakTo 0
-    doorTo  8
+    ident       TILE_STONE_WALL
+    glyph       '#'
+    colour      0x777777
+    name        "stone wall"
+    breakTo     TILE_DIRT
     loot {
-        6 100 2 2
+        ITEM_ROCK 100 2 2
     }
+    solid opaque
 };
 
 
 tile {
-    ident   10
-    glyph   '+'
-    colour  0x777777
-    name    "stone door (closed)"
-    breakTo 0
-    doorTo  11
+    ident       TILE_WOOD_FLOOR
+    glyph       '.'
+    colour      0x855723
+    name        "wood floor"
+    breakTo     TILE_DIRT
     loot {
-        1 100 1 1
+        ITEM_PLANK 100 1 1
+    }
+};
+
+tile {
+    ident       TILE_STONE_FLOOR
+    glyph       '.'
+    colour      0x777777
+    name        "stone floor"
+    breakTo     TILE_DIRT
+    loot {
+        ITEM_ROCK 100 1 1
+    }
+};
+
+tile {
+    ident       TILE_WOOD_DOOR_CLOSED
+    glyph       '+'
+    colour      0x855723
+    name        "wood door (closed)"
+    breakTo     TILE_DIRT
+    doorTo      TILE_WOOD_DOOR_OPEN
+    loot {
+        ITEM_PLANK 100 2 2
     }
     solid opaque
 };
 
 tile {
-    ident   11
-    glyph   '/'
-    colour  0x777777
-    name    "stone door (open)"
-    breakTo 0
-    doorTo  10
+    ident       TILE_WOOD_DOOR_OPEN
+    glyph       '/'
+    colour      0x855723
+    name        "wood door (open)"
+    breakTo     TILE_DIRT
+    doorTo      TILE_WOOD_DOOR_CLOSED
     loot {
-        1 100 1 1
+        ITEM_PLANK 100 2 2
     }
 };
 
 
 tile {
-    ident   12
-    glyph   '='
-    colour  0x7777FF
-    name    "window"
-    breakTo 0
+    ident       TILE_STONE_DOOR_CLOSED
+    glyph       '+'
+    colour      0x777777
+    name        "stone door (closed)"
+    breakTo     TILE_DIRT
+    doorTo      TILE_STONE_DOOR_OPEN
+    loot {
+        ITEM_ROCK 100 1 1
+    }
+    solid opaque
+};
+
+tile {
+    ident       TILE_STONE_DOOR_OPEN
+    glyph       '/'
+    colour      0x777777
+    name        "stone door (open)"
+    breakTo     TILE_DIRT
+    doorTo      TILE_STONE_DOOR_CLOSED
+    loot {
+        ITEM_ROCK 100 1 1
+    }
+};
+
+
+tile {
+    ident       TILE_WINDOW
+    glyph       '='
+    colour      0x7777FF
+    name        "window"
+    breakTo     TILE_DIRT
     solid
 };
 
 tile {
-    ident   13
-    glyph   '^'
-    colour  0x855723
-    name    "fence"
-    breakTo 0
+    ident       TILE_FENCE
+    glyph       '^'
+    colour      0x855723
+    name        "fence"
+    breakTo     TILE_DIRT
     loot {
-        6 100 1 1
+        ITEM_PLANK 100 1 1
     }
     solid
 };
@@ -167,215 +229,215 @@ tile {
 
 
 actor {
-    ident   1
-    glyph   '@'
-    colour  0x7777FF
-    name    "player"
-    ai      0
-    health  10
-    type    0
+    ident       ACTOR_PLAYER
+    glyph       '@'
+    colour      0x7777FF
+    name        "player"
+    ai          0
+    health      10
+    type        TYPE_PLAYER
 };
 
 actor {
-    ident   2
-    glyph   'k'
-    colour  0xFF77FF
-    name    "kobold"
-    ai      1
+    ident       ACTOR_KOBOLD
+    glyph       'k'
+    colour      0xFF77FF
+    name        "kobold"
+    ai          1
     moveChance  333
-    type    1
+    type        TYPE_VILLAGER
 };
 
 actor {
-    ident   3
-    glyph   'p'
-    colour  0xFF77FF
-    name    "pig"
-    ai      1
-    type    3
-    foodItem    18
+    ident       ACTOR_PIG
+    glyph       'p'
+    colour      0xFF77FF
+    name        "pig"
+    ai          1
+    type        TYPE_ANIMAL
+    foodItem    ITEM_CARROT
     moveChance  500
     loot {
-        21  100  2 3
+        ITEM_MEAT  100  2 3
     }
 };
 
 actor {
-    ident   4
-    glyph   'c'
-    colour  0xFF77FF
-    name    "chicken"
-    ai      1
-    type    3
-    foodItem    15
+    ident       ACTOR_CHICKEN
+    glyph       'c'
+    colour      0xFF77FF
+    name        "chicken"
+    ai          1
+    type        TYPE_ANIMAL
+    foodItem    ITEM_WHEAT_SEED
     moveChance  666
     loot {
-        21  100  1 2
+        ITEM_MEAT  100  1 2
     }
 };
 
 actor {
-    ident   5
-    glyph   'g'
-    colour  0xFF77FF
-    name    "goat"
-    ai      1
-    type    3
-    foodItem    17
+    ident       ACTOR_GOAT
+    glyph       'g'
+    colour      0xFF77FF
+    name        "goat"
+    ai          1
+    type        TYPE_ANIMAL
+    foodItem    ITEM_SHEAF_OF_WHEAT
     moveChance  500
     loot {
-        21  100  2 3
+        ITEM_MEAT  100  2 3
     }
 };
 
 actor {
-    ident   6
+    ident   ACTOR_WOLF
     glyph   'w'
     colour  0xFF77FF
     name    "wolf"
     ai      1
-    type    3
-    foodItem    21
+    type    TYPE_ANIMAL
+    foodItem    ITEM_MEAT
     moveChance  500
     loot {
-        21  100  2 3
+        ITEM_MEAT  100  2 3
     }
 };
 
 actor {
-    ident   1000
+    ident   ACTOR_TREE
     glyph   'T'
     colour  0x77FF77
     name    "tree"
     ai      0
-    type    2
+    type    TYPE_PLANT
     loot {
-        3   100 1   1
-        4   100 1   3
+        ITEM_LOG        100 1   1
+        ITEM_SAPLING    100 1   3
     }
 };
 
 actor {
-    ident   1001
+    ident   ACTOR_SHRUB
     glyph   ';'
     colour  0x77FF77
     name    "shrub"
     ai      0
-    type    2
+    type    TYPE_PLANT
     loot {
-        0 100 1 1
-        2 100 1 3
-        5 100 1 3
+        ITEM_SHRUB_SEED 100 1 3
+        ITEM_STICK      100 1 1
+        ITEM_CORD       100 1 3
     }
 };
 
 actor {
-    ident       1002
+    ident       ACTOR_SAPLING
     glyph       't'
     colour      0x77FF77
     name        "sapling"
     ai          0
-    type        2
-    growTo      1000
+    type        TYPE_PLANT
+    growTo      ACTOR_TREE
     growTime    20
     loot {
-        4   100 1   1
+        ITEM_SAPLING   100 1   1
     }
 };
 
 actor {
-    ident   1003
+    ident   ACTOR_SPROUT
     glyph   ','
     colour  0x77FF77
     name    "sprout"
     ai      0
-    type    2
-    growTo      1001
+    type    TYPE_PLANT
+    growTo      ACTOR_SHRUB
     growTime    15
     loot {
-        5 100 1 1
+        ITEM_SHRUB_SEED 100 1 1
     }
 };
 
 actor {
-    ident   1004
+    ident   ACTOR_WHEAT_SEEDLING
     glyph   ','
     colour  0xFFDF00
     name    "wheat seedling"
     ai      0
-    type    2
-    growTo      1005
+    type    TYPE_PLANT
+    growTo      ACTOR_GROWN_WHEAT
     growTime    15
     loot {
-        15 100 1 1
+        ITEM_WHEAT_SEED 100 1 1
     }
 };
 
 actor {
-    ident   1005
+    ident   ACTOR_GROWN_WHEAT
     glyph   ';'
     colour  0xFFDF00
     name    "grown wheat"
     ai      0
-    type    2
+    type    TYPE_PLANT
     loot {
-        15 100 1 3
-        17 100 2 4
+        ITEM_WHEAT_SEED 100 1 3
+        ITEM_SHEAF_OF_WHEAT 100 2 4
     }
 };
 
 actor {
-    ident   1006
+    ident   ACTOR_CARROT_SEEDLING
     glyph   ','
     colour  0xED9121
     name    "carrot seedling"
     ai      0
-    type    2
-    growTo      1007
+    type    TYPE_PLANT
+    growTo      ACTOR_GROWN_CARROT
     growTime    15
     loot {
-        16 100 1 1
+        ITEM_CARROT_SEED 100 1 1
     }
 };
 
 actor {
-    ident   1007
+    ident   ACTOR_GROWN_CARROT
     glyph   ';'
     colour  0xED9121
     name    "grown carrot"
     ai      0
-    type    2
+    type    TYPE_PLANT
     loot {
-        16 100 1 3
-        18 100 2 4
+        ITEM_CARROT_SEED 100 1 3
+        ITEM_CARROT 100 2 4
     }
 };
 
 
 actor {
-    ident   1008
+    ident   ACTOR_TURNIP_SEEDLING
     glyph   ','
     colour  0xEEEEEE
     name    "turnip seedling"
     ai      0
-    type    2
-    growTo      1009
+    type    TYPE_PLANT
+    growTo      ACTOR_GROWN_TURNIP
     growTime    15
     loot {
-        19 100 1 1
+        ITEM_TURNIP_SEED 100 1 1
     }
 };
 
 actor {
-    ident   1009
+    ident   ACTOR_GROWN_TURNIP
     glyph   ';'
     colour  0xEEEEEE
     name    "grown turnip"
     ai      0
-    type    2
+    type    TYPE_PLANT
     loot {
-        19 100 1 3
-        20 100 2 4
+        ITEM_TURNIP_SEED 100 1 3
+        ITEM_TURNIP 100 2 4
     }
 };
 
@@ -383,167 +445,167 @@ actor {
 
 
 item {
-    ident   0
+    ident   ITEM_STICK
     glyph   '/'
     colour  0x855723
     name    "stick"
 };
 
 item {
-    ident   1
+    ident   ITEM_ROCK
     glyph   '*'
     colour  0x777777
     name    "rock"
 };
 
 item {
-    ident   2
+    ident   ITEM_CORD
     glyph   '&'
     colour  0xFFFFFFFF
     name    "cord"
 };
 
 item {
-    ident   3
+    ident   ITEM_LOG
     glyph   '='
     colour  0x855723
     name    "log"
 };
 
 item {
-    ident 4
+    ident ITEM_SAPLING
     glyph   '/'
     colour  0x00FF00
     name    "sapling"
-    seedFor 1002
+    seedFor ACTOR_SAPLING
 };
 
 item {
-    ident 5
+    ident ITEM_SHRUB_SEED
     glyph   '.'
     colour  0x00FF00
     name    "shrub seed"
-    seedFor 1003
+    seedFor ACTOR_SPROUT
 };
 
 item {
-    ident   6
+    ident   ITEM_PLANK
     glyph   '-'
     colour  0x855723
     name    "plank"
 };
 
 item {
-    ident   7
+    ident   ITEM_WOOD_WALL_KIT
     glyph   '*'
     colour  0x855723
     name    "wood wall kit"
-    constructs  4
+    constructs  TILE_WOOD_WALL
 };
 
 item {
-    ident   8
+    ident   ITEM_STONE_WALL_KIT
     glyph   '*'
     colour  0x777777
     name    "stone wall kit"
-    constructs  5
+    constructs  TILE_STONE_WALL
 };
 
 item {
-    ident   9
+    ident   ITEM_WOOD_FLOOR_KIT
     glyph   '*'
     colour  0x855723
     name    "wood floor kit"
-    constructs  6
+    constructs  TILE_WOOD_FLOOR
 };
 
 item {
-    ident   10
+    ident   ITEM_STONE_FLOOR_KIT
     glyph   '*'
     colour  0x777777
     name    "stone floor kit"
-    constructs  7
+    constructs  TILE_STONE_FLOOR
 };
 
 item {
-    ident       11
+    ident       ITEM_WOOD_DOOR_KIT
     glyph       '*'
     colour      0x855723
     name        "wood door kit"
-    constructs  8
+    constructs  TILE_WOOD_DOOR_CLOSED
 };
 
 item {
-    ident       12
+    ident       ITEM_STONE_DOOR_KIT
     glyph       '*'
     colour      0x855723
     name        "stone door kit"
-    constructs  10
+    constructs  TILE_STONE_DOOR_CLOSED
 };
 
 item {
-    ident       13
+    ident       ITEM_WINDOW_KIT
     glyph       '*'
     colour      0x7777FF
     name        "window kit"
-    constructs  12
+    constructs  TILE_WINDOW
 };
 
 item {
-    ident       14
+    ident       ITEM_FENCE_KIT
     glyph       '*'
     colour      0x855723
     name        "fence kit"
-    constructs  13
+    constructs  TILE_FENCE
 };
 
 item {
-    ident       15
+    ident       ITEM_WHEAT_SEED
     glyph       '.'
     colour      0xFFDF00
     name        "wheat seed"
-    seedFor     1004
+    seedFor     ACTOR_WHEAT_SEEDLING
 };
 
 item {
-    ident       16
+    ident       ITEM_CARROT_SEED
     glyph       '.'
     colour      0xED9121
     name        "carrot seed"
-    seedFor     1006
+    seedFor     ACTOR_CARROT_SEEDLING
 };
 
 item {
-    ident       17
+    ident       ITEM_SHEAF_OF_WHEAT
     glyph       '/'
     colour      0xFFDF00
     name        "sheaf of wheat"
 };
 
 item {
-    ident       18
+    ident       ITEM_CARROT
     glyph       '/'
     colour      0xED9121
     name        "carrot"
 };
 
 item {
-    ident       19
+    ident       ITEM_TURNIP_SEED
     glyph       '.'
     colour      0xEEEEEE
     name        "turnip seed"
-    seedFor     1008
+    seedFor     ACTOR_TURNIP_SEEDLING
 };
 
 item {
-    ident       20
+    ident       ITEM_TURNIP
     glyph       '/'
     colour      0xEEEEEE
     name        "turnip"
 };
 
 item {
-    ident       21
+    ident       ITEM_MEAT
     glyph       '%'
     colour      0xFF7777
     name        "meat"
@@ -553,54 +615,54 @@ item {
 
 
 recipe {
-    makeIdent   6
+    makeIdent   ITEM_PLANK
     makeQty     4
-    part        1 3
+    part        1 ITEM_LOG
 };
 
 recipe {
-    makeIdent   7
+    makeIdent   ITEM_WOOD_WALL_KIT
     makeQty     5
-    part        10 6
+    part        10 ITEM_PLANK
 };
 
 recipe {
-    makeIdent   8
+    makeIdent   ITEM_STONE_WALL_KIT
     makeQty     5
-    part        10 1
+    part        10 ITEM_ROCK
 };
 
 recipe {
-    makeIdent   9
+    makeIdent   ITEM_WOOD_FLOOR_KIT
     makeQty     5
-    part        5 6
+    part        5 ITEM_PLANK
 };
 
 recipe {
-    makeIdent   10
+    makeIdent   ITEM_STONE_FLOOR_KIT
     makeQty     5
-    part        5 1
+    part        5 ITEM_ROCK
 };
 
 recipe {
-    makeIdent   11
+    makeIdent   ITEM_WOOD_DOOR_KIT
     makeQty     1
-    part        2 6
+    part        2 ITEM_PLANK
 };
 
 recipe {
-    makeIdent   12
+    makeIdent   ITEM_STONE_DOOR_KIT
     makeQty     1
-    part        1 1
+    part        1 ITEM_ROCK
 };
 
 recipe {
-    makeIdent   13
+    makeIdent   ITEM_WINDOW_KIT
     makeQty     1
 };
 
 recipe {
-    makeIdent   14
+    makeIdent   ITEM_FENCE_KIT
     makeQty     5
-    part        5 6
+    part        5 ITEM_PLANK
 };

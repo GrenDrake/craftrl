@@ -1,6 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include <map>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -34,9 +35,12 @@ struct TokenData {
     bool matches(TokenType type) const;
     bool matches(const std::string &identifier) const;
 
+    bool asInt(int &value) const;
+
     bool valid;
     unsigned pos = 0;
     std::vector<Token> tokens;
+    std::map<std::string, int> symbols;
 };
 
 TokenData parseFile(const std::string &filename);

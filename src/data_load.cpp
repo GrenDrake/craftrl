@@ -32,48 +32,40 @@ bool parseActor(World &w, TokenData &data) {
         data.next();
 
         if (name == "ident") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.ident = data.here().i;
+            if (!data.asInt(actor.ident)) return false;
             data.next();
         } else if (name == "glyph") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.glyph = data.here().i;
+            if (!data.asInt(actor.glyph)) return false;
             data.next();
         } else if (name == "colour") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            actor.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
             actor.name = data.here().s;
             data.next();
         } else if (name == "ai") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.aiType = data.here().i;
+            if (!data.asInt(actor.aiType)) return false;
             data.next();
         } else if (name == "type") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.type = data.here().i;
+            if (!data.asInt(actor.type)) return false;
             data.next();
         } else if (name == "health") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.health = data.here().i;
+            if (!data.asInt(actor.health)) return false;
             data.next();
         } else if (name == "growTo") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.growTo = data.here().i;
+            if (!data.asInt(actor.growTo)) return false;
             data.next();
         } else if (name == "growTime") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.growTime = data.here().i;
+            if (!data.asInt(actor.growTime)) return false;
             data.next();
         } else if (name == "foodItem") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.foodItem = data.here().i;
+            if (!data.asInt(actor.foodItem)) return false;
             data.next();
         } else if (name == "moveChance") {
-            if (!data.require(TokenType::Integer)) return false;
-            actor.moveChance = data.here().i;
+            if (!data.asInt(actor.moveChance)) return false;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);
@@ -99,6 +91,30 @@ bool parseActor(World &w, TokenData &data) {
     return true;
 }
 
+bool parseDefine(World &w, TokenData &data) {
+    const Origin &origin = data.here().origin;
+    data.next(); // skip "define"
+
+    if (!data.require(TokenType::Identifier)) return false;
+    const std::string &name = data.here().s;
+    data.next();
+
+    if (!data.require(TokenType::Integer)) return false;
+    int value = data.here().i;
+    data.next();
+
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next();
+
+    auto iter = data.symbols.find(name);
+    if (iter != data.symbols.end()) {
+        std::cerr << origin.filename << ':' << origin.line << "  Name " << name << " already defined.\n";
+        return false;
+    }
+    data.symbols.insert(std::make_pair(name, value));
+    return true;
+}
+
 bool parseItem(World &w, TokenData &data) {
     data.next(); // skip "tile"
 
@@ -120,24 +136,21 @@ bool parseItem(World &w, TokenData &data) {
         data.next();
 
         if (name == "ident") {
-            if (!data.require(TokenType::Integer)) return false;
-            item.ident = data.here().i;
+            if (!data.asInt(item.ident)) return false;
             data.next();
         } else if (name == "glyph") {
-            if (!data.require(TokenType::Integer)) return false;
-            item.glyph = data.here().i;
+            if (!data.asInt(item.glyph)) return false;
             data.next();
         } else if (name == "colour") {
-            if (!data.require(TokenType::Integer)) return false;
-            item.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            item.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "seedFor") {
-            if (!data.require(TokenType::Integer)) return false;
-            item.seedFor = static_cast<unsigned>(data.here().i);
+            if (!data.asInt(item.seedFor)) return false;
             data.next();
         } else if (name == "constructs") {
-            if (!data.require(TokenType::Integer)) return false;
-            item.constructs = static_cast<unsigned>(data.here().i);
+            if (!data.asInt(item.constructs)) return false;
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
@@ -167,20 +180,16 @@ LootTable* parseLootTable(World &w, TokenData &data) {
     while (!data.matches(TokenType::CloseBrace)) {
         LootRow row;
 
-        if (!data.require(TokenType::Integer)) return nullptr;
-        row.ident = data.here().i;
+        if (!data.asInt(row.ident)) return nullptr;
         data.next();
 
-        if (!data.require(TokenType::Integer)) return nullptr;
-        row.chance = data.here().i;
+        if (!data.asInt(row.chance)) return nullptr;
         data.next();
 
-        if (!data.require(TokenType::Integer)) return nullptr;
-        row.min = data.here().i;
+        if (!data.asInt(row.min)) return nullptr;
         data.next();
 
-        if (!data.require(TokenType::Integer)) return nullptr;
-        row.max = data.here().i;
+        if (!data.asInt(row.max)) return nullptr;
         data.next();
 
         table->mRows.push_back(row);
@@ -208,20 +217,16 @@ bool parseRecipe(World &w, TokenData &data) {
         data.next();
 
         if (name == "makeQty") {
-            if (!data.require(TokenType::Integer)) return false;
-            recipe.makeQty = data.here().i;
+            if (!data.asInt(recipe.makeQty)) return false;
             data.next();
         } else if (name == "makeIdent") {
-            if (!data.require(TokenType::Integer)) return false;
-            recipe.makeIdent = data.here().i;
+            if (!data.asInt(recipe.makeIdent)) return false;
             data.next();
         } else if (name == "part") {
             RecipeRow row;
-            if (!data.require(TokenType::Integer)) return false;
-            row.qty = data.here().i;
+            if (!data.asInt(row.qty)) return false;
             data.next();
-            if (!data.require(TokenType::Integer)) return false;
-            row.ident = data.here().i;
+            if (!data.asInt(row.ident)) return false;
             data.next();
             recipe.mRows.push_back(row);
         } else {
@@ -266,28 +271,25 @@ bool parseTile(World &w, TokenData &data) {
         else if (name == "solid") tile.solid = true;
         else if (name == "ground") tile.ground = true;
         else if (name == "ident") {
-            if (!data.require(TokenType::Integer)) return false;
-            tile.ident = data.here().i;
+            if (!data.asInt(tile.ident)) return false;
             data.next();
         } else if (name == "glyph") {
-            if (!data.require(TokenType::Integer)) return false;
-            tile.glyph = data.here().i;
+            if (!data.asInt(tile.glyph)) return false;
             data.next();
         } else if (name == "colour") {
-            if (!data.require(TokenType::Integer)) return false;
-            tile.colour = static_cast<unsigned>(data.here().i) | 0xFF000000;
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            tile.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
             tile.name = data.here().s;
             data.next();
         } else if (name == "breakTo") {
-            if (!data.require(TokenType::Integer)) return false;
-            tile.breakTo = data.here().i;
+            if (!data.asInt(tile.breakTo)) return false;
             data.next();
         } else if (name == "doorTo") {
-            if (!data.require(TokenType::Integer)) return false;
-            tile.doorTo = data.here().i;
+            if (!data.asInt(tile.doorTo)) return false;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);
@@ -333,6 +335,7 @@ bool loadGameData(World &w) {
         else if (data.matches("item"))  success = parseItem(w, data);
         else if (data.matches("actor")) success = parseActor(w, data);
         else if (data.matches("recipe"))success = parseRecipe(w, data);
+        else if (data.matches("define"))success = parseDefine(w, data);
         else {
             const Origin &origin = data.here().origin;
             std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().type << ".\n";
