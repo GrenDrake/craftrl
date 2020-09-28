@@ -4,7 +4,7 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../BearLibTerminal/Include/**"
+                "${workspaceFolder}/../lib/BearLibTerminal/Include/**"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
