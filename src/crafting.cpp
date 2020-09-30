@@ -15,7 +15,7 @@ bool canMakeRecipe(World &w, const RecipeDef *def, int qty, const Inventory &inv
     return true;
 }
 
-void doCrafting(World &w, Actor *player) {
+void doCrafting(World &w, Actor *player, unsigned craftingStation) {
     const unsigned highlightBG  = 0xFF666666;
     const unsigned highlightFG  = 0xFFFFFFFF;
     const unsigned textBG       = 0xFF000000;
@@ -28,7 +28,7 @@ void doCrafting(World &w, Actor *player) {
     const int inventoryHeight = 11;
     const int inventoryY = screenHeight - inventoryHeight;
 
-    const auto list = w.getRecipeList();
+    const auto list = w.getRecipeList(craftingStation);
 
     int selection = 0, count = 1;
     while (1) {

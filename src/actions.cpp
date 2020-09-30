@@ -3,7 +3,7 @@
 #include "world.h"
 
 Dir getDir(World &w, const std::string &reason);
-void doCrafting(World &w, Actor *player);
+void doCrafting(World &w, Actor *player, unsigned craftingStation);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 
 
@@ -125,13 +125,17 @@ bool actionContextMove(World &w, Actor *player, const Command &command, bool sil
     if (tile.actor) return actionTalkActor(w, player, newCommand, true);
 
     const TileDef &tdef = w.getTileDef(tile.terrain);
+    if (tdef.grantsCrafting) {
+        doCrafting(w, player, tdef.grantsCrafting);
+        return false;
+    }
     if (tdef.solid) return actionDo(w, player, newCommand, true);
     return actionMove(w, player, newCommand, true);
 }
 
 
 bool actionCraft(World &w, Actor *player, const Command &command, bool silent) {
-    doCrafting(w, player);
+    doCrafting(w, player, 0);
     return false;
 }
 

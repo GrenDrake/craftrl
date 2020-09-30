@@ -120,6 +120,7 @@ struct TileDef {
     bool opaque;
     bool solid;
     bool ground;
+    unsigned grantsCrafting;
 };
 
 struct RecipeRow {
@@ -130,6 +131,7 @@ struct RecipeDef {
     int makeIdent;
     int makeQty;
     std::vector<RecipeRow> mRows;
+    unsigned craftingStation;
 };
 
 struct InventoryRow {
@@ -229,7 +231,7 @@ public:
     void addRecipeDef(const RecipeDef &td);
     const RecipeDef& getRecipeDef(int ident) const;
     int recipeDefCount() const { return mRecipeDefs.size(); }
-    std::vector<const RecipeDef*> getRecipeList() const;
+    std::vector<const RecipeDef*> getRecipeList(unsigned stations) const;
 
     void tick();
     unsigned getTurn() const { return turn; }

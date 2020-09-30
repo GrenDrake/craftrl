@@ -19,6 +19,8 @@ define TILE_STONE_DOOR_CLOSED   110;
 define TILE_STONE_DOOR_OPEN     111;
 define TILE_WINDOW              112;
 define TILE_FENCE               113;
+define TILE_BASIC_WORKBENCH     500;
+define TILE_STD_WORKBENCH       501;
 
 define ACTOR_PLAYER             1;
 define ACTOR_KOBOLD             2;
@@ -59,6 +61,8 @@ define ITEM_CARROT              18;
 define ITEM_TURNIP_SEED         19;
 define ITEM_TURNIP              20;
 define ITEM_MEAT                21;
+define ITEM_BASIC_WORKBENCH_KIT 22;
+define ITEM_STD_WORKBENCH_KIT   23;
 
 
 
@@ -226,6 +230,31 @@ tile {
     solid
 };
 
+tile {
+    ident       TILE_BASIC_WORKBENCH
+    glyph       0x2565
+    colour      0x855723
+    name        "basic workbench"
+    breakTo     TILE_DIRT
+    loot {
+        ITEM_BASIC_WORKBENCH_KIT 100 1 1
+    }
+    solid
+    grantsCrafting  1
+};
+
+tile {
+    ident       TILE_STD_WORKBENCH
+    glyph       0x2565
+    colour      0xc36f10
+    name        "standard workbench"
+    breakTo     TILE_DIRT
+    loot {
+        ITEM_STD_WORKBENCH_KIT 100 1 1
+    }
+    solid
+    grantsCrafting  3
+};
 
 
 actor {
@@ -611,6 +640,21 @@ item {
     name        "meat"
 };
 
+item {
+    ident       ITEM_BASIC_WORKBENCH_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "basic workbench kit"
+    constructs  TILE_BASIC_WORKBENCH
+};
+
+item {
+    ident       ITEM_STD_WORKBENCH_KIT
+    glyph       '*'
+    colour      0xc36f10
+    name        "standard workbench kit"
+    constructs  TILE_STD_WORKBENCH
+};
 
 
 
@@ -618,51 +662,73 @@ recipe {
     makeIdent   ITEM_PLANK
     makeQty     4
     part        1 ITEM_LOG
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_WALL_KIT
     makeQty     5
     part        10 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_WALL_KIT
     makeQty     5
     part        10 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_FLOOR_KIT
     makeQty     5
     part        5 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_FLOOR_KIT
     makeQty     5
     part        5 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_DOOR_KIT
     makeQty     1
     part        2 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_DOOR_KIT
     makeQty     1
     part        1 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WINDOW_KIT
     makeQty     1
+    craftingStation 2
 };
 
 recipe {
     makeIdent   ITEM_FENCE_KIT
     makeQty     5
     part        5 ITEM_PLANK
+    craftingStation 1
+};
+
+recipe {
+    makeIdent   ITEM_BASIC_WORKBENCH_KIT
+    makeQty     1
+    part        1 ITEM_LOG
+};
+
+recipe {
+    makeIdent       ITEM_STD_WORKBENCH_KIT
+    makeQty         1
+    part            1 ITEM_BASIC_WORKBENCH_KIT
+    craftingStation 1
 };

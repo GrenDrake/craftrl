@@ -302,10 +302,12 @@ void World::addRecipeDef(const RecipeDef &td) {
     mRecipeDefs.push_back(td);
 }
 
-std::vector<const RecipeDef*> World::getRecipeList() const {
+std::vector<const RecipeDef*> World::getRecipeList(unsigned stations) const {
     std::vector<const RecipeDef*> list;
     for (const RecipeDef &td : mRecipeDefs) {
-        list.push_back(&td);
+        if ((td.craftingStation & stations) == td.craftingStation) {
+            list.push_back(&td);
+        }
     }
     return list;
 }
