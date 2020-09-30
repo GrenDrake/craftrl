@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ctime>
+#include <sstream>
 #include <BearLibTerminal.h>
 
 #include "world.h"
@@ -20,8 +21,11 @@ int main() {
 
     if (!loadGameData(w)) return 1;
 
+    std::stringstream nameString;
+    nameString << "CraftRL" << " v" << VER_MAJOR << '.' << VER_MINOR << '.' << VER_PATCH;
     terminal_open();
-    terminal_set("window: size=80x25; window.title='CraftRL'");
+    terminal_set("window: size=80x25");
+    terminal_set(("window.title='" + nameString.str() + "'").c_str());
     terminal_set("input.filter=keyboard,mouse_left,mouse_middle,mouse_right");
 
     mainmenu(w);
@@ -43,7 +47,6 @@ void setColourIfSelected(int selection, int position, bool enabled) {
     }
 }
 void mainmenu(World &w) {
-
     int selection = 1;
     unsigned long seed = w.getRandom().next64();
     unsigned long usedSeed = 0;
@@ -51,7 +54,8 @@ void mainmenu(World &w) {
         terminal_bkcolor(0xFF000000);
         terminal_color(0xFFFFFFFF);
         terminal_clear();
-        terminal_print(5, 3, "CraftRL Tech Demo");
+        terminal_print(5, 3, "CraftRL");
+        terminal_printf(70, 24, "%d.%d.%d", VER_MAJOR, VER_MINOR, VER_PATCH);
 
         setColourIfSelected(selection, 0, true);
         terminal_print(5, 6, "New Game");

@@ -427,8 +427,9 @@ bool World::savegame(const std::string &filename) const {
         return false;
     }
 
+    const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
     write32(out, 0x4C5243); // magic number
-    write32(out, 0);        // version #
+    write32(out, versionNumber);
     write32(out, mWidth);
     write32(out, mHeight);
 
@@ -512,7 +513,9 @@ bool World::loadgame(const std::string &filename) {
         std::cerr << "loadgame: bad magic number.\n";
         return false;
     }
-    if (read32(inf) != 0) {
+
+    const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
+    if (read32(inf) != versionNumber) {
         std::cerr << "loadgame: incompatable save version.\n";
         return false;
     }

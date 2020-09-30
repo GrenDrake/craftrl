@@ -8,6 +8,10 @@
 
 #include "random.h"
 
+const unsigned VER_MAJOR             = 0;
+const unsigned VER_MINOR             = 1;
+const unsigned VER_PATCH             = 0;
+
 const int INPUT_KEY_COUNT = 3;
 
 const int AI_NONE = 0;
