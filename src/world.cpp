@@ -5,8 +5,8 @@
 #include "world.h"
 
 
-LogMessage World::BAD_LOGMESSAGE;
-Tile World::BAD_TILE(-1);
+const LogMessage World::BAD_LOGMESSAGE;
+const Tile World::BAD_TILE(-1);
 const ActorDef World::BAD_ACTORDEF = { -1 };
 const ItemDef World::BAD_ITEMDEF = { -1 };
 const TileDef World::BAD_TILEDEF = { -1 };
@@ -134,28 +134,35 @@ Point World::findDropSpace(const Point &near) const {
 
 
 const Tile& World::at(const Point &p) const {
-    if (!valid(p)) {
-        BAD_TILE.terrain = -1;
-        return BAD_TILE;
-    }
+    if (!valid(p)) return BAD_TILE;
     int c = p.x + p.y * mWidth;
     return mTiles[c];
 }
 
-Tile& World::at(const Point &p) {
-    if (!valid(p)) {
-        BAD_TILE.terrain = -1;
-        return BAD_TILE;
-    }
-    int c = p.x + p.y * mWidth;
-    return mTiles[c];
+
+void World::setActor(const Point &pos, Actor *toActor) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].actor = toActor;
+}
+
+void World::setItem(const Point &pos, Item *toItem) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].item = toItem;
+}
+
+void World::setTerrain(const Point &pos, int toTile) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].terrain = toTile;
 }
 
 bool World::moveActor(Actor *actor, const Point &to) {
     if (!actor || (valid(to) && at(to).actor)) return false; // space already occupied
 
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
-        at(actor->pos).actor = nullptr;
+        setActor(actor->pos, nullptr);
         if (!valid(to)) {
             auto iter = mActors.begin();
             while (iter != mActors.cend()) {
@@ -172,7 +179,7 @@ bool World::moveActor(Actor *actor, const Point &to) {
     }
 
     if (valid(to)) {
-        at(to).actor = actor;
+        setActor(to, actor);
         if (actor->type == 1) mPlayer = actor;
     }
     actor->pos = to;
@@ -191,11 +198,11 @@ bool World::moveItem(Item *item, const Point &to) {
     if (!item || (valid(to) && at(to).item)) return false; // space already occupied
 
     if (valid(item->pos) && at(item->pos).item == item) {
-        at(item->pos).item = nullptr;
+        setItem(item->pos, nullptr);
     }
 
     if (valid(to)) {
-        at(to).item = item;
+        setItem(to, item);
     }
     item->pos = to;
     return true;
@@ -331,7 +338,7 @@ void World::tick() {
                     Dir d = actor->pos.directionTo(foodPos);
                     if (d == Dir::None) {
                         // on food item, eat it
-                        Tile &tile = at(foodPos);
+                        const Tile &tile = at(foodPos);
                         Item *item = tile.item;
                         if (item) {
                             moveItem(item, nowhere);
@@ -359,7 +366,7 @@ void World::tick() {
                     Actor *newActor = new Actor(def);
                     mActors[i] = newActor;
                     newActor->pos = actor->pos;
-                    at(actor->pos).actor = newActor;
+                    setActor(actor->pos, newActor);
                     delete actor;
                 }
             }

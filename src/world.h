@@ -191,7 +191,10 @@ public:
 
     Point findDropSpace(const Point &near) const;
     const Tile& at(const Point &p) const;
-    Tile& at(const Point &p);
+    // Tile& at(const Point &p);
+    void setTerrain(const Point &pos, int toTile);
+    void setActor(const Point &pos, Actor *toActor);
+    void setItem(const Point &pos, Item *toItem);
 
     bool moveActor(Actor *actor, const Point &to);
     bool tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep = true);
@@ -231,8 +234,8 @@ public:
     int mode, selection;
 
 private:
-    static LogMessage BAD_LOGMESSAGE;
-    static Tile BAD_TILE;
+    const static LogMessage BAD_LOGMESSAGE;
+    static const Tile BAD_TILE;
     static const ActorDef BAD_ACTORDEF;
     static const ItemDef BAD_ITEMDEF;
     static const TileDef BAD_TILEDEF;

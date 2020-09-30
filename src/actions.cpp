@@ -61,7 +61,7 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     }
 
     Point dest = player->pos.shift(dir);
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
 
     if (tile.actor) {
         if (tile.actor->def.type == TYPE_PLANT) {
@@ -80,12 +80,13 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
             return true;
         } else {
             w.addLogMsg("Can't attack that.");
+            return false;
         }
     }
 
     const TileDef &td = w.getTileDef(tile.terrain);
     if (td.breakTo >= 0) {
-        tile.terrain = td.breakTo;
+        w.setTerrain(dest, td.breakTo);
         w.addLogMsg("Broken.");
         makeLootAt(w, td.loot, dest);
     } else {
@@ -120,7 +121,7 @@ bool actionContextMove(World &w, Actor *player, const Command &command, bool sil
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
 
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
     if (tile.actor) return actionTalkActor(w, player, newCommand, true);
 
     const TileDef &tdef = w.getTileDef(tile.terrain);
@@ -146,7 +147,7 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
     }
 
     Point dest = player->pos.shift(dir);
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
 
     if (tile.actor) {
         w.addLogMsg(tile.actor->def.name + " is in the way.");
@@ -155,7 +156,7 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
 
     const TileDef &td = w.getTileDef(tile.terrain);
     if (td.doorTo >= 0) {
-        tile.terrain = td.doorTo;
+        w.setTerrain(dest, td.doorTo);
         if (!silent) w.addLogMsg("Done.");
         return true;
     }
@@ -313,7 +314,7 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
 
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
     if (tile.actor) {
         std::stringstream s;
         switch (tile.actor->def.type) {
@@ -366,13 +367,13 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
             return false;
         }
         Point dest = player->pos.shift(d);
-        Tile &t = w.at(dest);
+        const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
         if (!td.ground || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
-        t.terrain = def->constructs;
+        w.setTerrain(dest, def->constructs);
         player->inventory.remove(def);
         return true;
     } else {
