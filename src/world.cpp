@@ -162,17 +162,12 @@ bool World::moveActor(Actor *actor, const Point &to) {
     if (!actor || (valid(to) && at(to).actor)) return false; // space already occupied
 
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
-        setActor(actor->pos, nullptr);
         if (!valid(to)) {
-            auto iter = mActors.begin();
-            while (iter != mActors.cend()) {
-                if (*iter == actor) {
-                    iter = mActors.erase(iter);
-                } else {
-                    ++iter;
-                }
-            }
+            std::cerr << "moveActor: Moving actor (" << actor->def.name << ") at " << actor->pos << " to invalid position.\n";
+            removeActor(actor);
             return true;
+        } else {
+            setActor(actor->pos, nullptr);
         }
     } else {
         mActors.push_back(actor);
@@ -198,7 +193,12 @@ bool World::moveItem(Item *item, const Point &to) {
     if (!item || (valid(to) && at(to).item)) return false; // space already occupied
 
     if (valid(item->pos) && at(item->pos).item == item) {
-        setItem(item->pos, nullptr);
+        if (!valid(to)) {
+            std::cerr << "moveItem: Moving item (" << item->def.name << ") at " << item->pos << " to invalid position.\n";
+            removeItem(item);
+        } else {
+            setItem(item->pos, nullptr);
+        }
     }
 
     if (valid(to)) {
@@ -206,6 +206,24 @@ bool World::moveItem(Item *item, const Point &to) {
     }
     item->pos = to;
     return true;
+}
+
+void World::removeActor(Actor *actor) {
+    if (at(actor->pos).actor != actor) return;
+    setActor(actor->pos, nullptr);
+    auto iter = mActors.begin();
+    while (iter != mActors.end()) {
+        if (*iter == actor) {
+            iter = mActors.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
+void World::removeItem(Item *item) {
+    if (at(item->pos).item != item) return;
+    setItem(item->pos, nullptr);
 }
 
 Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
@@ -341,7 +359,7 @@ void World::tick() {
                         const Tile &tile = at(foodPos);
                         Item *item = tile.item;
                         if (item) {
-                            moveItem(item, nowhere);
+                            removeItem(item);
                             delete item;
                         }
                     } else {

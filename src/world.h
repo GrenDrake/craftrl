@@ -201,6 +201,8 @@ public:
     const Actor* getPlayer() const;
     Actor* getPlayer();
     bool moveItem(Item *item, const Point &to);
+    void removeActor(Actor *actor);
+    void removeItem(Item *item);
 
     Point findItemNearest(const Point &to, int itemIdent, int radius) const;
 
