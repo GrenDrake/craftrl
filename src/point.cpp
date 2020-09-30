@@ -1,6 +1,8 @@
 #include <cmath>
 #include "world.h"
 
+const Point nowhere(-1, -1);
+
 Point Point::shift(Dir dir, int amnt) const {
     switch (dir) {
         case Dir::North:        return Point(x,         y - amnt);

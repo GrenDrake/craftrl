@@ -67,14 +67,14 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
         if (tile.actor->def.type == TYPE_PLANT) {
             w.addLogMsg("Broke " + tile.actor->def.name + '.');
             Actor *actor = tile.actor;
-            w.moveActor(actor, Point(-1, -1));
+            w.moveActor(actor, nowhere);
             makeLootAt(w, actor->def.loot, dest);
             delete actor;
             return true;
         } else if (tile.actor->def.type == TYPE_ANIMAL) {
             w.addLogMsg("Killed " + tile.actor->def.name + '.');
             Actor *actor = tile.actor;
-            w.moveActor(actor, Point(-1, -1));
+            w.moveActor(actor, nowhere);
             makeLootAt(w, actor->def.loot, dest);
             delete actor;
             return true;
@@ -291,7 +291,7 @@ bool actionTake(World &w, Actor *player, const Command &command, bool silent) {
     }
 
     if (player->inventory.add(&item->def)) {
-        w.moveItem(item, Point(-1, -1));
+        w.moveItem(item, nowhere);
         w.addLogMsg("Took " + item->def.name + ".");
         delete item;
         return true;

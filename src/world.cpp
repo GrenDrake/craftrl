@@ -129,7 +129,7 @@ Point World::findDropSpace(const Point &near) const {
         if (t.actor && t.actor->def.type == TYPE_PLANT) continue;
         return p;
     }
-    return Point(-1, -1);
+    return nowhere;
 }
 
 
@@ -202,7 +202,7 @@ bool World::moveItem(Item *item, const Point &to) {
 }
 
 Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
-    Point result(-1, -1);
+    Point result = nowhere;
     double distance = 999999.0;
     for (int y = to.y - radius; y <= to.y + radius; ++y) {
         for (int x = to.x - radius; x <= to.x + radius; ++x) {
@@ -334,7 +334,7 @@ void World::tick() {
                         Tile &tile = at(foodPos);
                         Item *item = tile.item;
                         if (item) {
-                            moveItem(item, Point(-1, -1));
+                            moveItem(item, nowhere);
                             delete item;
                         }
                     } else {

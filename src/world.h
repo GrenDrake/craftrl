@@ -296,4 +296,6 @@ std::ostream& operator<<(std::ostream &out, const Point &p);
 std::string directionName(Dir d);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
 
+extern const Point nowhere;
+
 #endif
