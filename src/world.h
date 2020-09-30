@@ -19,6 +19,12 @@ const int TYPE_PLANT     = 2;
 const int TYPE_ANIMAL    = 3;
 const int TYPE_MONSTER   = 4;
 
+const int TILE_INVALID          = -1;
+const int TILE_DIRT             = 0;
+const int TILE_STONE            = 1;
+const int TILE_GRASS            = 2;
+const int TILE_WATER            = 3;
+
 const int CMD_NONE              = -1;
 const int CMD_DUMPMAP           = 0;
 const int CMD_TAKE              = 1;

@@ -24,7 +24,7 @@ bool buildmap(World &w, unsigned long seed) {
     // ensure all ground is grass
     for (int y = 0; y < w.height(); ++y) {
         for (int x = 0; x < w.width(); ++x) {
-            w.setTerrain(Point(x, y), 2);
+            w.setTerrain(Point(x, y), TILE_GRASS);
         }
     }
 
@@ -37,7 +37,7 @@ bool buildmap(World &w, unsigned long seed) {
             for (int x = cx - radius; x <= cx + radius; ++x) {
                 int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
                 if (dist <= radius) {
-                    w.setTerrain(Point(x, y), 3);
+                    w.setTerrain(Point(x, y), TILE_WATER);
                 }
             }
         }
@@ -52,7 +52,7 @@ bool buildmap(World &w, unsigned long seed) {
             for (int x = cx - radius; x <= cx + radius; ++x) {
                 int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
                 if (dist <= radius) {
-                    w.setTerrain(Point(x, y), 1);
+                    w.setTerrain(Point(x, y), TILE_STONE);
                 }
             }
         }
@@ -69,7 +69,7 @@ bool buildmap(World &w, unsigned long seed) {
                 int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
                 const Tile &tile = w.at(Point(x, y));
                 if (dist <= radius && tile.terrain == 2) {
-                    w.setTerrain(Point(x, y), 0);
+                    w.setTerrain(Point(x, y), TILE_DIRT);
                 }
             }
         }
@@ -82,7 +82,7 @@ bool buildmap(World &w, unsigned long seed) {
             Point top(x, y);
             w.setTerrain(top, 3);
             Point bottom(x, w.height() - 1 - y);
-            w.setTerrain(bottom, 3);
+            w.setTerrain(bottom, TILE_WATER);
         }
     }
     for (int y = 0; y < w.height(); ++y) {
@@ -91,7 +91,7 @@ bool buildmap(World &w, unsigned long seed) {
             Point left(x, y);
             w.setTerrain(left, 3);
             Point right(w.width() - 1 - x, y);
-            w.setTerrain(right, 3);
+            w.setTerrain(right, TILE_WATER);
         }
     }
 
