@@ -1,3 +1,4 @@
+#include <iostream>
 #include <sstream>
 #include "lodepng.h"
 #include "world.h"
@@ -10,22 +11,39 @@ bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages) {
     if (!table || table->mRows.empty()) return;
 
-    std::stringstream s;
+    Inventory inv;
     for (const LootRow &row : table->mRows) {
         if (row.ident < 0 || row.chance < 0 || row.max < 0) continue;
         const ItemDef &def = w.getItemDef(row.ident);
         if (def.ident < 0) continue;
         int chance = w.getRandom().next32() % 100;
         int qty = w.getRandom().between(row.min, row.max);
-        for (int i = 0; i < qty; ++i ) {
-            if (chance < row.chance) {
-                Point dest = w.findDropSpace(where);
-                if (w.valid(dest)) {
-                    s << " Dropped " << def.name << '.';
-                    Item *item = new Item(def);
-                    if (!w.moveItem(item, dest)) delete item;
+        if (chance < row.chance) inv.add(&def, qty);
+    }
+
+    std::stringstream s;
+    for (InventoryRow &row : inv.mContents) {
+        int realDropped = 0;
+        for (int i = 0; i < row.qty; ++i ) {
+            Point dest = w.findDropSpace(where);
+            if (w.valid(dest)) {
+                Item *item = new Item(*row.def);
+                if (!w.moveItem(item, dest)) {
+                    delete item;
+                } else {
+                    ++realDropped;
                 }
             }
+        }
+        row.qty = realDropped;
+    }
+
+    inv.cleanup();
+    for (const InventoryRow &row : inv.mContents) {
+        if (row.qty > 0) {
+            s << " Dropped " << row.def->name;
+            if (row.qty > 1) s << " (x" << row.qty << ')';
+            s << '.';
         }
     }
     if (showMessages) w.appendLogMsg(s.str());

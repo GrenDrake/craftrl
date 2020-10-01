@@ -127,7 +127,7 @@ void gameloop(World &w) {
                     s << ", " << tile.item->def.name;
                 }
                 if (tile.actor) {
-                    s << ", " << tile.actor->def.name;
+                    s << ", " << tile.actor->def.name << " (" << tile.actor->health << '/' << tile.actor->def.health << ')';
                 }
                 w.addLogMsg(s.str());
             }

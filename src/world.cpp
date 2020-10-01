@@ -55,6 +55,17 @@ bool Inventory::remove(const ItemDef *def, int qty) {
     return false;
 }
 
+void Inventory::cleanup() {
+    auto iter = mContents.begin();
+    while (iter != mContents.end()) {
+        if (iter->qty <= 0) {
+            iter = mContents.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
 bool sortByName(const InventoryRow &lhs, const InventoryRow &rhs) {
     return lhs.def->name < rhs.def->name;
 }

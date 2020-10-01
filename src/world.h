@@ -153,6 +153,7 @@ struct Inventory {
     int qty(const ItemDef*) const;
     bool remove(const ItemDef*, int qty = 1);
     int size() const { return mContents.size(); }
+    void cleanup();
     void sort(int sortType);
 
     std::vector<InventoryRow> mContents;
