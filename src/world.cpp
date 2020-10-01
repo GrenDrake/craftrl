@@ -161,6 +161,12 @@ void World::setTerrain(const Point &pos, int toTile) {
 bool World::moveActor(Actor *actor, const Point &to) {
     if (!actor || (valid(to) && at(to).actor)) return false; // space already occupied
 
+    if (to.x == 0 && to.y == 0) {
+        setActor(actor->pos, nullptr);
+        actor->pos = to;
+        return true;
+    }
+
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
         if (!valid(to)) {
             std::cerr << "moveActor: Moving actor (" << actor->def.name << ") at " << actor->pos << " to invalid position.\n";
@@ -245,12 +251,64 @@ Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
     return result;
 }
 
+Point World::findActorNearest(const Point &to, int notOfFaction, int radius) const {
+    Point result = nowhere;
+    double distance = 999999.0;
+    for (int y = to.y - radius; y <= to.y + radius; ++y) {
+        for (int x = to.x - radius; x <= to.x + radius; ++x) {
+            Point here(x, y);
+            const Tile &tile = at(here);
+            if (!tile.actor || tile.actor->def.type == TYPE_PLANT) continue;
+            if (notOfFaction < 0 || tile.actor->faction != notOfFaction) {
+                double myDist = here.distance(to);
+                if (myDist < distance) {
+                    result = here;
+                    distance = myDist;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+void World::doDamage(Actor *attacker, Actor *victim) {
+    if (!attacker || !victim) {
+        std::cerr << "doDamage: found null actor.\n";
+        return;
+    }
+
+    bool showMsgs = mPlayer->pos.distance(victim->pos) < 10;
+    int damage = attacker->def.baseDamage;
+    victim->health -= damage;
+
+    std::stringstream msg;
+    msg << upperFirst(attacker->def.name) << " does " << damage << " damage to " << victim->def.name << ".";
+    if (showMsgs) addLogMsg(msg.str());
+
+    if (victim->health <= 0) {
+        std::stringstream deathMsg;
+        deathMsg << ' ' << upperFirst(victim->def.name) << " dies.";
+        if (showMsgs) appendLogMsg(deathMsg.str());
+        Point oldPos = victim->pos;
+        moveActor(victim, Point(0, 0));
+        if (victim->def.loot) {
+            makeLootAt(*this, victim->def.loot, oldPos, showMsgs);
+        }
+    }
+
+}
+
 void World::addLogMsg(const LogMessage &msg) {
     mLog.push_back(msg);
 }
 
 void World::addLogMsg(const std::string &msg) {
     mLog.push_back(LogMessage{msg});
+}
+
+void World::appendLogMsg(const std::string &msg) {
+    if (mLog.empty()) addLogMsg(msg);
+    mLog.back().msg += msg;
 }
 
 int World::getLogCount() const {
@@ -347,9 +405,23 @@ void World::tick() {
 
         ++actor->age;
 
-        if (actor->def.type == TYPE_VILLAGER || actor->def.type == TYPE_MONSTER) {
+        if (actor->def.type == TYPE_VILLAGER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
             tryMoveActor(actor, dir);
+
+        } else if (actor->def.type == TYPE_MONSTER) {
+            Point victimPos = findActorNearest(actor->pos, actor->faction, 8);
+            if (valid(victimPos)) {
+                if (victimPos.distance(actor->pos) < 2) {
+                    const Tile &tile = at(victimPos);
+                    doDamage(actor, tile.actor);
+                } else {
+                    tryMoveActor(actor, actor->pos.directionTo(victimPos));
+                }
+            } else {
+                Dir dir = static_cast<Dir>(mRandom.next32() % 8);
+                tryMoveActor(actor, dir);
+            }
 
         } else if (actor->def.type == TYPE_ANIMAL) {
             if (actor->def.foodItem >= 0) {
@@ -390,6 +462,31 @@ void World::tick() {
                     delete actor;
                 }
             }
+        }
+    }
+
+    auto iter = mActors.begin();
+    while (iter != mActors.end()) {
+        if ((*iter)->pos.x == 0 && (*iter)->pos.y == 0) {
+            Actor *actor = *iter;
+            if (actor->def.type == TYPE_PLAYER) {
+                actor->reset();
+                Point p;
+                do {
+                    p.x = mRandom.next32() % mWidth;
+                    p.y = mRandom.next32() % mHeight;
+                } while (getTileDef(at(p).terrain).solid || at(p).actor);
+                moveActor(actor, p);
+                addLogMsg("You have died! Respawning...");
+                std::cerr << "tick (info): respawning player at " << p << ".\n";
+                actionCentrePan(*this, actor, Command{}, true);
+                ++iter;
+            } else {
+                iter = mActors.erase(iter);
+                delete actor;
+            }
+        } else {
+            ++iter;
         }
     }
 

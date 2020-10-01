@@ -102,6 +102,8 @@ struct ActorDef {
     int health;
     int foodItem;
     int moveChance;
+    int defaultFaction;
+    int baseDamage;
 };
 
 struct ItemDef {
@@ -152,7 +154,7 @@ struct Inventory {
 };
 
 struct Actor {
-    Actor(const ActorDef &def) : type(def.ident), def(def), age(0) { }
+    Actor(const ActorDef &def) : type(def.ident), def(def), age(0), faction(def.defaultFaction) { }
     void reset();
 
     int type;
@@ -162,6 +164,7 @@ struct Actor {
 
     int health;
     int age;
+    int faction;
 };
 
 struct Item {
@@ -217,9 +220,12 @@ public:
     void removeItem(Item *item);
 
     Point findItemNearest(const Point &to, int itemIdent, int radius) const;
+    Point findActorNearest(const Point &to, int notOfFaction, int radius) const;
+    void doDamage(Actor *attacker, Actor *victim);
 
     void addLogMsg(const LogMessage &msg);
     void addLogMsg(const std::string &msg);
+    void appendLogMsg(const std::string &msg);
     int getLogCount() const;
     const LogMessage& getLogMsg(int index) const;
 
@@ -298,6 +304,9 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);
 bool actionWait(World &w, Actor *player, const Command &command, bool silent);
 
+
+void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages);
+std::string upperFirst(std::string text);
 
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);

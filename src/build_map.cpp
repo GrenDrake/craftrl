@@ -110,10 +110,10 @@ bool buildmap(World &w, unsigned long seed) {
     }
 
     // add NPCs
-    int npcList[] = { 2, 3, 3, 4, 4, 4, 5, 5, 6, 3, 3, 4, 4, 4, 5, 5, 6};
+    int npcList[] = { 2, 3, 3, 4, 4, 4, 5, 5, 6, 3, 3, 4, 4, 4, 5, 5, 6, 2000};
     for (int i = 0; i < 75; ++i) {
         Point p = findOpenTile(w, rng, false, true);
-        int npcNum = rng.next32() % 9;
+        int npcNum = rng.next32() % 18;
         int type = npcList[npcNum];
         Actor *actor = new Actor(w.getActorDef(type));
         actor->reset();

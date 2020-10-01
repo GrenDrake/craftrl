@@ -7,7 +7,7 @@ void doCrafting(World &w, Actor *player, unsigned craftingStation);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 
 
-void makeLootAt(World &w, const LootTable *table, const Point &where) {
+void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages) {
     if (!table || table->mRows.empty()) return;
 
     std::stringstream s;
@@ -21,14 +21,23 @@ void makeLootAt(World &w, const LootTable *table, const Point &where) {
             if (chance < row.chance) {
                 Point dest = w.findDropSpace(where);
                 if (w.valid(dest)) {
-                    s << "Dropped " << def.name << ". ";
+                    s << " Dropped " << def.name << '.';
                     Item *item = new Item(def);
                     if (!w.moveItem(item, dest)) delete item;
                 }
             }
         }
     }
-    w.addLogMsg(s.str());
+    if (showMessages) w.appendLogMsg(s.str());
+}
+
+std::string upperFirst(std::string text) {
+    if (!text.empty()) {
+        if (text[0] >= 'a' && text[0] <= 'z') {
+            text[0] -= 'a' - 'A';
+        }
+    }
+    return text;
 }
 
 void shiftCameraForMove(World &w, Actor *player) {
@@ -64,19 +73,8 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     const Tile &tile = w.at(dest);
 
     if (tile.actor) {
-        if (tile.actor->def.type == TYPE_PLANT) {
-            w.addLogMsg("Broke " + tile.actor->def.name + '.');
-            Actor *actor = tile.actor;
-            w.removeActor(actor);
-            makeLootAt(w, actor->def.loot, dest);
-            delete actor;
-            return true;
-        } else if (tile.actor->def.type == TYPE_ANIMAL) {
-            w.addLogMsg("Killed " + tile.actor->def.name + '.');
-            Actor *actor = tile.actor;
-            w.removeActor(actor);
-            makeLootAt(w, actor->def.loot, dest);
-            delete actor;
+        if (tile.actor->def.type != TYPE_VILLAGER) {
+            w.doDamage(player, tile.actor);
             return true;
         } else {
             w.addLogMsg("Can't attack that.");
@@ -88,7 +86,7 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     if (td.breakTo >= 0) {
         w.setTerrain(dest, td.breakTo);
         w.addLogMsg("Broken.");
-        makeLootAt(w, td.loot, dest);
+        makeLootAt(w, td.loot, dest, true);
     } else {
         if (!silent) w.addLogMsg("Nothing to attack.");
         return false;

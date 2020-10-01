@@ -25,6 +25,7 @@ bool parseActor(World &w, TokenData &data) {
     actor.loot = nullptr;
     actor.foodItem = -1;
     actor.moveChance = 1000;
+    actor.baseDamage = 1;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -54,6 +55,12 @@ bool parseActor(World &w, TokenData &data) {
             data.next();
         } else if (name == "health") {
             if (!data.asInt(actor.health)) return false;
+            data.next();
+        } else if (name == "defaultFaction") {
+            if (!data.asInt(actor.defaultFaction)) return false;
+            data.next();
+        } else if (name == "baseDamage") {
+            if (!data.asInt(actor.baseDamage)) return false;
             data.next();
         } else if (name == "growTo") {
             if (!data.asInt(actor.growTo)) return false;
