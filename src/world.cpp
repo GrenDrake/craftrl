@@ -317,10 +317,6 @@ void World::doDamage(Actor *attacker, Actor *victim) {
 
 }
 
-void World::addLogMsg(const LogMessage &msg) {
-    mLog.push_back(msg);
-}
-
 void World::addLogMsg(const std::string &msg) {
     mLog.push_back(LogMessage{msg});
 }

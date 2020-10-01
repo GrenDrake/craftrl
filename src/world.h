@@ -229,7 +229,6 @@ public:
     Point findActorNearest(const Point &to, int notOfFaction, int radius) const;
     void doDamage(Actor *attacker, Actor *victim);
 
-    void addLogMsg(const LogMessage &msg);
     void addLogMsg(const std::string &msg);
     void appendLogMsg(const std::string &msg);
     int getLogCount() const;
