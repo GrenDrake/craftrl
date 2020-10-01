@@ -39,13 +39,17 @@ void makeLootAt(World &w, const LootTable *table, const Point &where, bool showM
     }
 
     inv.cleanup();
-    for (const InventoryRow &row : inv.mContents) {
-        if (row.qty > 0) {
-            s << " Dropped " << row.def->name;
-            if (row.qty > 1) s << " (x" << row.qty << ')';
-            s << '.';
-        }
+    if (inv.mContents.empty()) return;
+    s << " Dropped";
+    const unsigned invSize = inv.mContents.size();
+    for (unsigned i = 0; i < invSize; ++i) {
+        if (i != 0 && invSize > 2) s << ",";
+        if (i == invSize - 1 && invSize > 1) s << " and";
+        const InventoryRow &row = inv.mContents[i];
+        s << ' ' << row.def->name;
+        if (row.qty > 1) s << " (x" << row.qty << ')';
     }
+    s << '.';
     if (showMessages) w.appendLogMsg(s.str());
 }
 

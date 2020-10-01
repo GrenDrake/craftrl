@@ -306,7 +306,9 @@ void World::doDamage(Actor *attacker, Actor *victim) {
 
     if (victim->health <= 0) {
         std::stringstream deathMsg;
-        deathMsg << ' ' << upperFirst(victim->def.name) << " dies.";
+        deathMsg << ' ' << upperFirst(victim->def.name);
+        if (victim->def.type == TYPE_PLANT) deathMsg << " broken.";
+        else                                deathMsg << " dies.";
         if (showMsgs) appendLogMsg(deathMsg.str());
         Point oldPos = victim->pos;
         moveActor(victim, Point(0, 0));
