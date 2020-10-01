@@ -320,6 +320,7 @@ std::string commandName(int command);
 ActionHandler commandAction(int command);
 
 void ui_MessageBox(const std::string &title, const std::string &message);
+bool ui_prompt(const std::string &title, const std::string &message, std::string &text);
 
 Dir rotate45(Dir d);
 Dir unrotate45(Dir d);
