@@ -85,9 +85,13 @@ void redraw_main(World &w) {
     }
 
     terminal_color(0xFFFFFFFF);
-    for (int i = 0; i < logHeight; ++i) {
+    for (int i = 0; i < logHeight; ) {
         const LogMessage &msg = w.getLogMsg(i);
-        terminal_print(logX, screenHeight - i - 1, msg.msg.c_str());
+        if (i == 0) terminal_color(0xFFFFFFFF);
+        else        terminal_color(0xFF777777);
+        dimensions_t size = terminal_measure_ext(80, 3, msg.msg.c_str());
+        terminal_print_ext(logX, screenHeight - i - size.height, 80, 3, TK_ALIGN_LEFT, msg.msg.c_str());
+        i += size.height;
     }
 }
 
