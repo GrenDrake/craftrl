@@ -464,6 +464,7 @@ void World::tick() {
                 } else {
                     std::cerr << actor->def.name << " at " << actor->pos << " has grown into " << def.name << ".\n";
                     Actor *newActor = new Actor(def);
+                    newActor->reset();
                     mActors[i] = newActor;
                     newActor->pos = actor->pos;
                     setActor(actor->pos, newActor);
