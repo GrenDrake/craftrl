@@ -17,6 +17,9 @@ const int INPUT_KEY_COUNT = 3;
 const int AI_NONE = 0;
 const int AI_WANDER = 1;
 
+const int SORT_NAME             = 0;
+const int SORT_TYPE             = 1;
+
 const int TYPE_PLAYER    = 0;
 const int TYPE_VILLAGER  = 1;
 const int TYPE_PLANT     = 2;
@@ -52,6 +55,7 @@ const int CMD_SELECT_PGDN       = 18;
 const int CMD_SELECT_PGUP       = 19;
 const int CMD_SELECT_HOME       = 20;
 const int CMD_SELECT_END        = 21;
+const int CMD_SORT_INV_NAME     = 22;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -149,6 +153,7 @@ struct Inventory {
     int qty(const ItemDef*) const;
     bool remove(const ItemDef*, int qty = 1);
     int size() const { return mContents.size(); }
+    void sort(int sortType);
 
     std::vector<InventoryRow> mContents;
 };
@@ -299,6 +304,7 @@ bool actionSelectEnd(World &w, Actor *player, const Command &command, bool silen
 bool actionSelectHome(World &w, Actor *player, const Command &command, bool silent);
 bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool silent);
 bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent);
+bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent);
 bool actionTake(World &w, Actor *player, const Command &command, bool silent);
 bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);

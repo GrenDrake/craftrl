@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -52,6 +53,13 @@ bool Inventory::remove(const ItemDef *def, int qty) {
     }
 
     return false;
+}
+
+bool sortByName(const InventoryRow &lhs, const InventoryRow &rhs) {
+    return lhs.def->name < rhs.def->name;
+}
+void Inventory::sort(int sortType) {
+    std::sort(mContents.begin(), mContents.end(), sortByName);
 }
 
 

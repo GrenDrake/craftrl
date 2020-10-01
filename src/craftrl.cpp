@@ -109,6 +109,10 @@ void gameloop(World &w) {
         terminal_refresh();
         int key = terminal_read();
 
+        if (key == TK_P) {
+            player->inventory.sort(SORT_NAME);
+        }
+
         if (key == TK_MOUSE_RIGHT) {
             const Point &camera = w.getCamera();
             int mx = terminal_state(TK_MOUSE_X);

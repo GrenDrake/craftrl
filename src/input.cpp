@@ -25,6 +25,7 @@ const Command gameCommands[] = {
     {   CMD_SELECT_PGUP,    Dir::None,      { { TK_PAGEUP    } } },
     {   CMD_SELECT_HOME,    Dir::None,      { { TK_HOME      } } },
     {   CMD_SELECT_END,     Dir::None,      { { TK_END       } } },
+    {   CMD_SORT_INV_NAME,  Dir::None,      { { TK_O         } } },
 
     {   CMD_CONTEXTMOVE,    Dir::North,     { { TK_UP,       }, { TK_K }, { TK_KP_8 } } },
     {   CMD_CONTEXTMOVE,    Dir::East,      { { TK_RIGHT,    }, { TK_L }, { TK_KP_6 } } },
@@ -83,6 +84,7 @@ std::string commandName(int command) {
         case CMD_SELECT_PGUP:   return "Pageup Inventory";
         case CMD_SELECT_HOME:   return "Inventory First";
         case CMD_SELECT_END:    return "Inventory Last";
+        case CMD_SORT_INV_NAME: return "Sort Inventory by Name";
         default: {
             std::stringstream s;
             s << "(Unknown Command " << command << ')';
@@ -113,6 +115,7 @@ ActionHandler commandAction(int command) {
         case CMD_SELECT_PGUP:   return actionSelectPageup;
         case CMD_SELECT_HOME:   return actionSelectHome;
         case CMD_SELECT_END:    return actionSelectEnd;
+        case CMD_SORT_INV_NAME: return actionSortInvByName;
         default:                return nullptr;
     }
 }

@@ -423,3 +423,8 @@ bool actionSelectPageup(World &w, Actor *player, const Command &command, bool si
     if (w.selection < 0) w.selection = 0;
     return false;
 }
+
+bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent) {
+    player->inventory.sort(SORT_NAME);
+    return false;
+}
