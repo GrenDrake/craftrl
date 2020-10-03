@@ -28,7 +28,7 @@ int runMenu(Menu &menu) {
         terminal_print(5, 3, menu.titleLeft.c_str());
         terminal_print(75 - menu.titleRight.size(), 3, menu.titleRight.c_str());
 
-        for (int i = 0; i < menu.items.size(); ++i) {
+        for (unsigned i = 0; i < menu.items.size(); ++i) {
             const MenuItem &item = menu.items[i];
             if (item.type == MENU_SPACE) continue;
             setColourIfSelected(menu.selection, i, !item.disabled);
@@ -60,10 +60,10 @@ int runMenu(Menu &menu) {
                 break;
             case TK_DOWN: {
                 int newItem = menu.selection + 1;
-                while (menu.items[newItem].disabled && newItem < menu.items.size() - 1) {
+                while (menu.items[newItem].disabled && newItem < static_cast<int>(menu.items.size()) - 1) {
                     ++newItem;
                 }
-                if (!menu.items[newItem].disabled && newItem < menu.items.size()) menu.selection = newItem;
+                if (!menu.items[newItem].disabled && newItem < static_cast<int>(menu.items.size())) menu.selection = newItem;
                 break; }
             case TK_UP: {
                 if (menu.selection <= 0) break;
