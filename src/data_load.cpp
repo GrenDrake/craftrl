@@ -25,6 +25,7 @@ bool parseActor(World &w, TokenData &data) {
     actor.loot = nullptr;
     actor.foodItem = -1;
     actor.moveChance = 1000;
+    actor.baseDamage = 1;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -54,6 +55,12 @@ bool parseActor(World &w, TokenData &data) {
             data.next();
         } else if (name == "health") {
             if (!data.asInt(actor.health)) return false;
+            data.next();
+        } else if (name == "defaultFaction") {
+            if (!data.asInt(actor.defaultFaction)) return false;
+            data.next();
+        } else if (name == "baseDamage") {
+            if (!data.asInt(actor.baseDamage)) return false;
             data.next();
         } else if (name == "growTo") {
             if (!data.asInt(actor.growTo)) return false;
@@ -210,6 +217,7 @@ bool parseRecipe(World &w, TokenData &data) {
     RecipeDef recipe;
     recipe.makeQty = 1;
     recipe.makeIdent = -1;
+    recipe.craftingStation = 0;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -221,6 +229,11 @@ bool parseRecipe(World &w, TokenData &data) {
             data.next();
         } else if (name == "makeIdent") {
             if (!data.asInt(recipe.makeIdent)) return false;
+            data.next();
+        } else if (name == "craftingStation") {
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            recipe.craftingStation = value;
             data.next();
         } else if (name == "part") {
             RecipeRow row;
@@ -261,6 +274,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.breakTo = -1;
     tile.doorTo = -1;
     tile.loot = nullptr;
+    tile.grantsCrafting = 0;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -290,6 +304,11 @@ bool parseTile(World &w, TokenData &data) {
             data.next();
         } else if (name == "doorTo") {
             if (!data.asInt(tile.doorTo)) return false;
+            data.next();
+        } else if (name == "grantsCrafting") {
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            tile.grantsCrafting = value;
             data.next();
         } else if (name == "loot") {
             LootTable *table = parseLootTable(w, data);

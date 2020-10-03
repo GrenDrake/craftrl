@@ -1,34 +1,65 @@
+#include <iostream>
 #include <sstream>
 #include "lodepng.h"
 #include "world.h"
 
 Dir getDir(World &w, const std::string &reason);
-void doCrafting(World &w, Actor *player);
+void doCrafting(World &w, Actor *player, unsigned craftingStation);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 
 
-void makeLootAt(World &w, const LootTable *table, const Point &where) {
+void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages) {
     if (!table || table->mRows.empty()) return;
 
-    std::stringstream s;
+    Inventory inv;
     for (const LootRow &row : table->mRows) {
         if (row.ident < 0 || row.chance < 0 || row.max < 0) continue;
         const ItemDef &def = w.getItemDef(row.ident);
         if (def.ident < 0) continue;
         int chance = w.getRandom().next32() % 100;
         int qty = w.getRandom().between(row.min, row.max);
-        for (int i = 0; i < qty; ++i ) {
-            if (chance < row.chance) {
-                Point dest = w.findDropSpace(where);
-                if (w.valid(dest)) {
-                    s << "Dropped " << def.name << ". ";
-                    Item *item = new Item(def);
-                    if (!w.moveItem(item, dest)) delete item;
+        if (chance < row.chance) inv.add(&def, qty);
+    }
+
+    std::stringstream s;
+    for (InventoryRow &row : inv.mContents) {
+        int realDropped = 0;
+        for (int i = 0; i < row.qty; ++i ) {
+            Point dest = w.findDropSpace(where);
+            if (w.valid(dest)) {
+                Item *item = new Item(*row.def);
+                if (!w.moveItem(item, dest)) {
+                    delete item;
+                } else {
+                    ++realDropped;
                 }
             }
         }
+        row.qty = realDropped;
     }
-    w.addLogMsg(s.str());
+
+    inv.cleanup();
+    if (inv.mContents.empty()) return;
+    s << " Dropped";
+    const unsigned invSize = inv.mContents.size();
+    for (unsigned i = 0; i < invSize; ++i) {
+        if (i != 0 && invSize > 2) s << ",";
+        if (i == invSize - 1 && invSize > 1) s << " and";
+        const InventoryRow &row = inv.mContents[i];
+        s << ' ' << row.def->name;
+        if (row.qty > 1) s << " (x" << row.qty << ')';
+    }
+    s << '.';
+    if (showMessages) w.appendLogMsg(s.str());
+}
+
+std::string upperFirst(std::string text) {
+    if (!text.empty()) {
+        if (text[0] >= 'a' && text[0] <= 'z') {
+            text[0] -= 'a' - 'A';
+        }
+    }
+    return text;
 }
 
 void shiftCameraForMove(World &w, Actor *player) {
@@ -61,33 +92,23 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     }
 
     Point dest = player->pos.shift(dir);
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
 
     if (tile.actor) {
-        if (tile.actor->def.type == TYPE_PLANT) {
-            w.addLogMsg("Broke " + tile.actor->def.name + '.');
-            Actor *actor = tile.actor;
-            w.moveActor(actor, Point(-1, -1));
-            makeLootAt(w, actor->def.loot, dest);
-            delete actor;
-            return true;
-        } else if (tile.actor->def.type == TYPE_ANIMAL) {
-            w.addLogMsg("Killed " + tile.actor->def.name + '.');
-            Actor *actor = tile.actor;
-            w.moveActor(actor, Point(-1, -1));
-            makeLootAt(w, actor->def.loot, dest);
-            delete actor;
+        if (tile.actor->def.type != TYPE_VILLAGER) {
+            w.doDamage(player, tile.actor);
             return true;
         } else {
             w.addLogMsg("Can't attack that.");
+            return false;
         }
     }
 
     const TileDef &td = w.getTileDef(tile.terrain);
     if (td.breakTo >= 0) {
-        tile.terrain = td.breakTo;
+        w.setTerrain(dest, td.breakTo);
         w.addLogMsg("Broken.");
-        makeLootAt(w, td.loot, dest);
+        makeLootAt(w, td.loot, dest, true);
     } else {
         if (!silent) w.addLogMsg("Nothing to attack.");
         return false;
@@ -120,17 +141,21 @@ bool actionContextMove(World &w, Actor *player, const Command &command, bool sil
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
 
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
     if (tile.actor) return actionTalkActor(w, player, newCommand, true);
 
     const TileDef &tdef = w.getTileDef(tile.terrain);
+    if (tdef.grantsCrafting) {
+        doCrafting(w, player, tdef.grantsCrafting);
+        return false;
+    }
     if (tdef.solid) return actionDo(w, player, newCommand, true);
     return actionMove(w, player, newCommand, true);
 }
 
 
 bool actionCraft(World &w, Actor *player, const Command &command, bool silent) {
-    doCrafting(w, player);
+    doCrafting(w, player, 0);
     return false;
 }
 
@@ -146,7 +171,7 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
     }
 
     Point dest = player->pos.shift(dir);
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
 
     if (tile.actor) {
         w.addLogMsg(tile.actor->def.name + " is in the way.");
@@ -155,7 +180,7 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
 
     const TileDef &td = w.getTileDef(tile.terrain);
     if (td.doorTo >= 0) {
-        tile.terrain = td.doorTo;
+        w.setTerrain(dest, td.doorTo);
         if (!silent) w.addLogMsg("Done.");
         return true;
     }
@@ -291,7 +316,7 @@ bool actionTake(World &w, Actor *player, const Command &command, bool silent) {
     }
 
     if (player->inventory.add(&item->def)) {
-        w.moveItem(item, Point(-1, -1));
+        w.removeItem(item);
         w.addLogMsg("Took " + item->def.name + ".");
         delete item;
         return true;
@@ -313,7 +338,7 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
     Point dest = player->pos.shift(dir);
     if (!w.valid(dest)) return false;
 
-    Tile &tile = w.at(dest);
+    const Tile &tile = w.at(dest);
     if (tile.actor) {
         std::stringstream s;
         switch (tile.actor->def.type) {
@@ -366,13 +391,13 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
             return false;
         }
         Point dest = player->pos.shift(d);
-        Tile &t = w.at(dest);
+        const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
         if (!td.ground || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
-        t.terrain = def->constructs;
+        w.setTerrain(dest, def->constructs);
         player->inventory.remove(def);
         return true;
     } else {
@@ -418,5 +443,10 @@ bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool 
 bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent) {
     w.selection -= 10;
     if (w.selection < 0) w.selection = 0;
+    return false;
+}
+
+bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent) {
+    player->inventory.sort(SORT_NAME);
     return false;
 }

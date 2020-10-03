@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -5,77 +6,12 @@
 #include "world.h"
 
 
-LogMessage World::BAD_LOGMESSAGE;
-Tile World::BAD_TILE(-1);
+const LogMessage World::BAD_LOGMESSAGE;
+const Tile World::BAD_TILE(-1);
 const ActorDef World::BAD_ACTORDEF = { -1 };
 const ItemDef World::BAD_ITEMDEF = { -1 };
 const TileDef World::BAD_TILEDEF = { -1 };
 const RecipeDef World::BAD_RECIPEDEF = { -1 };
-
-
-Point Point::shift(Dir dir, int amnt) const {
-    switch (dir) {
-        case Dir::North:        return Point(x,         y - amnt);
-        case Dir::Northeast:    return Point(x + amnt,  y - amnt);
-        case Dir::East:         return Point(x + amnt,  y       );
-        case Dir::Southeast:    return Point(x + amnt,  y + amnt);
-        case Dir::South:        return Point(x,         y + amnt);
-        case Dir::Southwest:    return Point(x - amnt,  y + amnt);
-        case Dir::West:         return Point(x - amnt,  y       );
-        case Dir::Northwest:    return Point(x - amnt,  y - amnt);
-        default:                return *this;
-    }
-}
-
-Dir Point::directionTo(const Point &rhs) const {
-    if (rhs.x < x) {
-        if (rhs.y < y)      return Dir::Northwest;
-        else if (rhs.y > y) return Dir::Southwest;
-        else                return Dir::West;
-    } else if (rhs.x > x) {
-        if (rhs.y < y)      return Dir::Northeast;
-        else if (rhs.y > y) return Dir::Southeast;
-        else                return Dir::East;
-    } else {
-        if (rhs.y < y)      return Dir::North;
-        else if (rhs.y > y) return Dir::South;
-        else                return Dir::None;
-    }
-}
-
-double Point::distance(const Point &rhs) const {
-    return sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));
-}
-
-Dir rotate45(Dir d) {
-    switch(d) {
-        case Dir::North:        return Dir::Northeast;
-        case Dir::Northeast:    return Dir::East;
-        case Dir::East:         return Dir::Southeast;
-        case Dir::Southeast:    return Dir::South;
-        case Dir::South:        return Dir::Southwest;
-        case Dir::Southwest:    return Dir::West;
-        case Dir::West:         return Dir::Northwest;
-        case Dir::Northwest:    return Dir::North;
-        default:                return Dir::None;
-    }
-    return Dir::None;
-}
-
-Dir unrotate45(Dir d) {
-    switch(d) {
-        case Dir::North:        return Dir::Northwest;
-        case Dir::Northeast:    return Dir::North;
-        case Dir::East:         return Dir::Northeast;
-        case Dir::Southeast:    return Dir::East;
-        case Dir::South:        return Dir::Southeast;
-        case Dir::Southwest:    return Dir::South;
-        case Dir::West:         return Dir::Southwest;
-        case Dir::Northwest:    return Dir::West;
-        default:                return Dir::None;
-    }
-    return Dir::None;
-}
 
 
 bool Inventory::add(const ItemDef *def, int qty) {
@@ -117,6 +53,24 @@ bool Inventory::remove(const ItemDef *def, int qty) {
     }
 
     return false;
+}
+
+void Inventory::cleanup() {
+    auto iter = mContents.begin();
+    while (iter != mContents.end()) {
+        if (iter->qty <= 0) {
+            iter = mContents.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
+bool sortByName(const InventoryRow &lhs, const InventoryRow &rhs) {
+    return lhs.def->name < rhs.def->name;
+}
+void Inventory::sort(int sortType) {
+    std::sort(mContents.begin(), mContents.end(), sortByName);
 }
 
 
@@ -194,50 +148,58 @@ Point World::findDropSpace(const Point &near) const {
         if (t.actor && t.actor->def.type == TYPE_PLANT) continue;
         return p;
     }
-    return Point(-1, -1);
+    return nowhere;
 }
 
 
 const Tile& World::at(const Point &p) const {
-    if (!valid(p)) {
-        BAD_TILE.terrain = -1;
-        return BAD_TILE;
-    }
+    if (!valid(p)) return BAD_TILE;
     int c = p.x + p.y * mWidth;
     return mTiles[c];
 }
 
-Tile& World::at(const Point &p) {
-    if (!valid(p)) {
-        BAD_TILE.terrain = -1;
-        return BAD_TILE;
-    }
-    int c = p.x + p.y * mWidth;
-    return mTiles[c];
+
+void World::setActor(const Point &pos, Actor *toActor) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].actor = toActor;
+}
+
+void World::setItem(const Point &pos, Item *toItem) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].item = toItem;
+}
+
+void World::setTerrain(const Point &pos, int toTile) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].terrain = toTile;
 }
 
 bool World::moveActor(Actor *actor, const Point &to) {
     if (!actor || (valid(to) && at(to).actor)) return false; // space already occupied
 
+    if (to.x == 0 && to.y == 0) {
+        setActor(actor->pos, nullptr);
+        actor->pos = to;
+        return true;
+    }
+
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
-        at(actor->pos).actor = nullptr;
         if (!valid(to)) {
-            auto iter = mActors.begin();
-            while (iter != mActors.cend()) {
-                if (*iter == actor) {
-                    iter = mActors.erase(iter);
-                } else {
-                    ++iter;
-                }
-            }
+            std::cerr << "moveActor: Moving actor (" << actor->def.name << ") at " << actor->pos << " to invalid position.\n";
+            removeActor(actor);
             return true;
+        } else {
+            setActor(actor->pos, nullptr);
         }
     } else {
         mActors.push_back(actor);
     }
 
     if (valid(to)) {
-        at(to).actor = actor;
+        setActor(to, actor);
         if (actor->type == 1) mPlayer = actor;
     }
     actor->pos = to;
@@ -256,18 +218,41 @@ bool World::moveItem(Item *item, const Point &to) {
     if (!item || (valid(to) && at(to).item)) return false; // space already occupied
 
     if (valid(item->pos) && at(item->pos).item == item) {
-        at(item->pos).item = nullptr;
+        if (!valid(to)) {
+            std::cerr << "moveItem: Moving item (" << item->def.name << ") at " << item->pos << " to invalid position.\n";
+            removeItem(item);
+        } else {
+            setItem(item->pos, nullptr);
+        }
     }
 
     if (valid(to)) {
-        at(to).item = item;
+        setItem(to, item);
     }
     item->pos = to;
     return true;
 }
 
+void World::removeActor(Actor *actor) {
+    if (at(actor->pos).actor != actor) return;
+    setActor(actor->pos, nullptr);
+    auto iter = mActors.begin();
+    while (iter != mActors.end()) {
+        if (*iter == actor) {
+            iter = mActors.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
+void World::removeItem(Item *item) {
+    if (at(item->pos).item != item) return;
+    setItem(item->pos, nullptr);
+}
+
 Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
-    Point result(-1, -1);
+    Point result = nowhere;
     double distance = 999999.0;
     for (int y = to.y - radius; y <= to.y + radius; ++y) {
         for (int x = to.x - radius; x <= to.x + radius; ++x) {
@@ -285,12 +270,62 @@ Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
     return result;
 }
 
-void World::addLogMsg(const LogMessage &msg) {
-    mLog.push_back(msg);
+Point World::findActorNearest(const Point &to, int notOfFaction, int radius) const {
+    Point result = nowhere;
+    double distance = 999999.0;
+    for (int y = to.y - radius; y <= to.y + radius; ++y) {
+        for (int x = to.x - radius; x <= to.x + radius; ++x) {
+            Point here(x, y);
+            const Tile &tile = at(here);
+            if (!tile.actor || tile.actor->def.type == TYPE_PLANT) continue;
+            if (notOfFaction < 0 || tile.actor->faction != notOfFaction) {
+                double myDist = here.distance(to);
+                if (myDist < distance) {
+                    result = here;
+                    distance = myDist;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+void World::doDamage(Actor *attacker, Actor *victim) {
+    if (!attacker || !victim) {
+        std::cerr << "doDamage: found null actor.\n";
+        return;
+    }
+
+    bool showMsgs = mPlayer->pos.distance(victim->pos) < 10;
+    int damage = attacker->def.baseDamage;
+    victim->health -= damage;
+
+    std::stringstream msg;
+    msg << upperFirst(attacker->def.name) << " does " << damage << " damage to " << victim->def.name << ".";
+    if (showMsgs) addLogMsg(msg.str());
+
+    if (victim->health <= 0) {
+        std::stringstream deathMsg;
+        deathMsg << ' ' << upperFirst(victim->def.name);
+        if (victim->def.type == TYPE_PLANT) deathMsg << " broken.";
+        else                                deathMsg << " dies.";
+        if (showMsgs) appendLogMsg(deathMsg.str());
+        Point oldPos = victim->pos;
+        moveActor(victim, Point(0, 0));
+        if (victim->def.loot) {
+            makeLootAt(*this, victim->def.loot, oldPos, showMsgs);
+        }
+    }
+
 }
 
 void World::addLogMsg(const std::string &msg) {
     mLog.push_back(LogMessage{msg});
+}
+
+void World::appendLogMsg(const std::string &msg) {
+    if (mLog.empty()) addLogMsg(msg);
+    mLog.back().msg += msg;
 }
 
 int World::getLogCount() const {
@@ -342,10 +377,12 @@ void World::addRecipeDef(const RecipeDef &td) {
     mRecipeDefs.push_back(td);
 }
 
-std::vector<const RecipeDef*> World::getRecipeList() const {
+std::vector<const RecipeDef*> World::getRecipeList(unsigned stations) const {
     std::vector<const RecipeDef*> list;
     for (const RecipeDef &td : mRecipeDefs) {
-        list.push_back(&td);
+        if ((td.craftingStation & stations) == td.craftingStation) {
+            list.push_back(&td);
+        }
     }
     return list;
 }
@@ -385,9 +422,23 @@ void World::tick() {
 
         ++actor->age;
 
-        if (actor->def.type == TYPE_VILLAGER || actor->def.type == TYPE_MONSTER) {
+        if (actor->def.type == TYPE_VILLAGER) {
             Dir dir = static_cast<Dir>(mRandom.next32() % 8);
             tryMoveActor(actor, dir);
+
+        } else if (actor->def.type == TYPE_MONSTER) {
+            Point victimPos = findActorNearest(actor->pos, actor->faction, 8);
+            if (valid(victimPos)) {
+                if (victimPos.distance(actor->pos) < 2) {
+                    const Tile &tile = at(victimPos);
+                    doDamage(actor, tile.actor);
+                } else {
+                    tryMoveActor(actor, actor->pos.directionTo(victimPos));
+                }
+            } else {
+                Dir dir = static_cast<Dir>(mRandom.next32() % 8);
+                tryMoveActor(actor, dir);
+            }
 
         } else if (actor->def.type == TYPE_ANIMAL) {
             if (actor->def.foodItem >= 0) {
@@ -396,10 +447,10 @@ void World::tick() {
                     Dir d = actor->pos.directionTo(foodPos);
                     if (d == Dir::None) {
                         // on food item, eat it
-                        Tile &tile = at(foodPos);
+                        const Tile &tile = at(foodPos);
                         Item *item = tile.item;
                         if (item) {
-                            moveItem(item, Point(-1, -1));
+                            removeItem(item);
                             delete item;
                         }
                     } else {
@@ -422,12 +473,38 @@ void World::tick() {
                 } else {
                     std::cerr << actor->def.name << " at " << actor->pos << " has grown into " << def.name << ".\n";
                     Actor *newActor = new Actor(def);
+                    newActor->reset();
                     mActors[i] = newActor;
                     newActor->pos = actor->pos;
-                    at(actor->pos).actor = newActor;
+                    setActor(actor->pos, newActor);
                     delete actor;
                 }
             }
+        }
+    }
+
+    auto iter = mActors.begin();
+    while (iter != mActors.end()) {
+        if ((*iter)->pos.x == 0 && (*iter)->pos.y == 0) {
+            Actor *actor = *iter;
+            if (actor->def.type == TYPE_PLAYER) {
+                actor->reset();
+                Point p;
+                do {
+                    p.x = mRandom.next32() % mWidth;
+                    p.y = mRandom.next32() % mHeight;
+                } while (getTileDef(at(p).terrain).solid || at(p).actor);
+                moveActor(actor, p);
+                addLogMsg("You have died! Respawning...");
+                std::cerr << "tick (info): respawning player at " << p << ".\n";
+                actionCentrePan(*this, actor, Command{}, true);
+                ++iter;
+            } else {
+                iter = mActors.erase(iter);
+                delete actor;
+            }
+        } else {
+            ++iter;
         }
     }
 
@@ -465,8 +542,9 @@ bool World::savegame(const std::string &filename) const {
         return false;
     }
 
+    const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
     write32(out, 0x4C5243); // magic number
-    write32(out, 0);        // version #
+    write32(out, versionNumber);
     write32(out, mWidth);
     write32(out, mHeight);
 
@@ -550,7 +628,9 @@ bool World::loadgame(const std::string &filename) {
         std::cerr << "loadgame: bad magic number.\n";
         return false;
     }
-    if (read32(inf) != 0) {
+
+    const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
+    if (read32(inf) != versionNumber) {
         std::cerr << "loadgame: incompatable save version.\n";
         return false;
     }

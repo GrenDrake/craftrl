@@ -2,6 +2,7 @@ define TYPE_PLAYER              0;
 define TYPE_VILLAGER            1;
 define TYPE_PLANT               2;
 define TYPE_ANIMAL              3;
+define TYPE_MONSTER             4;
 
 
 define TILE_INVALID             -1;
@@ -9,16 +10,18 @@ define TILE_DIRT                0;
 define TILE_STONE               1;
 define TILE_GRASS               2;
 define TILE_WATER               3;
-define TILE_WOOD_WALL           4;
-define TILE_STONE_WALL          5;
-define TILE_WOOD_FLOOR          6;
-define TILE_STONE_FLOOR         7;
-define TILE_WOOD_DOOR_CLOSED    8;
-define TILE_WOOD_DOOR_OPEN      9;
-define TILE_STONE_DOOR_CLOSED   10;
-define TILE_STONE_DOOR_OPEN     11;
-define TILE_WINDOW              12;
-define TILE_FENCE               13;
+define TILE_WOOD_WALL           104;
+define TILE_STONE_WALL          105;
+define TILE_WOOD_FLOOR          106;
+define TILE_STONE_FLOOR         107;
+define TILE_WOOD_DOOR_CLOSED    108;
+define TILE_WOOD_DOOR_OPEN      109;
+define TILE_STONE_DOOR_CLOSED   110;
+define TILE_STONE_DOOR_OPEN     111;
+define TILE_WINDOW              112;
+define TILE_FENCE               113;
+define TILE_BASIC_WORKBENCH     500;
+define TILE_STD_WORKBENCH       501;
 
 define ACTOR_PLAYER             1;
 define ACTOR_KOBOLD             2;
@@ -36,6 +39,7 @@ define ACTOR_CARROT_SEEDLING    1006;
 define ACTOR_GROWN_CARROT       1007;
 define ACTOR_TURNIP_SEEDLING    1008;
 define ACTOR_GROWN_TURNIP       1009;
+define ACTOR_ZOMBIE             2000;
 
 define ITEM_STICK               0;
 define ITEM_ROCK                1;
@@ -59,6 +63,8 @@ define ITEM_CARROT              18;
 define ITEM_TURNIP_SEED         19;
 define ITEM_TURNIP              20;
 define ITEM_MEAT                21;
+define ITEM_BASIC_WORKBENCH_KIT 22;
+define ITEM_STD_WORKBENCH_KIT   23;
 
 
 
@@ -226,6 +232,31 @@ tile {
     solid
 };
 
+tile {
+    ident       TILE_BASIC_WORKBENCH
+    glyph       0x2565
+    colour      0x855723
+    name        "basic workbench"
+    breakTo     TILE_DIRT
+    loot {
+        ITEM_BASIC_WORKBENCH_KIT 100 1 1
+    }
+    solid
+    grantsCrafting  1
+};
+
+tile {
+    ident       TILE_STD_WORKBENCH
+    glyph       0x2565
+    colour      0xc36f10
+    name        "standard workbench"
+    breakTo     TILE_DIRT
+    loot {
+        ITEM_STD_WORKBENCH_KIT 100 1 1
+    }
+    solid
+    grantsCrafting  3
+};
 
 
 actor {
@@ -233,7 +264,6 @@ actor {
     glyph       '@'
     colour      0x7777FF
     name        "player"
-    ai          0
     health      10
     type        TYPE_PLAYER
 };
@@ -243,7 +273,7 @@ actor {
     glyph       'k'
     colour      0xFF77FF
     name        "kobold"
-    ai          1
+    health      10
     moveChance  333
     type        TYPE_VILLAGER
 };
@@ -253,7 +283,7 @@ actor {
     glyph       'p'
     colour      0xFF77FF
     name        "pig"
-    ai          1
+    health      4
     type        TYPE_ANIMAL
     foodItem    ITEM_CARROT
     moveChance  500
@@ -267,7 +297,7 @@ actor {
     glyph       'c'
     colour      0xFF77FF
     name        "chicken"
-    ai          1
+    health      2
     type        TYPE_ANIMAL
     foodItem    ITEM_WHEAT_SEED
     moveChance  666
@@ -281,7 +311,7 @@ actor {
     glyph       'g'
     colour      0xFF77FF
     name        "goat"
-    ai          1
+    health      5
     type        TYPE_ANIMAL
     foodItem    ITEM_SHEAF_OF_WHEAT
     moveChance  500
@@ -295,7 +325,7 @@ actor {
     glyph   'w'
     colour  0xFF77FF
     name    "wolf"
-    ai      1
+    health  3
     type    TYPE_ANIMAL
     foodItem    ITEM_MEAT
     moveChance  500
@@ -309,7 +339,7 @@ actor {
     glyph   'T'
     colour  0x77FF77
     name    "tree"
-    ai      0
+    health  10
     type    TYPE_PLANT
     loot {
         ITEM_LOG        100 1   1
@@ -439,6 +469,18 @@ actor {
         ITEM_TURNIP_SEED 100 1 3
         ITEM_TURNIP 100 2 4
     }
+};
+
+actor {
+    ident           ACTOR_ZOMBIE
+    glyph           'z'
+    colour          0xFF7777
+    name            "zombie"
+    health          6
+    type            TYPE_MONSTER
+    moveChance      250
+    defaultFaction  2
+    baseDamage      2
 };
 
 
@@ -611,6 +653,21 @@ item {
     name        "meat"
 };
 
+item {
+    ident       ITEM_BASIC_WORKBENCH_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "basic workbench kit"
+    constructs  TILE_BASIC_WORKBENCH
+};
+
+item {
+    ident       ITEM_STD_WORKBENCH_KIT
+    glyph       '*'
+    colour      0xc36f10
+    name        "standard workbench kit"
+    constructs  TILE_STD_WORKBENCH
+};
 
 
 
@@ -618,51 +675,73 @@ recipe {
     makeIdent   ITEM_PLANK
     makeQty     4
     part        1 ITEM_LOG
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_WALL_KIT
     makeQty     5
     part        10 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_WALL_KIT
     makeQty     5
     part        10 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_FLOOR_KIT
     makeQty     5
     part        5 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_FLOOR_KIT
     makeQty     5
     part        5 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WOOD_DOOR_KIT
     makeQty     1
     part        2 ITEM_PLANK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_STONE_DOOR_KIT
     makeQty     1
     part        1 ITEM_ROCK
+    craftingStation 1
 };
 
 recipe {
     makeIdent   ITEM_WINDOW_KIT
     makeQty     1
+    craftingStation 2
 };
 
 recipe {
     makeIdent   ITEM_FENCE_KIT
     makeQty     5
     part        5 ITEM_PLANK
+    craftingStation 1
+};
+
+recipe {
+    makeIdent   ITEM_BASIC_WORKBENCH_KIT
+    makeQty     1
+    part        1 ITEM_LOG
+};
+
+recipe {
+    makeIdent       ITEM_STD_WORKBENCH_KIT
+    makeQty         1
+    part            1 ITEM_BASIC_WORKBENCH_KIT
+    craftingStation 1
 };

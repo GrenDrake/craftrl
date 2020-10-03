@@ -54,7 +54,7 @@ void redraw_main(World &w) {
 
     for (int y = 0; y < viewHeight; ++y) {
         for (int x = 0; x < viewWidth; ++x) {
-            auto tile = w.at(Point(x + camera.x, y + camera.y));
+            const auto &tile = w.at(Point(x + camera.x, y + camera.y));
 
             if (tile.actor) {
                 terminal_color(tile.actor->def.colour);
@@ -85,9 +85,13 @@ void redraw_main(World &w) {
     }
 
     terminal_color(0xFFFFFFFF);
-    for (int i = 0; i < logHeight; ++i) {
+    for (int i = 0; i < logHeight; ) {
         const LogMessage &msg = w.getLogMsg(i);
-        terminal_print(logX, screenHeight - i - 1, msg.msg.c_str());
+        if (i == 0) terminal_color(0xFFFFFFFF);
+        else        terminal_color(0xFF777777);
+        dimensions_t size = terminal_measure_ext(80, 3, msg.msg.c_str());
+        terminal_print_ext(logX, screenHeight - i - size.height, 80, 3, TK_ALIGN_LEFT, msg.msg.c_str());
+        i += size.height;
     }
 }
 
@@ -109,6 +113,10 @@ void gameloop(World &w) {
         terminal_refresh();
         int key = terminal_read();
 
+        if (key == TK_P) {
+            player->inventory.sort(SORT_NAME);
+        }
+
         if (key == TK_MOUSE_RIGHT) {
             const Point &camera = w.getCamera();
             int mx = terminal_state(TK_MOUSE_X);
@@ -123,7 +131,7 @@ void gameloop(World &w) {
                     s << ", " << tile.item->def.name;
                 }
                 if (tile.actor) {
-                    s << ", " << tile.actor->def.name;
+                    s << ", " << tile.actor->def.name << " (" << tile.actor->health << '/' << tile.actor->def.health << ')';
                 }
                 w.addLogMsg(s.str());
             }

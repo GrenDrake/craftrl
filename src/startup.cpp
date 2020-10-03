@@ -1,14 +1,18 @@
 #include <iostream>
 #include <ctime>
+#include <sstream>
 #include <BearLibTerminal.h>
 
+#include "runmenu.h"
 #include "world.h"
+
 
 
 void mainmenu(World &w);
 void gameloop(World &w);
 bool loadGameData(World &w);
 bool buildmap(World &w, unsigned long seed);
+void newgame(World &w);
 void keybinds();
 std::string keyName(int key);
 
@@ -20,9 +24,20 @@ int main() {
 
     if (!loadGameData(w)) return 1;
 
-    terminal_open();
-    terminal_set("window: size=80x25; window.title='CraftRL'");
-    terminal_set("input.filter=keyboard,mouse_left,mouse_middle,mouse_right");
+    std::stringstream nameString;
+    nameString << "CraftRL" << " v" << VER_MAJOR << '.' << VER_MINOR << '.' << VER_PATCH;
+    if (!terminal_open()) {
+        std::cerr << "main: Failed to initialize BearLibTerm.\n";
+        return 1;
+    }
+    if (!terminal_set(("window: size=80x25; window.title='" + nameString.str() + "'").c_str())) {
+        std::cerr << "main: failed to set window properties.\n";
+        return 1;
+    }
+    if (!terminal_set("input.filter=keyboard,mouse_left,mouse_middle,mouse_right")) {
+        std::cerr << "main: failed to set input filter.\n";
+        return 1;
+    }
 
     mainmenu(w);
 
@@ -31,67 +46,34 @@ int main() {
     return 0;
 }
 
-
-void setColourIfSelected(int selection, int position, bool enabled) {
-    if (!enabled) {
-        terminal_color(0xFF777777);
-    } else if (selection == position)  {
-        terminal_color(0xFFFFFF77);
-        terminal_print(0, 6 + position, "-->");
-    } else {
-        terminal_color(0xFFAAAA66);
+Menu mainmenuMenu {
+    "CraftRL", "Version Text",
+    {
+        {   "New Game",         0,  false,  MENU_SELECT },
+        {   "Load Game",        1,  false,  MENU_SELECT },
+        {   "Continue Game",    2,  true,   MENU_SELECT },
+        {   "---",              -1, true,   MENU_SPACE },
+        {   "Keybindings",      4,  false,  MENU_SELECT },
+        {   "---",              -1, true,   MENU_SPACE },
+        {   "Quit",             3,  false,  MENU_SELECT },
     }
-}
+};
+
 void mainmenu(World &w) {
+    mainmenuMenu.titleRight = std::to_string(VER_MAJOR) + "." + std::to_string(VER_MINOR) + "." + std::to_string(VER_PATCH);
 
-    int selection = 1;
-    unsigned long seed = w.getRandom().next64();
-    unsigned long usedSeed = 0;
     while (1) {
-        terminal_bkcolor(0xFF000000);
-        terminal_color(0xFFFFFFFF);
-        terminal_clear();
-        terminal_print(5, 3, "CraftRL Tech Demo");
+        mainmenuMenu.selection = w.inProgress ? 2 : 0;
+        mainmenuMenu.items[2].disabled = !w.inProgress;
+        int result = runMenu(mainmenuMenu);
 
-        setColourIfSelected(selection, 0, true);
-        terminal_print(5, 6, "New Game");
-        setColourIfSelected(selection, 1, true);
-        terminal_print(5, 7, "Load Game");
-        setColourIfSelected(selection, 2, true);
-        terminal_printf(5, 8, "Seed: %lu", seed);
-        setColourIfSelected(selection, 3, w.inProgress);
-        terminal_print(5, 9, "Continue Game");
-        setColourIfSelected(selection, 4, true);
-        terminal_print(5, 10, "Keybindings");
-        setColourIfSelected(selection, 5, true);
-        terminal_print(5, 11, "Quit");
-        terminal_refresh();
-
-        int key = terminal_read();
-        if (key == TK_CLOSE || key == TK_ESCAPE || key == TK_Q) return;
-        if (key == TK_DOWN && selection < 5) {
-            ++selection;
-            if (selection == 3 && !w.inProgress) ++selection;
-        }
-        if (key == TK_UP && selection > 0) {
-            --selection;
-            if (selection == 3 && !w.inProgress) --selection;
-        }
-        if (key == TK_ENTER || key == TK_KP_ENTER || key == TK_SPACE) {
-            if (selection == 0) {
-                w.allocMap(160, 160);
-                usedSeed = seed;
-                buildmap(w, usedSeed);
-                w.inProgress = true;
-                selection = 3;
-                std::cerr << "mainmenu (info): created new map (size " << w.width() << ',' << w.height() << ", seed " << seed << ").\n";
-                std::cerr << "mainmenu (info): player starting position is " << w.getPlayer()->pos << ".\n";
-                gameloop(w);
-                std::cerr << "mainmenu (info): returned to menu.\n";
-            } else if (selection == 1) {
+        switch(result) {
+            case 0:
+                newgame(w);
+                break;
+            case 1: // load game
                 if (w.loadgame("game.sav")) {
                     w.inProgress = true;
-                    selection = 3;
                     std::cerr << "mainmenu (info): loaded game from save.\n";
                     std::cerr << "mainmenu (info): initial player position is " << w.getPlayer()->pos << ".\n";
                     gameloop(w);
@@ -100,39 +82,78 @@ void mainmenu(World &w) {
                     std::cerr << "mainmenu: failed to load save game.\n";
                     ui_MessageBox("Error", "Failed to load game.");
                 }
-            } else if (selection == 3) {
+                break;
+            case 2: // continue game
                 if (w.inProgress) {
                     std::cerr << "mainmenu (info): resuming on previous map.\n";
                     gameloop(w);
                     std::cerr << "mainmenu (info): returned to menu.\n";
-                    seed = usedSeed;
-                }
-            } else if (selection == 4) {
-                keybinds();
-            } else if (selection == 5) {
+                } else std::cerr << "mainmenu: tried to continue non-existant game.\n";
+                break;
+            case 3:
+            case MENU_CANCELED:
                 return;
-            }
-        }
-        if (selection == 2) {
-            if (key == TK_R) seed = w.getRandom().next64();
-            if (key == TK_C) seed = 0;
-            if (key == TK_LEFT) --seed;
-            if (key == TK_RIGHT) ++seed;
-            if (key == TK_BACKSPACE && seed != 0) seed /= 10;
-            if (key == TK_1) { seed *= 10; seed += 1; }
-            if (key == TK_2) { seed *= 10; seed += 2; }
-            if (key == TK_3) { seed *= 10; seed += 3; }
-            if (key == TK_4) { seed *= 10; seed += 4; }
-            if (key == TK_5) { seed *= 10; seed += 5; }
-            if (key == TK_6) { seed *= 10; seed += 6; }
-            if (key == TK_7) { seed *= 10; seed += 7; }
-            if (key == TK_8) { seed *= 10; seed += 8; }
-            if (key == TK_9) { seed *= 10; seed += 9; }
-            if (key == TK_0) { seed *= 10; }
+            case 4:
+                keybinds();
+                break;
         }
     }
 }
 
+
+Menu newgameMenu {
+    "New Game", "CraftRL",
+    {
+        {   "World Name",       0,  false,  MENU_TEXT },
+        {   "Seed",             1,  false,  MENU_TEXT },
+        {   "Begin",            2,  false,  MENU_SELECT },
+        {   "Cancel",           3,  false,  MENU_SELECT },
+    }
+};
+
+// https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+unsigned long hashString(const std::string &str) {
+    const unsigned long FNV_offset_basis = 14695981039346656037ul;
+    const unsigned long FNV_prime = 1099511628211ul;
+    unsigned long hash = FNV_offset_basis;
+
+    for (char c : str) {
+        hash ^= static_cast<unsigned long>(c);
+        hash *= FNV_prime;
+    }
+    return hash;
+}
+
+void newgame(World &w) {
+    newgameMenu.items[0].strValue = "New World";
+    newgameMenu.items[1].strValue = "";
+    newgameMenu.selection = 0;
+    while (1) {
+        int result = runMenu(newgameMenu);
+
+        switch(result) {
+            case 2: {
+                unsigned long seed = 0;
+                if (newgameMenu.items[1].strValue.empty()) {
+                    seed = w.getRandom().next32();
+                } else {
+                    seed = hashString(newgameMenu.items[1].strValue);
+                }
+                w.inProgress = true;
+                w.allocMap(160, 160);
+                buildmap(w, seed);
+                std::cerr << "newgame (info): created new map (size " << w.width();
+                std::cerr << ',' << w.height() << ", seed " << seed << ").\n";
+                std::cerr << "newgame (info): player starting position is " << w.getPlayer()->pos << ".\n";
+                gameloop(w);
+                std::cerr << "newgame (info): returned to menu.\n";
+                return; }
+            case 3:
+            case MENU_CANCELED:
+                return;
+        }
+    }
+}
 
 void keybinds() {
     int commandCount = 0;

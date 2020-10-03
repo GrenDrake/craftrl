@@ -8,16 +8,29 @@
 
 #include "random.h"
 
+const unsigned VER_MAJOR             = 0;
+const unsigned VER_MINOR             = 1;
+const unsigned VER_PATCH             = 0;
+
 const int INPUT_KEY_COUNT = 3;
 
 const int AI_NONE = 0;
 const int AI_WANDER = 1;
+
+const int SORT_NAME             = 0;
+const int SORT_TYPE             = 1;
 
 const int TYPE_PLAYER    = 0;
 const int TYPE_VILLAGER  = 1;
 const int TYPE_PLANT     = 2;
 const int TYPE_ANIMAL    = 3;
 const int TYPE_MONSTER   = 4;
+
+const int TILE_INVALID          = -1;
+const int TILE_DIRT             = 0;
+const int TILE_STONE            = 1;
+const int TILE_GRASS            = 2;
+const int TILE_WATER            = 3;
 
 const int CMD_NONE              = -1;
 const int CMD_DUMPMAP           = 0;
@@ -42,6 +55,7 @@ const int CMD_SELECT_PGDN       = 18;
 const int CMD_SELECT_PGUP       = 19;
 const int CMD_SELECT_HOME       = 20;
 const int CMD_SELECT_END        = 21;
+const int CMD_SORT_INV_NAME     = 22;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -92,6 +106,8 @@ struct ActorDef {
     int health;
     int foodItem;
     int moveChance;
+    int defaultFaction;
+    int baseDamage;
 };
 
 struct ItemDef {
@@ -114,6 +130,7 @@ struct TileDef {
     bool opaque;
     bool solid;
     bool ground;
+    unsigned grantsCrafting;
 };
 
 struct RecipeRow {
@@ -124,6 +141,7 @@ struct RecipeDef {
     int makeIdent;
     int makeQty;
     std::vector<RecipeRow> mRows;
+    unsigned craftingStation;
 };
 
 struct InventoryRow {
@@ -135,12 +153,14 @@ struct Inventory {
     int qty(const ItemDef*) const;
     bool remove(const ItemDef*, int qty = 1);
     int size() const { return mContents.size(); }
+    void cleanup();
+    void sort(int sortType);
 
     std::vector<InventoryRow> mContents;
 };
 
 struct Actor {
-    Actor(const ActorDef &def) : type(def.ident), def(def), age(0) { }
+    Actor(const ActorDef &def) : type(def.ident), def(def), age(0), faction(def.defaultFaction) { }
     void reset();
 
     int type;
@@ -150,6 +170,7 @@ struct Actor {
 
     int health;
     int age;
+    int faction;
 };
 
 struct Item {
@@ -191,18 +212,25 @@ public:
 
     Point findDropSpace(const Point &near) const;
     const Tile& at(const Point &p) const;
-    Tile& at(const Point &p);
+    // Tile& at(const Point &p);
+    void setTerrain(const Point &pos, int toTile);
+    void setActor(const Point &pos, Actor *toActor);
+    void setItem(const Point &pos, Item *toItem);
 
     bool moveActor(Actor *actor, const Point &to);
     bool tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep = true);
     const Actor* getPlayer() const;
     Actor* getPlayer();
     bool moveItem(Item *item, const Point &to);
+    void removeActor(Actor *actor);
+    void removeItem(Item *item);
 
     Point findItemNearest(const Point &to, int itemIdent, int radius) const;
+    Point findActorNearest(const Point &to, int notOfFaction, int radius) const;
+    void doDamage(Actor *attacker, Actor *victim);
 
-    void addLogMsg(const LogMessage &msg);
     void addLogMsg(const std::string &msg);
+    void appendLogMsg(const std::string &msg);
     int getLogCount() const;
     const LogMessage& getLogMsg(int index) const;
 
@@ -218,7 +246,7 @@ public:
     void addRecipeDef(const RecipeDef &td);
     const RecipeDef& getRecipeDef(int ident) const;
     int recipeDefCount() const { return mRecipeDefs.size(); }
-    std::vector<const RecipeDef*> getRecipeList() const;
+    std::vector<const RecipeDef*> getRecipeList(unsigned stations) const;
 
     void tick();
     unsigned getTurn() const { return turn; }
@@ -231,8 +259,8 @@ public:
     int mode, selection;
 
 private:
-    static LogMessage BAD_LOGMESSAGE;
-    static Tile BAD_TILE;
+    const static LogMessage BAD_LOGMESSAGE;
+    static const Tile BAD_TILE;
     static const ActorDef BAD_ACTORDEF;
     static const ItemDef BAD_ITEMDEF;
     static const TileDef BAD_TILEDEF;
@@ -276,11 +304,15 @@ bool actionSelectEnd(World &w, Actor *player, const Command &command, bool silen
 bool actionSelectHome(World &w, Actor *player, const Command &command, bool silent);
 bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool silent);
 bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent);
+bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent);
 bool actionTake(World &w, Actor *player, const Command &command, bool silent);
 bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);
 bool actionWait(World &w, Actor *player, const Command &command, bool silent);
 
+
+void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages);
+std::string upperFirst(std::string text);
 
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);
@@ -288,6 +320,7 @@ std::string commandName(int command);
 ActionHandler commandAction(int command);
 
 void ui_MessageBox(const std::string &title, const std::string &message);
+bool ui_prompt(const std::string &title, const std::string &message, std::string &text);
 
 Dir rotate45(Dir d);
 Dir unrotate45(Dir d);
@@ -295,5 +328,7 @@ Dir unrotate45(Dir d);
 std::ostream& operator<<(std::ostream &out, const Point &p);
 std::string directionName(Dir d);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
+
+extern const Point nowhere;
 
 #endif
