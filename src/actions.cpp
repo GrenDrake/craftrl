@@ -53,14 +53,7 @@ void makeLootAt(World &w, const LootTable *table, const Point &where, bool showM
     if (showMessages) w.appendLogMsg(s.str());
 }
 
-std::string upperFirst(std::string text) {
-    if (!text.empty()) {
-        if (text[0] >= 'a' && text[0] <= 'z') {
-            text[0] -= 'a' - 'A';
-        }
-    }
-    return text;
-}
+
 
 void shiftCameraForMove(World &w, Actor *player) {
     const int screenWidth = 80;

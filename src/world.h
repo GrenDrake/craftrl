@@ -311,17 +311,20 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent);
 bool actionWait(World &w, Actor *player, const Command &command, bool silent);
 
 
+// actions.cpp
 void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages);
-std::string upperFirst(std::string text);
 
+// input.cpp
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);
 std::string commandName(int command);
 ActionHandler commandAction(int command);
 
+// ui.cpp
 void ui_MessageBox(const std::string &title, const std::string &message);
 bool ui_prompt(const std::string &title, const std::string &message, std::string &text);
 
+// point.cpp
 Dir rotate45(Dir d);
 Dir unrotate45(Dir d);
 
@@ -330,5 +333,10 @@ std::string directionName(Dir d);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
 
 extern const Point nowhere;
+
+// utility.cpp
+unsigned long long hashString(const std::string &str);
+std::string upperFirst(std::string text);
+
 
 #endif
