@@ -190,6 +190,10 @@ bool parseItem(World &w, TokenData &data) {
             if (!data.require(TokenType::String)) return false;
             item.name = data.here().s;
             data.next();
+        } else if (name == "plural") {
+            if (!data.require(TokenType::String)) return false;
+            item.plural = data.here().s;
+            data.next();
         } else {
             const Origin &origin = data.here().origin;
             logger_log(origin.toString() + "  Unknown property " + name + ".");
@@ -204,6 +208,7 @@ bool parseItem(World &w, TokenData &data) {
             logger_log(fullOrigin.toString() + "  item ident " + std::to_string(item.ident) + " already used.");
             return false;
     }
+    if (item.plural.empty()) item.plural = item.name + "s";
     w.addItemDef(item);
     return true;
 }

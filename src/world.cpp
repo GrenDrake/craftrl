@@ -74,8 +74,22 @@ void Inventory::sort(int sortType) {
 }
 
 
+std::string Actor::getName() const {
+    std::string name = "the " + def.name;
+    if (health < def.health && health > 0) {
+        int percent = health * 100 / def.health;
+        name += " (" + std::to_string(percent) + "%)";
+    }
+    return name;
+}
+
 void Actor::reset() {
     health = def.health;
+}
+
+std::string Item::getName(bool forPural) const {
+    if (forPural) return def.plural;
+    return "a " + def.name;
 }
 
 
@@ -301,13 +315,13 @@ void World::doDamage(Actor *attacker, Actor *victim) {
     victim->health -= damage;
 
     std::stringstream msg;
-    msg << upperFirst(attacker->def.name) << " does " << damage << " damage to " << victim->def.name << ".";
+    msg << upperFirst(attacker->getName()) << " does " << damage << " damage to " << victim->getName() << ".";
     if (showMsgs) addLogMsg(msg.str());
 
     if (victim->health <= 0) {
         std::stringstream deathMsg;
-        deathMsg << ' ' << upperFirst(victim->def.name);
-        if (victim->def.type == TYPE_PLANT) deathMsg << " broken.";
+        deathMsg << ' ' << upperFirst(victim->getName());
+        if (victim->def.type == TYPE_PLANT) deathMsg << " breaks.";
         else                                deathMsg << " dies.";
         if (showMsgs) appendLogMsg(deathMsg.str());
         Point oldPos = victim->pos;

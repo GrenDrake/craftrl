@@ -135,6 +135,7 @@ item {
     glyph       '/'
     colour      0xFFDF00
     name        "sheaf of wheat"
+    plural      "sheafs of wheat"
 };
 
 item {

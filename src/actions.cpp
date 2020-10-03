@@ -46,8 +46,11 @@ void makeLootAt(World &w, const LootTable *table, const Point &where, bool showM
         if (i != 0 && invSize > 2) s << ",";
         if (i == invSize - 1 && invSize > 1) s << " and";
         const InventoryRow &row = inv.mContents[i];
-        s << ' ' << row.def->name;
-        if (row.qty > 1) s << " (x" << row.qty << ')';
+        if (row.qty > 1) {
+            s << ' ' << row.qty << ' ' << row.def->plural;
+        } else {
+            s << " a " << row.def->name;
+        }
     }
     s << '.';
     if (showMessages) w.appendLogMsg(s.str());
@@ -167,7 +170,7 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
     const Tile &tile = w.at(dest);
 
     if (tile.actor) {
-        w.addLogMsg(tile.actor->def.name + " is in the way.");
+        w.addLogMsg(tile.actor->getName() + " is in the way.");
         return false;
     }
 
@@ -310,7 +313,7 @@ bool actionTake(World &w, Actor *player, const Command &command, bool silent) {
 
     if (player->inventory.add(&item->def)) {
         w.removeItem(item);
-        w.addLogMsg("Took " + item->def.name + ".");
+        w.addLogMsg("Took " + item->getName(false) + ".");
         delete item;
         return true;
     }
@@ -336,7 +339,7 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
         std::stringstream s;
         switch (tile.actor->def.type) {
             case TYPE_VILLAGER:
-                s << tile.actor->def.name << ": \"Hello!\"";
+                s << upperFirst(tile.actor->getName()) << ": \"Hello!\"";
                 w.addLogMsg(s.str());
                 return false;
             default:

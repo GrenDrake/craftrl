@@ -115,7 +115,7 @@ struct ItemDef {
     int ident;
     int glyph;
     unsigned colour;
-    std::string name;
+    std::string name, plural;
     int seedFor;
     int constructs;
 };
@@ -162,6 +162,7 @@ struct Inventory {
 
 struct Actor {
     Actor(const ActorDef &def) : type(def.ident), def(def), age(0), faction(def.defaultFaction) { }
+    std::string getName() const;
     void reset();
 
     int type;
@@ -176,6 +177,8 @@ struct Actor {
 
 struct Item {
     Item(const ItemDef &def) : type(def.ident), def(def) { }
+    std::string getName(bool forPural) const;
+
     int type;
     const ItemDef &def;
     Point pos;

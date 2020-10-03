@@ -128,10 +128,10 @@ void gameloop(World &w) {
                 std::stringstream s;
                 s << "You see: " << w.getTileDef(tile.terrain).name;
                 if (tile.item) {
-                    s << ", " << tile.item->def.name;
+                    s << ", " << tile.item->getName(false);
                 }
                 if (tile.actor) {
-                    s << ", " << tile.actor->def.name << " (" << tile.actor->health << '/' << tile.actor->def.health << ')';
+                    s << ", " << tile.actor->getName();
                 }
                 w.addLogMsg(s.str());
             }
