@@ -51,28 +51,28 @@ std::ostream& operator<<(std::ostream &out, const Token &token) {
 }
 
 
-TokenData::TokenData(const std::vector<Token> &tokens)
-: valid(true), pos(0), tokens(tokens) {
+TokenData::TokenData()
+: valid(true), pos(0), tokens(nullptr) {
 }
 
 bool TokenData::end() const {
-    return pos >= tokens.size();
+    return pos >= tokens->size();
 }
 
 const Token BAD_TOKEN{ Origin{}, TokenType::Invalid };
 
 const Token& TokenData::here() const {
-    if (pos < tokens.size()) return tokens[pos];
+    if (pos < tokens->size()) return (*tokens)[pos];
     return BAD_TOKEN;
 }
 
 const Token& TokenData::next() {
-    if (pos < tokens.size()) ++pos;
+    if (pos < tokens->size()) ++pos;
     return here();
 }
 
 void TokenData::skipTo(TokenType type) {
-    while (pos < tokens.size() && !matches(type)) ++pos;
+    while (pos < tokens->size() && !matches(type)) ++pos;
 }
 
 bool TokenData::require(TokenType type) {
@@ -115,7 +115,7 @@ bool TokenData::asInt(int &value) const {
 
 
 
-TokenData parseFile(const std::string &filename) {
+std::vector<Token> parseFile(const std::string &filename) {
     std::vector<Token> tokens;
     std::ifstream inf(filename);
     std::string line;
@@ -190,11 +190,8 @@ TokenData parseFile(const std::string &filename) {
         }
     }
 
-    // for (const Token &t : tokens) std::cout << t << '\n';
-
-    TokenData data(tokens);
-    data.valid = errorCount == 0;
-    return data;
+    if (errorCount) return std::vector<Token>{};
+    return tokens;
 }
 
 

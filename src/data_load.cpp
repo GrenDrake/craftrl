@@ -1,8 +1,30 @@
+#include <map>
 #include <iostream>
 #include "data.h"
 #include "world.h"
 
 LootTable* parseLootTable(World &w, TokenData &data);
+
+bool parseAddfile(World &w, TokenData &data) {
+    data.next(); // skip "addfile"
+
+    while (!data.matches(TokenType::Semicolon)) {
+        if (!data.require(TokenType::String)) return false;
+        for (const std::string &s : data.fileList) {
+            if (s == data.here().s) {
+                std::cerr << data.here().origin.filename << ':' << data.here().origin.line;
+                std::cerr << "  File \"" << data.here().s << "\" already included.\n";
+                return false;
+            }
+        }
+        std::cerr << "Including data file " << data.here().s << ".\n";
+        data.fileList.push_back(data.here().s);
+        data.next();
+   }
+
+    data.next(); // skip ";"
+    return true;
+}
 
 
 bool parseActor(World &w, TokenData &data) {
@@ -335,9 +357,34 @@ bool parseTile(World &w, TokenData &data) {
 }
 
 
-bool loadGameData(World &w) {
-    TokenData data = parseFile("game.dat");
-    if (!data.valid) return false;
+bool loadGameData(World &w, const std::string &filename) {
+    TokenData data;
+    data.fileList.push_back(filename);
+    int errorCount = 0;
+
+    for (unsigned i = 0; i < data.fileList.size(); ++i) {
+        errorCount += loadGameData_Core(w, data, data.fileList[i]);
+    }
+
+    std::cerr << "\nLoaded " << w.actorDefCount() << " actors.\n";
+    std::cerr << "Loaded " << w.itemDefCount() << " items.\n";
+    std::cerr << "Loaded " << w.tileDefCount() << " tiles.\n";
+    std::cerr << "Loaded " << w.recipeDefCount() << " recipes.\n\n";
+    if (errorCount > 0) {
+        std::cerr << "Found " << errorCount << " errors in data file.\n";
+        return false;
+    }
+    return true;
+}
+
+int loadGameData_Core(World &w, TokenData &data, const std::string &filename) {
+    auto tokens = parseFile(filename);
+    if (tokens.empty()) {
+        std::cerr << filename << "  failed to lex file.\n";
+        return 1;
+    }
+    data.tokens = &tokens;
+    data.pos = 0;
 
 
     int errorCount = 0;
@@ -350,14 +397,15 @@ bool loadGameData(World &w) {
         if (!data.require(TokenType::Identifier)) { data.skipTo(TokenType::Semicolon); ++errorCount; continue; }
 
         bool success = false;
-        if (data.matches("tile"))       success = parseTile(w, data);
-        else if (data.matches("item"))  success = parseItem(w, data);
-        else if (data.matches("actor")) success = parseActor(w, data);
-        else if (data.matches("recipe"))success = parseRecipe(w, data);
-        else if (data.matches("define"))success = parseDefine(w, data);
+        if (data.matches("tile"))           success = parseTile(w, data);
+        else if (data.matches("item"))      success = parseItem(w, data);
+        else if (data.matches("actor"))     success = parseActor(w, data);
+        else if (data.matches("recipe"))    success = parseRecipe(w, data);
+        else if (data.matches("define"))    success = parseDefine(w, data);
+        else if (data.matches("addfile"))   success = parseAddfile(w, data);
         else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().type << ".\n";
+            std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().s << ".\n";
             ++errorCount;
             success = false;
             data.next();
@@ -368,20 +416,5 @@ bool loadGameData(World &w) {
             data.skipTo(TokenType::Semicolon);
         }
     }
-
-    std::cerr << "Loaded " << w.actorDefCount() << " actors.\n";
-    std::cerr << "Loaded " << w.itemDefCount() << " items.\n";
-    std::cerr << "Loaded " << w.tileDefCount() << " tiles.\n";
-    std::cerr << "Loaded " << w.recipeDefCount() << " recipes.\n";
-    if (errorCount > 0) {
-        std::cerr << "Found " << errorCount << " errors in data file.\n";
-        return false;
-    }
-    return true;
+    return errorCount;
 }
-
-
-
-
-
-

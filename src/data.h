@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+class World;
+
 enum class TokenType {
     Identifier, String, Integer, OpenBrace, CloseBrace, Semicolon,
     Invalid
@@ -24,7 +26,7 @@ struct Token {
 };
 
 struct TokenData {
-    TokenData(const std::vector<Token> &tokens);
+    TokenData();
 
     bool end() const;
     const Token& here() const;
@@ -39,15 +41,16 @@ struct TokenData {
 
     bool valid;
     unsigned pos = 0;
-    std::vector<Token> tokens;
+    std::vector<Token> *tokens;
+    std::vector<std::string> fileList;
     std::map<std::string, int> symbols;
 };
 
-TokenData parseFile(const std::string &filename);
+bool loadGameData(World &w, const std::string &filename);
+int loadGameData_Core(World &w, TokenData &data, const std::string &filename);
+std::vector<Token> parseFile(const std::string &filename);
 
 std::ostream& operator<<(std::ostream &out, const TokenType &type);
 std::ostream& operator<<(std::ostream &out, const Token &token);
-
-
 
 #endif

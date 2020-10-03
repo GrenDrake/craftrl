@@ -1,0 +1,183 @@
+
+item {
+    ident   ITEM_STICK
+    glyph   '/'
+    colour  0x855723
+    name    "stick"
+};
+
+item {
+    ident   ITEM_ROCK
+    glyph   '*'
+    colour  0x777777
+    name    "rock"
+};
+
+item {
+    ident   ITEM_CORD
+    glyph   '&'
+    colour  0xFFFFFFFF
+    name    "cord"
+};
+
+item {
+    ident   ITEM_LOG
+    glyph   '='
+    colour  0x855723
+    name    "log"
+};
+
+item {
+    ident ITEM_SAPLING
+    glyph   '/'
+    colour  0x00FF00
+    name    "sapling"
+    seedFor ACTOR_SAPLING
+};
+
+item {
+    ident ITEM_SHRUB_SEED
+    glyph   '.'
+    colour  0x00FF00
+    name    "shrub seed"
+    seedFor ACTOR_SPROUT
+};
+
+item {
+    ident   ITEM_PLANK
+    glyph   '-'
+    colour  0x855723
+    name    "plank"
+};
+
+item {
+    ident   ITEM_WOOD_WALL_KIT
+    glyph   '*'
+    colour  0x855723
+    name    "wood wall kit"
+    constructs  TILE_WOOD_WALL
+};
+
+item {
+    ident   ITEM_STONE_WALL_KIT
+    glyph   '*'
+    colour  0x777777
+    name    "stone wall kit"
+    constructs  TILE_STONE_WALL
+};
+
+item {
+    ident   ITEM_WOOD_FLOOR_KIT
+    glyph   '*'
+    colour  0x855723
+    name    "wood floor kit"
+    constructs  TILE_WOOD_FLOOR
+};
+
+item {
+    ident   ITEM_STONE_FLOOR_KIT
+    glyph   '*'
+    colour  0x777777
+    name    "stone floor kit"
+    constructs  TILE_STONE_FLOOR
+};
+
+item {
+    ident       ITEM_WOOD_DOOR_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "wood door kit"
+    constructs  TILE_WOOD_DOOR_CLOSED
+};
+
+item {
+    ident       ITEM_STONE_DOOR_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "stone door kit"
+    constructs  TILE_STONE_DOOR_CLOSED
+};
+
+item {
+    ident       ITEM_WINDOW_KIT
+    glyph       '*'
+    colour      0x7777FF
+    name        "window kit"
+    constructs  TILE_WINDOW
+};
+
+item {
+    ident       ITEM_FENCE_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "fence kit"
+    constructs  TILE_FENCE
+};
+
+item {
+    ident       ITEM_WHEAT_SEED
+    glyph       '.'
+    colour      0xFFDF00
+    name        "wheat seed"
+    seedFor     ACTOR_WHEAT_SEEDLING
+};
+
+item {
+    ident       ITEM_CARROT_SEED
+    glyph       '.'
+    colour      0xED9121
+    name        "carrot seed"
+    seedFor     ACTOR_CARROT_SEEDLING
+};
+
+item {
+    ident       ITEM_SHEAF_OF_WHEAT
+    glyph       '/'
+    colour      0xFFDF00
+    name        "sheaf of wheat"
+};
+
+item {
+    ident       ITEM_CARROT
+    glyph       '/'
+    colour      0xED9121
+    name        "carrot"
+};
+
+item {
+    ident       ITEM_TURNIP_SEED
+    glyph       '.'
+    colour      0xEEEEEE
+    name        "turnip seed"
+    seedFor     ACTOR_TURNIP_SEEDLING
+};
+
+item {
+    ident       ITEM_TURNIP
+    glyph       '/'
+    colour      0xEEEEEE
+    name        "turnip"
+};
+
+item {
+    ident       ITEM_MEAT
+    glyph       '%'
+    colour      0xFF7777
+    name        "meat"
+};
+
+item {
+    ident       ITEM_BASIC_WORKBENCH_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "basic workbench kit"
+    constructs  TILE_BASIC_WORKBENCH
+};
+
+item {
+    ident       ITEM_STD_WORKBENCH_KIT
+    glyph       '*'
+    colour      0xc36f10
+    name        "standard workbench kit"
+    constructs  TILE_STD_WORKBENCH
+};

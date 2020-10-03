@@ -10,7 +10,7 @@
 
 void mainmenu(World &w);
 void gameloop(World &w);
-bool loadGameData(World &w);
+bool loadGameData(World &w, const std::string &filename);
 bool buildmap(World &w, unsigned long seed);
 void newgame(World &w);
 void keybinds();
@@ -22,7 +22,7 @@ int main() {
     World w;
     w.getRandom().seed(time(nullptr));
 
-    if (!loadGameData(w)) return 1;
+    if (!loadGameData(w, "game.dat")) return 1;
 
     std::stringstream nameString;
     nameString << "CraftRL" << " v" << VER_MAJOR << '.' << VER_MINOR << '.' << VER_PATCH;
