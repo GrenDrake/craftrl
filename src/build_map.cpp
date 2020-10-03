@@ -104,7 +104,7 @@ bool buildmap(World &w, unsigned long seed) {
         Actor *actor = new Actor(w.getActorDef(plantList[plantNum]));
         actor->reset();
         if (!w.moveActor(actor, p)) {
-            std::cerr << "Failed to place plant at " << p << ".\n";
+            logger_log("Failed to place plant at " + p.toString() + ".");
             delete actor;
         }
     }
@@ -118,7 +118,7 @@ bool buildmap(World &w, unsigned long seed) {
         Actor *actor = new Actor(w.getActorDef(type));
         actor->reset();
         if (!w.moveActor(actor, p)) {
-            std::cerr << "Failed to place actor at " << p << ".\n";
+            logger_log("Failed to place actor at " + p.toString() + ".");
             delete actor;
         }
     }

@@ -14,6 +14,7 @@ enum class TokenType {
 };
 
 struct Origin {
+    std::string toString() const;
     std::string filename;
     int line;
 };

@@ -1,7 +1,15 @@
 #include <cmath>
+#include <sstream>
+#include <string>
 #include "world.h"
 
 const Point nowhere(-1, -1);
+
+std::string Point::toString() const {
+    std::stringstream s;
+    s << '(' << x << ',' << y << ')';
+    return s.str();
+}
 
 Point Point::shift(Dir dir, int amnt) const {
     switch (dir) {

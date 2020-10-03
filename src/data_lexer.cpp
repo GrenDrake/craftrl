@@ -1,9 +1,11 @@
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "data.h"
+#include "logger.h"
 
 
 bool is_space(int c) {
@@ -24,6 +26,13 @@ bool is_alnum(int c) {
 
 bool is_identifier(int c) {
     return is_digit(c) || is_alpha(c) || c == '-' || c == '_';
+}
+
+std::string Origin::toString() const {
+    std::stringstream s;
+    s << filename;
+    if (line > 0) s << ':' << line;
+    return s.str();
 }
 
 std::ostream& operator<<(std::ostream &out, const TokenType &type) {
@@ -79,7 +88,9 @@ bool TokenData::require(TokenType type) {
     if (matches(type)) {
         return true;
     }
-    std::cerr << here().origin.filename << ':' << here().origin.line << "  Expected " << type << " but found " << here().type << ".\n";
+    std::stringstream s;
+    s << here().origin.toString() + "  Expected " << type << " but found " << here().type << ".";
+    logger_log(s.str());
     return false;
 }
 
@@ -102,14 +113,16 @@ bool TokenData::asInt(int &value) const {
     if (matches(TokenType::Identifier)) {
         auto iter = symbols.find(here().s);
         if (iter == symbols.end()) {
-            std::cerr << here().origin.filename << ':' << here().origin.line << "  Undefined symbol " << here().s << ".\n";
+            logger_log(here().origin.toString() + "  Undefined symbol " + here().s + ".");
             return false;
         }
         value = iter->second;
         return true;
     }
 
-    std::cerr << here().origin.filename << ':' << here().origin.line << "  Expected Integer but found " << here().type << ".\n";
+    std::stringstream s;
+    s << here().origin.toString() + "  Expected Integer but found " << here().type << ".";
+    logger_log(s.str());
     return false;
 }
 
@@ -151,7 +164,7 @@ std::vector<Token> parseFile(const std::string &filename) {
 
                 if (quoteChar == '\'') {
                     if (text.size() != 1) {
-                        std::cerr << filename << ':' << lineNo << "  Bad character literal length.\n";
+                        logger_log(filename + ":" + std::to_string(lineNo) + "  Bad character literal length.");
                         ++errorCount;
                     } else {
                         tokens.push_back(Token{origin, TokenType::Integer, text[0]});
@@ -170,7 +183,7 @@ std::vector<Token> parseFile(const std::string &filename) {
                     if (*endPtr == '\x0') {
                         tokens.push_back(Token{origin, TokenType::Integer, result});
                     } else {
-                        std::cerr << filename << ':' << lineNo << "  Invalid hex literal.\n";
+                        logger_log(filename + ":" + std::to_string(lineNo) + "  Invalid hex literal.");
                         ++errorCount;
                     }
                 } else {
@@ -183,7 +196,7 @@ std::vector<Token> parseFile(const std::string &filename) {
                     }
                 }
             } else {
-                std::cerr << filename << ':' << lineNo << "  Unexpected character " << line[pos] << ".\n";
+                logger_log(filename + ":" + std::to_string(lineNo) + "  Unexpected character " + line[pos] + ".");
                 ++errorCount;
                 ++pos;
             }

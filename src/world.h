@@ -66,6 +66,7 @@ struct Point {
     Point() : x(0), y(0) {};
     Point(int x, int y) : x(x), y(y) {};
 
+    std::string toString() const;
     Point shift(Dir dir, int amnt = 1) const;
     Dir directionTo(const Point &rhs) const;
     double distance(const Point &rhs) const;
@@ -337,6 +338,8 @@ extern const Point nowhere;
 // utility.cpp
 unsigned long long hashString(const std::string &str);
 std::string upperFirst(std::string text);
+
+#include "logger.h"
 
 
 #endif

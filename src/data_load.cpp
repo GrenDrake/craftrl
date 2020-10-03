@@ -12,12 +12,11 @@ bool parseAddfile(World &w, TokenData &data) {
         if (!data.require(TokenType::String)) return false;
         for (const std::string &s : data.fileList) {
             if (s == data.here().s) {
-                std::cerr << data.here().origin.filename << ':' << data.here().origin.line;
-                std::cerr << "  File \"" << data.here().s << "\" already included.\n";
+                logger_log(data.here().origin.toString() + "  File \"" + data.here().s + "\" already included.");
                 return false;
             }
         }
-        std::cerr << "Including data file " << data.here().s << ".\n";
+        logger_log("Including data file " + data.here().s + ".");
         data.fileList.push_back(data.here().s);
         data.next();
    }
@@ -101,7 +100,7 @@ bool parseActor(World &w, TokenData &data) {
             LootTable *table = parseLootTable(w, data);
             if (actor.loot) {
             const Origin &origin = data.here().origin;
-                std::cerr << origin.filename << ':' << origin.line << "  multiple loot tables found.\n";
+                logger_log(origin.toString() + "  multiple loot tables found.");
                 delete table;
                 return false;
             } else {
@@ -109,7 +108,7 @@ bool parseActor(World &w, TokenData &data) {
             }
         } else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            logger_log(origin.toString() + "  Unknown property " + name + ".");
             return false;
         }
     }
@@ -118,7 +117,7 @@ bool parseActor(World &w, TokenData &data) {
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
     if (w.getActorDef(actor.ident).ident >= 0) {
-            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  actor ident " << actor.ident << " already used.\n";
+            logger_log(fullOrigin.toString() + "  actor ident " + std::to_string(actor.ident) + " already used.");
             return false;
     }
     w.addActorDef(actor);
@@ -142,7 +141,7 @@ bool parseDefine(World &w, TokenData &data) {
 
     auto iter = data.symbols.find(name);
     if (iter != data.symbols.end()) {
-        std::cerr << origin.filename << ':' << origin.line << "  Name " << name << " already defined.\n";
+        logger_log(origin.toString() + "  Name " + name + " already defined.");
         return false;
     }
     data.symbols.insert(std::make_pair(name, value));
@@ -193,7 +192,7 @@ bool parseItem(World &w, TokenData &data) {
             data.next();
         } else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            logger_log(origin.toString() + "  Unknown property " + name + ".");
             return false;
         }
     }
@@ -202,7 +201,7 @@ bool parseItem(World &w, TokenData &data) {
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
     if (w.getItemDef(item.ident).ident >= 0) {
-            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  item ident " << item.ident << " already used.\n";
+            logger_log(fullOrigin.toString() + "  item ident " + std::to_string(item.ident) + " already used.");
             return false;
     }
     w.addItemDef(item);
@@ -276,7 +275,7 @@ bool parseRecipe(World &w, TokenData &data) {
             recipe.mRows.push_back(row);
         } else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            logger_log(origin.toString() + "  Unknown property " + name + ".");
             return false;
         }
     }
@@ -347,7 +346,7 @@ bool parseTile(World &w, TokenData &data) {
             LootTable *table = parseLootTable(w, data);
             if (tile.loot) {
             const Origin &origin = data.here().origin;
-                std::cerr << origin.filename << ':' << origin.line << "  multiple loot tables found.\n";
+                logger_log(origin.toString() + "  multiple loot tables found.");
                 delete table;
                 return false;
             } else {
@@ -355,7 +354,7 @@ bool parseTile(World &w, TokenData &data) {
             }
         } else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown property " << name << ".\n";
+            logger_log(origin.toString() + "  Unknown property " + name + ".");
             return false;
         }
     }
@@ -364,7 +363,7 @@ bool parseTile(World &w, TokenData &data) {
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
     if (w.getTileDef(tile.ident).ident >= 0) {
-            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  tile ident " << tile.ident << " already used.\n";
+            logger_log(fullOrigin.toString() + "  tile ident " + std::to_string(tile.ident) + " already used.");
             return false;
     }
     w.addTileDef(tile);
@@ -381,12 +380,12 @@ bool loadGameData(World &w, const std::string &filename) {
         errorCount += loadGameData_Core(w, data, data.fileList[i]);
     }
 
-    std::cerr << "\nLoaded " << w.actorDefCount() << " actors.\n";
-    std::cerr << "Loaded " << w.itemDefCount() << " items.\n";
-    std::cerr << "Loaded " << w.tileDefCount() << " tiles.\n";
-    std::cerr << "Loaded " << w.recipeDefCount() << " recipes.\n\n";
+    logger_log("Loaded " + std::to_string(w.actorDefCount()) + " actors.");
+    logger_log("Loaded "   + std::to_string(w.itemDefCount()) + " items.");
+    logger_log("Loaded "   + std::to_string(w.tileDefCount()) + " tiles.");
+    logger_log("Loaded "   + std::to_string(w.recipeDefCount()) + " recipes.");
     if (errorCount > 0) {
-        std::cerr << "Found " << errorCount << " errors in data file.\n";
+        logger_log("Found " + std::to_string(errorCount) + " errors in data file.");
         return false;
     }
     return true;
@@ -395,7 +394,7 @@ bool loadGameData(World &w, const std::string &filename) {
 int loadGameData_Core(World &w, TokenData &data, const std::string &filename) {
     auto tokens = parseFile(filename);
     if (tokens.empty()) {
-        std::cerr << filename << "  failed to lex file.\n";
+        logger_log(filename + "  failed to lex file.");
         return 1;
     }
     data.tokens = &tokens;
@@ -420,7 +419,7 @@ int loadGameData_Core(World &w, TokenData &data, const std::string &filename) {
         else if (data.matches("addfile"))   success = parseAddfile(w, data);
         else {
             const Origin &origin = data.here().origin;
-            std::cerr << origin.filename << ':' << origin.line << "  Unknown data type " << data.here().s << ".\n";
+            logger_log(origin.toString() + "  Unknown data type " + data.here().s + ".");
             ++errorCount;
             success = false;
             data.next();

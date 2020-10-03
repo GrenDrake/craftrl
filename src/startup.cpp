@@ -19,6 +19,7 @@ std::string keyName(int key);
 
 
 int main() {
+    logger_setFile("game.log");
     World w;
     w.getRandom().seed(time(nullptr));
 
@@ -27,20 +28,21 @@ int main() {
     std::stringstream nameString;
     nameString << "CraftRL" << " v" << VER_MAJOR << '.' << VER_MINOR << '.' << VER_PATCH;
     if (!terminal_open()) {
-        std::cerr << "main: Failed to initialize BearLibTerm.\n";
+        logger_log("main: Failed to initialize BearLibTerm.");
         return 1;
     }
     if (!terminal_set(("window: size=80x25; window.title='" + nameString.str() + "'").c_str())) {
-        std::cerr << "main: failed to set window properties.\n";
+        logger_log("main: failed to set window properties.");
         return 1;
     }
     if (!terminal_set("input.filter=keyboard,mouse_left,mouse_middle,mouse_right")) {
-        std::cerr << "main: failed to set input filter.\n";
+        logger_log("main: failed to set input filter.");
         return 1;
     }
 
     mainmenu(w);
 
+    logger_close();
     terminal_close();
 
     return 0;
@@ -74,21 +76,22 @@ void mainmenu(World &w) {
             case 1: // load game
                 if (w.loadgame("game.sav")) {
                     w.inProgress = true;
-                    std::cerr << "mainmenu (info): loaded game from save.\n";
-                    std::cerr << "mainmenu (info): initial player position is " << w.getPlayer()->pos << ".\n";
+                    logger_log("mainmenu (info): loaded game from save.");
+                    logger_log("mainmenu (info): initial player position is "
+                                + w.getPlayer()->pos.toString() + ".");
                     gameloop(w);
-                    std::cerr << "mainmenu (info): returned to menu.\n";
+                    logger_log("mainmenu (info): returned to menu.");
                 } else {
-                    std::cerr << "mainmenu: failed to load save game.\n";
+                    logger_log("mainmenu: failed to load save game.");
                     ui_MessageBox("Error", "Failed to load game.");
                 }
                 break;
             case 2: // continue game
                 if (w.inProgress) {
-                    std::cerr << "mainmenu (info): resuming on previous map.\n";
+                    logger_log("mainmenu (info): resuming on previous map.");
                     gameloop(w);
-                    std::cerr << "mainmenu (info): returned to menu.\n";
-                } else std::cerr << "mainmenu: tried to continue non-existant game.\n";
+                    logger_log("mainmenu (info): returned to menu.");
+                } else logger_log("mainmenu: tried to continue non-existant game.");
                 break;
             case 3:
             case MENU_CANCELED:
@@ -130,11 +133,11 @@ void newgame(World &w) {
                 w.inProgress = true;
                 w.allocMap(160, 160);
                 buildmap(w, seed);
-                std::cerr << "newgame (info): created new map (size " << w.width();
-                std::cerr << ',' << w.height() << ", seed " << seed << ").\n";
-                std::cerr << "newgame (info): player starting position is " << w.getPlayer()->pos << ".\n";
+                logger_log("newgame (info): created new map (size " + std::to_string(w.width())
+                            + "," + std::to_string(w.height()) + ", seed " + std::to_string(seed) + ").");
+                logger_log("newgame (info): player starting position is " + w.getPlayer()->pos.toString() + ".");
                 gameloop(w);
-                std::cerr << "newgame (info): returned to menu.\n";
+                logger_log("newgame (info): returned to menu.");
                 return; }
             case 3:
             case MENU_CANCELED:

@@ -111,7 +111,7 @@ void World::deallocMap() {
     mTiles = nullptr;
 
     for (Actor *actor : mActors) {
-        if (!actor) std::cerr << "deallocMap: Found null actor in actor list.\n";
+        if (!actor) logger_log("deallocMap: Found null actor in actor list.");
         else        delete actor;
     }
     mActors.clear();
@@ -188,7 +188,7 @@ bool World::moveActor(Actor *actor, const Point &to) {
 
     if (valid(actor->pos) && at(actor->pos).actor == actor) {
         if (!valid(to)) {
-            std::cerr << "moveActor: Moving actor (" << actor->def.name << ") at " << actor->pos << " to invalid position.\n";
+            logger_log("moveActor: Moving actor (" + actor->def.name + ") at " + actor->pos.toString() + " to invalid position.");
             removeActor(actor);
             return true;
         } else {
@@ -219,7 +219,7 @@ bool World::moveItem(Item *item, const Point &to) {
 
     if (valid(item->pos) && at(item->pos).item == item) {
         if (!valid(to)) {
-            std::cerr << "moveItem: Moving item (" << item->def.name << ") at " << item->pos << " to invalid position.\n";
+            logger_log("moveItem: Moving item (" + item->def.name + ") at " + item->pos.toString() + " to invalid position.");
             removeItem(item);
         } else {
             setItem(item->pos, nullptr);
@@ -292,7 +292,7 @@ Point World::findActorNearest(const Point &to, int notOfFaction, int radius) con
 
 void World::doDamage(Actor *attacker, Actor *victim) {
     if (!attacker || !victim) {
-        std::cerr << "doDamage: found null actor.\n";
+        logger_log("doDamage: found null actor.");
         return;
     }
 
@@ -469,9 +469,8 @@ void World::tick() {
                 const ActorDef &def = getActorDef(actor->def.growTo);
                 if (def.ident == -1) {
                     actor->age = -9999;
-                    std::cerr << actor->def.name << " at " << actor->pos << " has invalid next growth state.\n";
+                    logger_log(actor->def.name + " at " + actor->pos.toString() + " has invalid next growth state.");
                 } else {
-                    std::cerr << actor->def.name << " at " << actor->pos << " has grown into " << def.name << ".\n";
                     Actor *newActor = new Actor(def);
                     newActor->reset();
                     mActors[i] = newActor;
@@ -496,7 +495,7 @@ void World::tick() {
                 } while (getTileDef(at(p).terrain).solid || at(p).actor);
                 moveActor(actor, p);
                 addLogMsg("You have died! Respawning...");
-                std::cerr << "tick (info): respawning player at " << p << ".\n";
+                logger_log("tick (info): respawning player at " + p.toString() + ".");
                 actionCentrePan(*this, actor, Command{}, true);
                 ++iter;
             } else {
@@ -535,10 +534,10 @@ void writeString(std::ostream &out, const std::string &s) {
 }
 
 bool World::savegame(const std::string &filename) const {
-    std::cerr << "savegame (info): saving game.\n";
+    logger_log("savegame (info): saving game.");
     std::ofstream out(filename, std::ios_base::binary);
     if (!out) {
-        std::cerr << "savegame: Failed to open save file.\n";
+        logger_log("savegame: Failed to open save file.");
         return false;
     }
 
@@ -617,21 +616,21 @@ std::string readString(std::istream &inf) {
 }
 
 bool World::loadgame(const std::string &filename) {
-    std::cerr << "loadgame (info): loading game.\n";
+    logger_log("loadgame (info): loading game.");
     std::ifstream inf(filename, std::ios_base::binary);
     if (!inf) {
-        std::cerr << "loadgame: Failed to open save file.\n";
+        logger_log("loadgame: Failed to open save file.");
         return false;
     }
 
     if (read32(inf) != 0x4C5243) {
-        std::cerr << "loadgame: bad magic number.\n";
+        logger_log("loadgame: bad magic number.");
         return false;
     }
 
     const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
     if (read32(inf) != versionNumber) {
-        std::cerr << "loadgame: incompatable save version.\n";
+        logger_log("loadgame: incompatable save version.");
         return false;
     }
     int width = read32(inf);
@@ -645,7 +644,7 @@ bool World::loadgame(const std::string &filename) {
 
     // read tiles
     if (read32(inf) != 0x454C4954) {
-        std::cerr << "loadgame: expected start of tile data.\n";
+        logger_log("loadgame: expected start of tile data.");
         return false;
     }
     for (int i = 0; i < mWidth * mHeight; ++i) {
@@ -655,7 +654,7 @@ bool World::loadgame(const std::string &filename) {
 
     // read items on ground
     if (read32(inf) != 0x4D455449) {
-        std::cerr << "loadgame: expected start of item data.\n";
+        logger_log("loadgame: expected start of item data.");
         return false;
     }
     int itemCount = read32(inf);
@@ -670,13 +669,13 @@ bool World::loadgame(const std::string &filename) {
 
     // read actors
     if (read32(inf) != 0x52544341) {
-        std::cerr << "loadgame: expected start of actor data.\n";
+        logger_log("loadgame: expected start of actor data.");
         return false;
     }
     int actorCount = read32(inf);
     for (int i = 0; i < actorCount; ++i) {
         if (inf.eof()) {
-            std::cerr << "loadgame: unexpected end of file (actors).\n";
+            logger_log("loadgame: unexpected end of file (actors).");
             return false;
         }
         int ident = read32(inf);
@@ -697,7 +696,7 @@ bool World::loadgame(const std::string &filename) {
     }
     // read log
     if (read32(inf) != 0x00474F4C) {
-        std::cerr << "loadgame: expected start of log data.\n";
+        logger_log("loadgame: expected start of log data.");
         return false;
     }
     int logCount = read32(inf);

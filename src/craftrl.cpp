@@ -101,7 +101,7 @@ void gameloop(World &w) {
     w.wantsToQuit = false;
     Actor *player = w.getPlayer();
     if (player->def.ident != 1) {
-        std::cerr << "gameloop: player is not of type player.\n";
+        logger_log("gameloop: player is not of type player.");
         return;
     }
     actionCentrePan(w, player, Command{ CMD_NONE }, true);
