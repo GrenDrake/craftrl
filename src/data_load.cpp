@@ -28,6 +28,7 @@ bool parseAddfile(World &w, TokenData &data) {
 
 
 bool parseActor(World &w, TokenData &data) {
+    const Origin &fullOrigin = data.here().origin;
     data.next(); // skip "tile"
 
     if (!data.require(TokenType::OpenBrace)) return false;
@@ -116,6 +117,10 @@ bool parseActor(World &w, TokenData &data) {
     data.next(); // skip "}"
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
+    if (w.getActorDef(actor.ident).ident >= 0) {
+            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  actor ident " << actor.ident << " already used.\n";
+            return false;
+    }
     w.addActorDef(actor);
     return true;
 }
@@ -145,6 +150,7 @@ bool parseDefine(World &w, TokenData &data) {
 }
 
 bool parseItem(World &w, TokenData &data) {
+    const Origin &fullOrigin = data.here().origin;
     data.next(); // skip "tile"
 
     if (!data.require(TokenType::OpenBrace)) return false;
@@ -195,6 +201,10 @@ bool parseItem(World &w, TokenData &data) {
     data.next(); // skip "}"
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
+    if (w.getItemDef(item.ident).ident >= 0) {
+            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  item ident " << item.ident << " already used.\n";
+            return false;
+    }
     w.addItemDef(item);
     return true;
 }
@@ -279,6 +289,7 @@ bool parseRecipe(World &w, TokenData &data) {
 }
 
 bool parseTile(World &w, TokenData &data) {
+    const Origin &fullOrigin = data.here().origin;
     data.next(); // skip "tile"
 
     if (!data.require(TokenType::OpenBrace)) return false;
@@ -352,6 +363,10 @@ bool parseTile(World &w, TokenData &data) {
     data.next(); // skip "}"
     if (!data.require(TokenType::Semicolon)) return false;
     data.next(); // skip ";"
+    if (w.getTileDef(tile.ident).ident >= 0) {
+            std::cerr << fullOrigin.filename << ':' << fullOrigin.line << "  tile ident " << tile.ident << " already used.\n";
+            return false;
+    }
     w.addTileDef(tile);
     return true;
 }
