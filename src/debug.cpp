@@ -14,13 +14,15 @@ void debugGive(World &w, Actor *player, const std::vector<std::string> &command)
 void debugHelp(World &w, Actor *player, const std::vector<std::string> &command);
 void debugKill(World &w, Actor *player, const std::vector<std::string> &command);
 void debugSpawn(World &w, Actor *player, const std::vector<std::string> &command);
+void debugTeleport(World &w, Actor *player, const std::vector<std::string> &command);
 
 
 DebugCommand debugCommands[] = {
-    {   "give",     debugGive,  2  },
-    {   "help",     debugHelp,  0  },
-    {   "kill",     debugKill,  1  },
-    {   "spawn",    debugSpawn, 1  },
+    {   "give",     debugGive,      2  },
+    {   "help",     debugHelp,      0  },
+    {   "kill",     debugKill,      1  },
+    {   "spawn",    debugSpawn,     1  },
+    {   "teleport", debugTeleport,  2  },
     {   "", nullptr }
 };
 
@@ -129,4 +131,34 @@ void debugSpawn(World &w, Actor *player, const std::vector<std::string> &command
     actor->reset();
     w.moveActor(actor, p);
     w.addLogMsg("Spawned " + def.name + " at " + p.toString() + ".");
+}
+
+void debugTeleport(World &w, Actor *player, const std::vector<std::string> &command) {
+    int x = -1, y = -1;
+    if (!strToInt(command[1], x)) {
+        w.addLogMsg("X coord radius must be number.");
+        return;
+    }
+    if (!strToInt(command[2], y)) {
+        w.addLogMsg("y coord radius must be number.");
+        return;
+    }
+    Point dest(x, y);
+
+    if (!w.valid(dest)) {
+        w.addLogMsg("Not a valid map position.");
+        return;
+    }
+    const Tile &tile = w.at(dest);
+    if (tile.actor) {
+        w.addLogMsg("Position already occupied.");
+        return;
+    }
+    if (w.getTileDef(tile.terrain).solid) {
+        w.addLogMsg("Position not passable.");
+        return;
+    }
+
+    w.moveActor(player, dest);
+    actionCentrePan(w, player, Command{}, true);
 }
