@@ -65,7 +65,7 @@ void mainmenu(World &w) {
     mainmenuMenu.titleRight = std::to_string(VER_MAJOR) + "." + std::to_string(VER_MINOR) + "." + std::to_string(VER_PATCH);
 
     while (1) {
-        mainmenuMenu.selection = w.inProgress ? 2 : 0;
+        mainmenuMenu.selection = w.inProgress ? 2 : 1;
         mainmenuMenu.items[2].disabled = !w.inProgress;
         int result = runMenu(mainmenuMenu);
 

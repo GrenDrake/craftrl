@@ -42,8 +42,9 @@ void redraw_main(World &w) {
     const int viewWidth = screenWidth - sidebarWidth - 1;
     const int viewHeight = screenHeight - logHeight - 1;
 
-    terminal_clear();
+    terminal_bkcolor(0xFF000000);
     terminal_color(0xFFFFFFFF);
+    terminal_clear();
     for (int i = 0; i < logY; ++i) {
         terminal_put(sidebarX - 1, i, '|');
     }

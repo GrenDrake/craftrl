@@ -26,6 +26,7 @@ const Command gameCommands[] = {
     {   CMD_SELECT_HOME,    Dir::None,      { { TK_HOME      } } },
     {   CMD_SELECT_END,     Dir::None,      { { TK_END       } } },
     {   CMD_SORT_INV_NAME,  Dir::None,      { { TK_O         } } },
+    {   CMD_DEBUG,          Dir::None,      { { TK_F7        } } },
 
     {   CMD_CONTEXTMOVE,    Dir::North,     { { TK_UP,       }, { TK_K }, { TK_KP_8 } } },
     {   CMD_CONTEXTMOVE,    Dir::East,      { { TK_RIGHT,    }, { TK_L }, { TK_KP_6 } } },
@@ -72,6 +73,7 @@ std::string commandName(int command) {
         case CMD_DROP:          return "Drop";
         case CMD_USE:           return "Use";
         case CMD_WAIT:          return "Wait";
+        case CMD_TALK:          return "Talk";
         case CMD_CONTEXTMOVE:   return "Context-Sensitive Move";
         case CMD_QUIT:          return "Quit";
         case CMD_NEXT_SELECT:   return "Inventory Down";
@@ -85,6 +87,7 @@ std::string commandName(int command) {
         case CMD_SELECT_HOME:   return "Inventory First";
         case CMD_SELECT_END:    return "Inventory Last";
         case CMD_SORT_INV_NAME: return "Sort Inventory by Name";
+        case CMD_DEBUG:         return "Debug Command";
         default: {
             std::stringstream s;
             s << "(Unknown Command " << command << ')';
@@ -116,6 +119,7 @@ ActionHandler commandAction(int command) {
         case CMD_SELECT_HOME:   return actionSelectHome;
         case CMD_SELECT_END:    return actionSelectEnd;
         case CMD_SORT_INV_NAME: return actionSortInvByName;
+        case CMD_DEBUG:         return actionDebug;
         default:                return nullptr;
     }
 }

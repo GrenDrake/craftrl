@@ -156,6 +156,11 @@ bool actionCraft(World &w, Actor *player, const Command &command, bool silent) {
 }
 
 
+bool actionDebug(World &w, Actor *player, const Command &command, bool silent) {
+    doDebug(w, player);
+    return false;
+}
+
 bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
     Dir dir = command.dir;
     if (dir == Dir::None) {

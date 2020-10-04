@@ -97,6 +97,7 @@ bool ui_prompt(const std::string &title, const std::string &message, std::string
         terminal_bkcolor(0xFFFFFFFF);
         terminal_color(0xFF333333);
         terminal_print(okayPos, boxY + boxHeight - 1, " OKAY ");
+        terminal_bkcolor(0xFF999999);
         terminal_print(cancelPos, boxY + boxHeight - 1, " CANCEL ");
         terminal_refresh();
 

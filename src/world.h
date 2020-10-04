@@ -56,6 +56,7 @@ const int CMD_SELECT_PGUP       = 19;
 const int CMD_SELECT_HOME       = 20;
 const int CMD_SELECT_END        = 21;
 const int CMD_SORT_INV_NAME     = 22;
+const int CMD_DEBUG             = 23;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -295,6 +296,7 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent);
 bool actionCentrePan(World &w, Actor *player, const Command &command, bool silent);
 bool actionContextMove(World &w, Actor *player, const Command &command, bool silent);
 bool actionCraft(World &w, Actor *player, const Command &command, bool silent);
+bool actionDebug(World &w, Actor *player, const Command &command, bool silent);
 bool actionDo(World &w, Actor *player, const Command &command, bool silent);
 bool actionDrop(World &w, Actor *player, const Command &command, bool silent);
 bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent);
@@ -318,6 +320,9 @@ bool actionWait(World &w, Actor *player, const Command &command, bool silent);
 // actions.cpp
 void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages);
 
+// debug.cpp
+void doDebug(World &w, Actor *player);
+
 // input.cpp
 extern const Command gameCommands[];
 const Command& findCommand(int key, const Command *commandList);
@@ -340,6 +345,9 @@ extern const Point nowhere;
 
 // utility.cpp
 unsigned long long hashString(const std::string &str);
+std::vector<std::string> explode(const std::string &text);
+bool strToInt(const std::string &str, int &number);
+std::string trim(std::string s);
 std::string upperFirst(std::string text);
 
 #include "logger.h"
