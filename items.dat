@@ -164,7 +164,8 @@ item {
     ident       ITEM_MEAT
     glyph       '%'
     colour      0xFF7777
-    name        "meat"
+    name        "chunk of meat"
+    plural      "chunks of meat"
 };
 
 item {
