@@ -75,6 +75,36 @@ bool buildmap(World &w, unsigned long seed) {
         }
     }
 
+
+    // add sand patches
+    for (int i = 0; i < 40; ++i) {
+        int radius = rng.between(6, 12);
+        int cx = rng.next32() % w.width();
+        int cy = rng.next32() % w.height();
+        for (int y = cy - radius; y <= cy + radius; ++y) {
+            for (int x = cx - radius; x <= cx + radius; ++x) {
+                int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+                const Tile &tile = w.at(Point(x, y));
+                if (dist <= radius && tile.terrain == 2) {
+                    w.setTerrain(Point(x, y), TILE_SAND);
+                }
+            }
+        }
+    }
+
+
+    // add ore veins
+    std::vector<int> oreList{ 30, 31, 32, 32, 33, 34 };
+    for (int i = 0; i < 800; ++i) {
+        int cx = rng.next32() % w.width();
+        int cy = rng.next32() % w.height();
+        Point c(cx, cy);
+        if (w.at(c).terrain == TILE_STONE) {
+            int oreNum = rng.next32() % oreList.size();
+            w.setTerrain(c, oreList[oreNum]);
+        }
+    }
+
     // build map borders
     for (int x = 0; x < w.width(); ++x) {
         int size = rng.between(3, 5);

@@ -73,3 +73,42 @@ recipe {
     part            1 ITEM_BASIC_WORKBENCH_KIT
     craftingStation 1
 };
+
+recipe {
+    makeIdent       ITEM_FORGE
+    makeQty         1
+    part            3 ITEM_ROCK
+    craftingStation 1
+};
+
+recipe {
+    makeIdent       ITEM_IRON_INGOT
+    makeQty         5
+    part            1 ITEM_IRON_ORE
+    part            1 ITEM_COAL
+    craftingStation 4
+};
+
+recipe {
+    makeIdent       ITEM_COPPER_INGOT
+    makeQty         5
+    part            1 ITEM_COPPER_ORE
+    part            1 ITEM_COAL
+    craftingStation 4
+};
+
+recipe {
+    makeIdent       ITEM_SILVER_INGOT
+    makeQty         5
+    part            1 ITEM_SILVER_ORE
+    part            1 ITEM_COAL
+    craftingStation 4
+};
+
+recipe {
+    makeIdent       ITEM_GOLD_INGOT
+    makeQty         5
+    part            1 ITEM_GOLD_ORE
+    part            1 ITEM_COAL
+    craftingStation 4
+};

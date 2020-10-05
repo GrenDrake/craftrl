@@ -31,6 +31,12 @@ const int TILE_DIRT             = 0;
 const int TILE_STONE            = 1;
 const int TILE_GRASS            = 2;
 const int TILE_WATER            = 3;
+const int TILE_SAND             = 4;
+const int TILE_IRON_VEIN        = 30;
+const int TILE_COPPER_VEIN      = 31;
+const int TILE_COAL_VEIN        = 32;
+const int TILE_SILVER_VEIN      = 33;
+const int TILE_GOLD_VEIN        = 34;
 
 const int CMD_NONE              = -1;
 const int CMD_DUMPMAP           = 0;

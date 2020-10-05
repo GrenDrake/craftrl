@@ -183,3 +183,88 @@ item {
     name        "standard workbench kit"
     constructs  TILE_STD_WORKBENCH
 };
+
+item {
+    ident       ITEM_SAND
+    glyph       '*'
+    colour      0xFFFF77
+    name        "handful of sand"
+    plural      "handfuls of sand"
+};
+
+item {
+    ident       ITEM_IRON_ORE
+    glyph       '*'
+    colour      0xB7410E
+    name        "piece of iron ore"
+    plural      "pieces of iron ore"
+};
+
+item {
+    ident       ITEM_COPPER_ORE
+    glyph       '*'
+    colour      0xB87333
+    name        "piece of copper ore"
+    plural      "pieces of copper ore"
+};
+
+item {
+    ident       ITEM_COAL
+    glyph       '*'
+    colour      0x36454F
+    name        "piece of coal"
+    plural      "pieces of coal"
+};
+
+item {
+    ident       ITEM_GOLD_ORE
+    glyph       '*'
+    colour      0xFFD700
+    name        "piece of gold ore"
+    plural      "pieces of gold ore"
+};
+
+item {
+    ident       ITEM_SILVER_ORE
+    glyph       '*'
+    colour      0xC0C0C0
+    name        "piece of silver ore"
+    plural      "pieces of silver ore"
+};
+
+
+item {
+    ident       ITEM_FORGE
+    glyph       '*'
+    colour      0xAAAAAA
+    name        "forge"
+    constructs  TILE_FORGE
+};
+
+item {
+    ident       ITEM_IRON_INGOT
+    glyph       '*'
+    colour      0xB7410E
+    name        "iron ingot"
+};
+
+item {
+    ident       ITEM_COPPER_INGOT
+    glyph       '*'
+    colour      0xB87333
+    name        "copper ingot"
+};
+
+item {
+    ident       ITEM_GOLD_INGOT
+    glyph       '*'
+    colour      0xFFD700
+    name        "gold ingot"
+};
+
+item {
+    ident       ITEM_SILVER_INGOT
+    glyph       '*'
+    colour      0xC0C0C0
+    name        "silver ingot"
+};
