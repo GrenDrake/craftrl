@@ -195,6 +195,11 @@ void World::setTerrain(const Point &pos, int toTile) {
     if (!valid(pos)) return;
     int c = pos.x + pos.y * mWidth;
     mTiles[c].terrain = toTile;
+
+    // check for neccesary room updates
+    if (mTiles[c].room) {
+        updateRoom(mTiles[c].room);
+    }
 }
 
 bool World::moveActor(Actor *actor, const Point &to) {
@@ -271,6 +276,39 @@ void World::removeItem(Item *item) {
     setItem(item->pos, nullptr);
 }
 
+std::vector<Point> World::findRoomExtents(const Point &pos) const {
+    std::vector<Point> result;
+    std::vector<Point> todo;
+    todo.push_back(pos);
+    while (!todo.empty()) {
+        Point pos = todo.back();
+        todo.pop_back();
+        bool alreadyDone = false;
+        for (const Point &p : result) {
+            if (p == pos) {
+                alreadyDone = true;
+                break;
+            }
+        }
+        if (alreadyDone) continue;
+        result.push_back(pos);
+
+        Dir d = Dir::North;
+        do {
+            Point dest = pos.shift(d);
+            if (valid(dest) && !getTileDef(at(dest).terrain).isWall) {
+                todo.push_back(dest);
+            }
+            d = rotate45(d);
+        } while (d != Dir::North);
+
+        if (result.size() > 100) {
+            return std::vector<Point>{};
+        }
+    }
+    return result;
+}
+
 void World::addRoom(Room *room) {
     if (!room) return;
     mRooms.push_back(room);
@@ -329,6 +367,8 @@ void World::updateRoom(Room *room) {
     if (theDef == nullptr) {
         theDef = &getRoomDef(0);
     }
+    if (room->def == nullptr)   addLogMsg("Created " + theDef->name + ".");
+    else                        addLogMsg("The " + room->def->name + " becomes a " + theDef->name + ".");
     room->def = theDef;
     room->type = theDef->ident;
 }

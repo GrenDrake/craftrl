@@ -257,6 +257,7 @@ public:
     void removeActor(Actor *actor);
     void removeItem(Item *item);
 
+    std::vector<Point> findRoomExtents(const Point &pos) const;
     void addRoom(Room *room);
     void removeRoom(Room *room);
     void updateRoom(Room *room);

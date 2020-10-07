@@ -264,38 +264,13 @@ bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent
         return false;
     }
 
-    Room *room = new Room;
-    std::vector<Point> todo;
-    todo.push_back(player->pos);
-    while (!todo.empty()) {
-        Point pos = todo.back();
-        todo.pop_back();
-        bool alreadyDone = false;
-        for (const Point &p : room->points) {
-            if (p == pos) {
-                alreadyDone = true;
-                break;
-            }
-        }
-        if (alreadyDone) continue;
-        room->points.push_back(pos);
-
-        Dir d = Dir::North;
-        do {
-            Point dest = pos.shift(d);
-            if (w.valid(dest) && !w.getTileDef(w.at(dest).terrain).isWall) {
-                todo.push_back(dest);
-            }
-            d = rotate45(d);
-        } while (d != Dir::North);
-
-        if (room->points.size() > 100) {
-            delete room;
-            w.addLogMsg("Area exceeds maximum room size.");
-            return false;
-        }
+    std::vector<Point> points = w.findRoomExtents(player->pos);
+    if (points.empty()) {
+        w.addLogMsg("Cannot make room here.");
+        return false;
     }
-
+    Room *room = new Room;
+    room->points = points;
     w.addRoom(room);
     w.updateRoom(room);
     w.addLogMsg("Created " + room->def->name + ".");
