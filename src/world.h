@@ -63,6 +63,8 @@ const int CMD_SELECT_HOME       = 20;
 const int CMD_SELECT_END        = 21;
 const int CMD_SORT_INV_NAME     = 22;
 const int CMD_DEBUG             = 23;
+const int CMD_MAKEROOM          = 24;
+const int CMD_CLEARROOM         = 25;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -77,6 +79,7 @@ struct Point {
     Point shift(Dir dir, int amnt = 1) const;
     Dir directionTo(const Point &rhs) const;
     double distance(const Point &rhs) const;
+    bool operator==(const Point &rhs) const;
 
     int x, y;
 };
@@ -139,6 +142,7 @@ struct TileDef {
     bool solid;
     bool ground;
     unsigned grantsCrafting;
+    bool isWall;
 };
 
 struct RecipeRow {
@@ -150,6 +154,14 @@ struct RecipeDef {
     int makeQty;
     std::vector<RecipeRow> mRows;
     unsigned craftingStation;
+};
+
+struct RoomDef {
+    int ident;
+    std::string name;
+    int colour;
+    int value;
+    std::vector<int> requirements;
 };
 
 struct InventoryRow {
@@ -191,12 +203,21 @@ struct Item {
     Point pos;
 };
 
+struct Room {
+    Room()
+    : type(0), def(nullptr)
+    { }
+    int type;
+    const RoomDef *def;
+    std::vector<Point> points;
+};
+
 struct Tile {
-    Tile() : terrain(0), construct(0), actor(nullptr), item(0) { }
-    Tile(int tile) : terrain(tile), construct(0), actor(nullptr), item(0) { }
+    Tile() : terrain(0), room(nullptr), actor(nullptr), item(0) { }
+    Tile(int tile) : terrain(tile), room(nullptr), actor(nullptr), item(0) { }
 
     int terrain;
-    int construct;
+    Room *room;
     Actor *actor;
     Item *item;
 };
@@ -236,6 +257,10 @@ public:
     void removeActor(Actor *actor);
     void removeItem(Item *item);
 
+    void addRoom(Room *room);
+    void removeRoom(Room *room);
+    void updateRoom(Room *room);
+
     Point findItemNearest(const Point &to, int itemIdent, int radius) const;
     Point findActorNearest(const Point &to, int notOfFaction, int radius) const;
     void doDamage(Actor *attacker, Actor *victim);
@@ -258,6 +283,9 @@ public:
     const RecipeDef& getRecipeDef(int ident) const;
     int recipeDefCount() const { return mRecipeDefs.size(); }
     std::vector<const RecipeDef*> getRecipeList(unsigned stations) const;
+    void addRoomDef(const RoomDef &td);
+    const RoomDef& getRoomDef(int ident) const;
+    int roomDefCount() const { return mRoomDefs.size(); }
 
     void tick();
     unsigned getTurn() const { return turn; }
@@ -276,11 +304,13 @@ private:
     static const ItemDef BAD_ITEMDEF;
     static const TileDef BAD_TILEDEF;
     static const RecipeDef BAD_RECIPEDEF;
+    static const RoomDef BAD_ROOMDEF;
 
     std::vector<ActorDef> mActorDefs;
     std::vector<ItemDef> mItemDefs;
     std::vector<TileDef> mTileDefs;
     std::vector<RecipeDef> mRecipeDefs;
+    std::vector<RoomDef> mRoomDefs;
 
     Point mCamera;
     std::vector<LogMessage> mLog;
@@ -288,6 +318,7 @@ private:
     int mWidth, mHeight;
     Tile *mTiles;
     std::vector<Actor*> mActors;
+    std::vector<Room*> mRooms;
     Actor *mPlayer;
 
     unsigned turn;
@@ -300,12 +331,14 @@ typedef bool (*ActionHandler)(World&, Actor*, const Command&, bool);
 
 bool actionAttack(World &w, Actor *player, const Command &command, bool silent);
 bool actionCentrePan(World &w, Actor *player, const Command &command, bool silent);
+bool actionClearRoom(World &w, Actor *player, const Command &command, bool silent);
 bool actionContextMove(World &w, Actor *player, const Command &command, bool silent);
 bool actionCraft(World &w, Actor *player, const Command &command, bool silent);
 bool actionDebug(World &w, Actor *player, const Command &command, bool silent);
 bool actionDo(World &w, Actor *player, const Command &command, bool silent);
 bool actionDrop(World &w, Actor *player, const Command &command, bool silent);
 bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent);
+bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 bool actionNextSelect(World &w, Actor *player, const Command &command, bool silent);
 bool actionPan(World &w, Actor *player, const Command &command, bool silent);

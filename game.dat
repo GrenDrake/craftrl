@@ -84,7 +84,12 @@ define ITEM_COPPER_INGOT        32;
 define ITEM_SILVER_INGOT        33;
 define ITEM_GOLD_INGOT          34;
 
+define ROOM_EMPTY               0;
+define ROOM_WORKSHOP            1;
+define ROOM_SMITHY              2;
+
 addfile "actors.dat";
 addfile "items.dat";
 addfile "recipes.dat";
+addfile "rooms.dat";
 addfile "tiles.dat";
