@@ -198,8 +198,14 @@ void World::setTerrain(const Point &pos, int toTile) {
 
     // check for neccesary room updates
     if (mTiles[c].room) {
-        updateRoom(mTiles[c].room);
+        rescaleRoom(mTiles[c].room);
     }
+    Dir d = Dir::North;
+    do {
+        Point dest = pos.shift(d);
+        if (at(dest).room) rescaleRoom(at(dest).room);
+        d = rotate45(d);
+    } while (d != Dir::North);
 }
 
 bool World::moveActor(Actor *actor, const Point &to) {
@@ -319,6 +325,16 @@ void World::addRoom(Room *room) {
     }
 }
 
+bool World::createRoom(const Point &initial) {
+    std::vector<Point> points = findRoomExtents(initial);
+    if (points.empty()) return false;
+    Room *room = new Room;
+    room->points = points;
+    addRoom(room);
+    updateRoom(room);
+    return true;
+}
+
 void World::removeRoom(Room *room) {
     for (const Point &pos : room->points) {
         int c = pos.x + pos.y * mWidth;
@@ -333,6 +349,53 @@ void World::removeRoom(Room *room) {
             ++iter;
         }
     }
+}
+
+bool World::rescaleRoom(Room *room) {
+    Point initial = nowhere;
+
+    for (const Point &p : room->points) {
+        if (!getTileDef(at(p).terrain).isWall) {
+            initial = p;
+            break;
+        }
+    }
+    if (!valid(initial)) {
+        addLogMsg("Destroyed " + room->def->name + ".");
+        removeRoom(room);
+        delete room;
+        return false;
+    }
+
+    auto extents = findRoomExtents(initial);
+    if (extents.empty()) {
+        addLogMsg("Destroyed " + room->def->name + ".");
+        removeRoom(room);
+        delete room;
+        return false;
+    }
+
+    for (const Point &p : room->points) {
+        int c = p.x + p.y * mWidth;
+        mTiles[c].room = nullptr;
+    }
+    for (const Point &p : extents) {
+        int c = p.x + p.y * mWidth;
+        if (mTiles[c].room && mTiles[c].room != room) {
+            addLogMsg("Destroyed " + mTiles[c].room->def->name + ".");
+            removeRoom(mTiles[c].room);
+        }
+        mTiles[c].room = room;
+    }
+    if (extents.size() < room->points.size()) {
+        addLogMsg("The " + room->def->name + " became smaller.");
+    } else if (extents.size() > room->points.size()) {
+        addLogMsg("The " + room->def->name + " became larger.");
+    }
+
+    room->points = extents;
+    updateRoom(room);
+    return true;
 }
 
 void World::updateRoom(Room *room) {
@@ -367,8 +430,8 @@ void World::updateRoom(Room *room) {
     if (theDef == nullptr) {
         theDef = &getRoomDef(0);
     }
-    if (room->def == nullptr)   addLogMsg("Created " + theDef->name + ".");
-    else                        addLogMsg("The " + room->def->name + " becomes a " + theDef->name + ".");
+    if (room->def == nullptr)       addLogMsg("Created " + theDef->name + ".");
+    else if (room->def != theDef)   addLogMsg("The " + room->def->name + " becomes a " + theDef->name + ".");
     room->def = theDef;
     room->type = theDef->ident;
 }

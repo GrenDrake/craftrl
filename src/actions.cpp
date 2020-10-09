@@ -5,6 +5,7 @@
 Dir getDir(World &w, const std::string &reason);
 void doCrafting(World &w, Actor *player, unsigned craftingStation);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
+void viewLog(World &w);
 
 
 void makeLootAt(World &w, const LootTable *table, const Point &where, bool showMessages) {
@@ -264,16 +265,9 @@ bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent
         return false;
     }
 
-    std::vector<Point> points = w.findRoomExtents(player->pos);
-    if (points.empty()) {
+    if (!w.createRoom(player->pos)) {
         w.addLogMsg("Cannot make room here.");
-        return false;
     }
-    Room *room = new Room;
-    room->points = points;
-    w.addRoom(room);
-    w.updateRoom(room);
-    w.addLogMsg("Created " + room->def->name + ".");
     return false;
 }
 
@@ -487,5 +481,10 @@ bool actionSelectPageup(World &w, Actor *player, const Command &command, bool si
 
 bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent) {
     player->inventory.sort(SORT_NAME);
+    return false;
+}
+
+bool actionViewLog(World &w, Actor *player, const Command &command, bool silent) {
+    viewLog(w);
     return false;
 }

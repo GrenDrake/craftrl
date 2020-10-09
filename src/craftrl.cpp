@@ -29,6 +29,33 @@ Dir getDir(World &w, const std::string &reason) {
 }
 
 
+void viewLog(World &w) {
+    const int screenHeight = 24;
+    unsigned top = 0;
+
+    terminal_bkcolor(0xFF000000);
+    terminal_color(0xFFFFFFFF);
+    while (1) {
+        terminal_clear();
+        for (int i = 0; i < screenHeight; ) {
+            const LogMessage &msg = w.getLogMsg(i + top);
+            terminal_color(0xFFCCCCCC);
+            dimensions_t size = terminal_measure_ext(80, 3, msg.msg.c_str());
+            terminal_print_ext(0, screenHeight - i - size.height, 80, 3, TK_ALIGN_LEFT, msg.msg.c_str());
+            i += size.height;
+        }
+        terminal_refresh();
+
+        int key = terminal_read();
+        if (key == TK_ESCAPE || key == TK_Q || key == TK_Z || key == TK_CLOSE) return;
+        if (key == TK_DOWN && top > 0) --top;
+        if (key == TK_UP) ++top;
+        if (key == TK_HOME) top = 0;
+        if (key == TK_END) top = w.getLogCount() - screenHeight;
+    }
+}
+
+
 void redraw_main(World &w) {
     const Actor *player = w.getPlayer();
     Point camera = w.getCamera();
@@ -138,7 +165,8 @@ void gameloop(World &w) {
                     s << ", " << tile.actor->getName();
                 }
                 if (tile.room) {
-                    s << " in " << tile.room->def->name;
+                    s << " in " << tile.room->def->name << "(";
+                    s << "size:" << tile.room->points.size() << ')';
                 }
                 w.addLogMsg(s.str());
             }

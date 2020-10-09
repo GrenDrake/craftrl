@@ -65,6 +65,7 @@ const int CMD_SORT_INV_NAME     = 22;
 const int CMD_DEBUG             = 23;
 const int CMD_MAKEROOM          = 24;
 const int CMD_CLEARROOM         = 25;
+const int CMD_VIEWLOG           = 26;
 
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
@@ -259,7 +260,9 @@ public:
 
     std::vector<Point> findRoomExtents(const Point &pos) const;
     void addRoom(Room *room);
+    bool createRoom(const Point &initial);
     void removeRoom(Room *room);
+    bool rescaleRoom(Room *room);
     void updateRoom(Room *room);
 
     Point findItemNearest(const Point &to, int itemIdent, int radius) const;
@@ -355,6 +358,7 @@ bool actionTake(World &w, Actor *player, const Command &command, bool silent);
 bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);
 bool actionWait(World &w, Actor *player, const Command &command, bool silent);
+bool actionViewLog(World &w, Actor *player, const Command &command, bool silent);
 
 
 // actions.cpp
