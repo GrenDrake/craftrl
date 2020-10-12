@@ -25,6 +25,7 @@ const int TYPE_VILLAGER  = 1;
 const int TYPE_PLANT     = 2;
 const int TYPE_ANIMAL    = 3;
 const int TYPE_MONSTER   = 4;
+const int TYPE_INVENTORY = 5;
 
 const int TILE_INVALID          = -1;
 const int TILE_DIRT             = 0;

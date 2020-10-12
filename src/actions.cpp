@@ -3,6 +3,7 @@
 
 Dir getDir(World &w, const std::string &reason);
 void doCrafting(World &w, Actor *player, unsigned craftingStation);
+void doTrading(World &w, Actor *left, Actor *right);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 
 
@@ -378,6 +379,9 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
                 s << upperFirst(tile.actor->getName()) << ": \"Hello!\"";
                 w.addLogMsg(s.str());
                 return false;
+            case TYPE_INVENTORY:
+                doTrading(w, player, tile.actor);
+                return false;
             default:
                 w.addLogMsg("Can't talk to that!");
                 return false;
@@ -414,6 +418,7 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
         player->inventory.remove(def);
         if (actorDef.ident < 0) return false;
         Actor *actor = new Actor(actorDef);
+        actor->reset();
         w.moveActor(actor, dest);
         return true;
     } else if (def->constructs >= 0) {

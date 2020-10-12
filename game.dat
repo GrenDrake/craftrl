@@ -3,6 +3,7 @@ define TYPE_VILLAGER            1;
 define TYPE_PLANT               2;
 define TYPE_ANIMAL              3;
 define TYPE_MONSTER             4;
+define TYPE_INVENTORY           5;
 
 
 define TILE_INVALID             -1;
@@ -47,6 +48,7 @@ define ACTOR_GROWN_CARROT       1007;
 define ACTOR_TURNIP_SEEDLING    1008;
 define ACTOR_GROWN_TURNIP       1009;
 define ACTOR_ZOMBIE             2000;
+define ACTOR_CHEST              3000;
 
 define ITEM_STICK               0;
 define ITEM_ROCK                1;
@@ -83,6 +85,7 @@ define ITEM_IRON_INGOT          31;
 define ITEM_COPPER_INGOT        32;
 define ITEM_SILVER_INGOT        33;
 define ITEM_GOLD_INGOT          34;
+define ITEM_CHEST               35;
 
 define ROOM_EMPTY               0;
 define ROOM_WORKSHOP            1;
