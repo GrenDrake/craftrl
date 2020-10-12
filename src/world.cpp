@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <sstream>
+#include <physfs.h>
 #include "world.h"
 
 
@@ -534,74 +534,69 @@ void World::getTime(int *day, int *hour, int *minute) const {
     *minute = this->minute;
 }
 
-void write8(std::ostream &out, uint8_t value) {
-    out.write(reinterpret_cast<char*>(&value), 1);
-}
-void write32(std::ostream &out, uint32_t value) {
-    out.write(reinterpret_cast<char*>(&value), 4);
-}
-void writeString(std::ostream &out, const std::string &s) {
+void writeString(PHYSFS_file *out, const std::string &s) {
     for (char c : s) {
-        write8(out, c);
+        PHYSFS_writeBytes(out, &c, 1);
     }
-    write8(out, 0);
+    char zero  =0;
+    PHYSFS_writeBytes(out, &zero, 1);
 }
 
 bool World::savegame(const std::string &filename) const {
     logger_log("savegame (info): saving game.");
-    std::ofstream out(filename, std::ios_base::binary);
+    PHYSFS_file *out = PHYSFS_openWrite(filename.c_str());
     if (!out) {
         logger_log("savegame: Failed to open save file.");
         return false;
     }
 
     const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
-    write32(out, 0x4C5243); // magic number
-    write32(out, versionNumber);
-    write32(out, mWidth);
-    write32(out, mHeight);
+    PHYSFS_writeULE32(out, 0x4C5243); // magic number
+    PHYSFS_writeULE32(out, versionNumber);
+    PHYSFS_writeULE32(out, mWidth);
+    PHYSFS_writeULE32(out, mHeight);
 
-    write32(out, turn);
-    write32(out, day);
-    write32(out, hour);
-    write32(out, minute);
+    PHYSFS_writeULE32(out, turn);
+    PHYSFS_writeULE32(out, day);
+    PHYSFS_writeULE32(out, hour);
+    PHYSFS_writeULE32(out, minute);
 
 
     int itemCount = 0;
     // write tiles
-    write32(out, 0x454C4954);
+    PHYSFS_writeULE32(out, 0x454C4954);
     for (int i = 0; i < mWidth * mHeight; ++i) {
-        write32(out, mTiles[i].terrain);
+        PHYSFS_writeULE32(out, mTiles[i].terrain);
         if (mTiles[i].item) ++itemCount;
     }
     // write items on ground
-    write32(out, 0x4D455449);
-    write32(out, itemCount);
+    PHYSFS_writeULE32(out, 0x4D455449);
+    PHYSFS_writeULE32(out, itemCount);
     for (int i = 0; i < mWidth * mHeight; ++i) {
         if (!mTiles[i].item) continue;
         const Item *item = mTiles[i].item;
-        write32(out, item->def.ident);
-        write32(out, item->pos.x);
-        write32(out, item->pos.y);
+        PHYSFS_writeULE32(out, item->def.ident);
+        PHYSFS_writeULE32(out, item->pos.x);
+        PHYSFS_writeULE32(out, item->pos.y);
     }
     // write actors
-    write32(out, 0x52544341);
-    write32(out, mActors.size());
+    PHYSFS_writeULE32(out, 0x52544341);
+    PHYSFS_writeULE32(out, mActors.size());
     for (const Actor *actor : mActors) {
-        write32(out, actor->def.ident);
-        write32(out, actor->pos.x);
-        write32(out, actor->pos.y);
-        write32(out, actor->age);
-        write32(out, actor->health);
-        write32(out, actor->inventory.size());
+        PHYSFS_writeULE32(out, actor->def.ident);
+        PHYSFS_writeULE32(out, actor->pos.x);
+        PHYSFS_writeULE32(out, actor->pos.y);
+        PHYSFS_writeULE32(out, actor->age);
+        PHYSFS_writeULE32(out, actor->health);
+        PHYSFS_writeULE32(out, actor->inventory.size());
         for (const InventoryRow &row : actor->inventory.mContents) {
-            write32(out, row.qty);
-            write32(out, row.def->ident);
+            PHYSFS_writeULE32(out, row.qty);
+            PHYSFS_writeULE32(out, row.def->ident);
         }
     }
     // write log
-    write32(out, 0x00474F4C);
-    write32(out, mLog.size());
+    PHYSFS_writeULE32(out, 0x00474F4C);
+    PHYSFS_writeULE32(out, mLog.size());
     for (const LogMessage &msg : mLog) {
         writeString(out, msg.msg);
     }
@@ -609,29 +604,33 @@ bool World::savegame(const std::string &filename) const {
     return true;
 }
 
-uint8_t read8(std::istream &inf) {
-    uint8_t value = 0;
-    inf.read(reinterpret_cast<char*>(&value), 1);
-    return value;
+char read8(PHYSFS_File *file) {
+    char v;
+    if (PHYSFS_readBytes(file, &v, 1) != 1) {
+        return -1;
+    }
+    return v;
 }
-uint32_t read32(std::istream &inf) {
-    uint32_t value = 0;
-    inf.read(reinterpret_cast<char*>(&value), 4);
-    return value;
+int read32(PHYSFS_File *file) {
+    unsigned v;
+    if (!PHYSFS_readULE32(file, &v)) {
+        return -1;
+    }
+    return v;
 }
-std::string readString(std::istream &inf) {
+std::string readString(PHYSFS_File *file) {
     std::string s;
-    char c = read8(inf);
+    char c = read8(file);
     while (c != 0) {
         s += c;
-        c = read8(inf);
+        c = read8(file);
     }
     return s;
 }
 
 bool World::loadgame(const std::string &filename) {
     logger_log("loadgame (info): loading game.");
-    std::ifstream inf(filename, std::ios_base::binary);
+    PHYSFS_file *inf = PHYSFS_openRead(("/save/" + filename).c_str());
     if (!inf) {
         logger_log("loadgame: Failed to open save file.");
         return false;
@@ -688,10 +687,6 @@ bool World::loadgame(const std::string &filename) {
     }
     int actorCount = read32(inf);
     for (int i = 0; i < actorCount; ++i) {
-        if (inf.eof()) {
-            logger_log("loadgame: unexpected end of file (actors).");
-            return false;
-        }
         int ident = read32(inf);
         Actor *actor = new Actor(getActorDef(ident));
         int x = read32(inf);

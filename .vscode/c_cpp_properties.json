@@ -4,7 +4,8 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../lib/BearLibTerminal/Include/**"
+                "${workspaceFolder}/../lib/BearLibTerminal/Include/**",
+                "${workspaceFolder}/../lib/physfs-3.0.2/src/**"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
@@ -14,7 +15,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../lib/BearLibTerminal/Include/**"
+                "${workspaceFolder}/../lib/BearLibTerminal/Include/**",
+                "${workspaceFolder}/../lib/physfs-3.0.2/src/**"
             ],
             "defines": [
                 "_DEBUG",

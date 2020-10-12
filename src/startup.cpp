@@ -2,6 +2,7 @@
 #include <ctime>
 #include <sstream>
 #include <BearLibTerminal.h>
+#include <physfs.h>
 
 #include "runmenu.h"
 #include "world.h"
@@ -18,7 +19,35 @@ std::string keyName(int key);
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    if (!PHYSFS_init(argv[0])) {
+        std::cerr << "Failed to initialize PhysicsFS: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        return 1;
+    }
+
+    const char *baseDir = PHYSFS_getBaseDir();
+    if (!baseDir) {
+        std::cerr << "Failed to get base directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+    const char *prefDir = PHYSFS_getPrefDir("grendrake", "craftrl");
+    if (!prefDir) {
+        std::cerr << "Failed to get pref dir directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+    if (!PHYSFS_setWriteDir(prefDir)) {
+        std::cerr << "Failed to set write directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+
+    PHYSFS_mount(baseDir, "/", true);
+    std::cerr << prefDir << '\n';
+    PHYSFS_mount(prefDir, "/save", false);
+
     logger_setFile("game.log");
     World w;
     w.getRandom().seed(time(nullptr));
@@ -44,7 +73,7 @@ int main() {
 
     logger_close();
     terminal_close();
-
+    PHYSFS_deinit();
     return 0;
 }
 
