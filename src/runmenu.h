@@ -8,6 +8,7 @@ const int MENU_CANCELED     = -1;
 const int MENU_SELECT       = 0;
 const int MENU_TEXT         = 1;
 const int MENU_SPACE        = 3;
+const int MENU_INT          = 4;
 
 struct MenuItem {
     std::string text;
@@ -16,6 +17,7 @@ struct MenuItem {
     int type;
     std::string strValue;
     int intValue;
+    int minValue, maxValue;
 };
 
 struct Menu {

@@ -138,6 +138,7 @@ Menu newgameMenu {
     {
         {   "World Name",       0,  false,  MENU_TEXT },
         {   "Seed",             1,  false,  MENU_TEXT },
+        {   "Size",             4,  false,  MENU_INT,   "", 128, 64, 1024 },
         {   "Begin",            2,  false,  MENU_SELECT },
         {   "Cancel",           3,  false,  MENU_SELECT },
     }
@@ -160,7 +161,8 @@ void newgame(World &w) {
                     seed = hashString(newgameMenu.items[1].strValue);
                 }
                 w.inProgress = true;
-                w.allocMap(160, 160);
+                int size = newgameMenu.items[2].intValue;
+                w.allocMap(size, size);
                 buildmap(w, seed);
                 logger_log("newgame (info): created new map (size " + std::to_string(w.width())
                             + "," + std::to_string(w.height()) + ", seed " + std::to_string(seed) + ").");
