@@ -103,6 +103,7 @@ void mainmenu(World &w) {
                 newgame(w);
                 break;
             case 1: // load game
+                ui_MessageBox_Instant("Loading saved game...");
                 if (w.loadgame("game.sav")) {
                     w.inProgress = true;
                     logger_log("mainmenu (info): loaded game from save.");

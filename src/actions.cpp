@@ -238,6 +238,7 @@ void dumpPlantMap(World &w);
 void dumpTerrainMap(World &w);
 
 bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
+    ui_MessageBox_Instant("Dumping map images...");
     dumpActorMap(w);
     dumpPlantMap(w);
     dumpTerrainMap(w);
@@ -322,12 +323,14 @@ bool actionPrevSelect(World &w, Actor *player, const Command &command, bool sile
 
 bool actionQuit(World &w, Actor *player, const Command &command, bool silent) {
     w.wantsToQuit = true;
+    ui_MessageBox_Instant("Saving the game...");
     actionSavegame(w, player, command, silent);
     return false;
 }
 
 
 bool actionSavegame(World &w, Actor *player, const Command &command, bool silent) {
+    ui_MessageBox_Instant("Saving the game...");
     if (w.savegame("game.sav")) {
         w.addLogMsg("Game saved.");
     } else {

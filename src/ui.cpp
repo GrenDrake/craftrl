@@ -53,6 +53,35 @@ void ui_MessageBox(const std::string &title, const std::string &message) {
     }
 }
 
+void ui_MessageBox_Instant(const std::string &message) {
+    const int screenWidth = 80;
+    const int screenHeight = 24;
+    const int maxLength = message.size();
+    const int boxWidth = maxLength + 4;
+    const int boxHeight = 5;
+    const int boxX = (screenWidth - boxWidth) / 2;
+    const int boxY = (screenHeight - boxHeight) / 2;
+
+    terminal_bkcolor(0xFF333333);
+    terminal_color(0xFFFFFFFF);
+    terminal_clear_area(boxX, boxY, boxWidth, boxHeight);
+
+    for (int y = boxY + 1; y < boxY + boxHeight; ++y) {
+        terminal_put(boxX, y, '|');
+        terminal_put(boxX + boxWidth - 1, y, '|');
+    }
+    for (int x = boxX + 1; x < boxX + boxWidth; ++x) {
+        terminal_put(x, boxY, '-');
+        terminal_put(x, boxY + boxHeight - 1, '-');
+    }
+    terminal_put(boxX, boxY, '+');
+    terminal_put(boxX, boxY + boxHeight - 1, '+');
+    terminal_put(boxX + boxWidth - 1, boxY, '+');
+    terminal_put(boxX + boxWidth - 1, boxY + boxHeight - 1, '+');
+
+    terminal_print(boxX + 2, boxY + 2, message.c_str());
+    terminal_refresh();
+}
 
 bool ui_prompt(const std::string &title, const std::string &message, std::string &text) {
     std::string current = text;

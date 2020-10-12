@@ -371,6 +371,7 @@ ActionHandler commandAction(int command);
 
 // ui.cpp
 void ui_MessageBox(const std::string &title, const std::string &message);
+void ui_MessageBox_Instant(const std::string &message);
 bool ui_prompt(const std::string &title, const std::string &message, std::string &text);
 
 // point.cpp
