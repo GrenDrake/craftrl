@@ -1,4 +1,3 @@
-#include <iostream>
 #include <sstream>
 #include "world.h"
 
@@ -122,6 +121,23 @@ bool actionCentrePan(World &w, Actor *player, const Command &command, bool silen
 }
 
 
+bool actionClearRoom(World &w, Actor *player, const Command &command, bool silent) {
+    if (!w.valid(player->pos) || !w.at(player->pos).room) {
+        w.addLogMsg("Not in a room.");
+        return false;
+    }
+
+    Room *room = w.at(player->pos).room;
+    const RoomDef *def = room->def;
+    w.removeRoom(room);
+    delete room;
+    if (!def)   w.addLogMsg("Cleared room (no RoomDef found).");
+    else        w.addLogMsg("Cleared " + def->name + ".");
+
+    return false;
+}
+
+
 bool actionContextMove(World &w, Actor *player, const Command &command, bool silent) {
     Dir dir = command.dir;
     if (dir == Dir::None) {
@@ -228,6 +244,28 @@ bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent)
     return false;
 }
 
+bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent) {
+    if (w.at(player->pos).room) {
+        w.addLogMsg("Already in a room.");
+        return false;
+    }
+    if (!w.valid(player->pos) || w.getTileDef(w.at(player->pos).terrain).solid) {
+        w.addLogMsg("Invalid room position.");
+        return false;
+    }
+
+    std::vector<Point> points = w.findRoomExtents(player->pos);
+    if (points.empty()) {
+        w.addLogMsg("Cannot make room here.");
+        return false;
+    }
+    Room *room = new Room;
+    room->points = points;
+    w.addRoom(room);
+    w.updateRoom(room);
+    w.addLogMsg("Created " + room->def->name + ".");
+    return false;
+}
 
 bool actionMove(World &w, Actor *player, const Command &command, bool silent) {
     Dir dir = command.dir;

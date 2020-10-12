@@ -292,6 +292,64 @@ bool parseRecipe(World &w, TokenData &data) {
     return true;
 }
 
+
+bool parseRoom(World &w, TokenData &data) {
+    const Origin &fullOrigin = data.here().origin;
+    data.next(); // skip "room"
+
+    if (!data.require(TokenType::OpenBrace)) return false;
+    data.next(); // skip "{"
+
+    // set up default actordef data
+    RoomDef room;
+    room.ident = -1;
+    room.name = "generic room";
+    room.value = 0;
+    room.colour = 0xFFFFFFFF;
+
+    while (!data.matches(TokenType::CloseBrace)) {
+        if (!data.require(TokenType::Identifier)) return false;
+        const std::string &name = data.here().s;
+        data.next();
+
+        if (name == "ident") {
+            if (!data.asInt(room.ident)) return false;
+            data.next();
+        } else if (name == "value") {
+            if (!data.asInt(room.value)) return false;
+            data.next();
+        } else if (name == "colour") {
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            room.colour = static_cast<unsigned>(value) | 0xFF000000;
+            data.next();
+        } else if (name == "name") {
+            if (!data.require(TokenType::String)) return false;
+            room.name = data.here().s;
+            data.next();
+        } else if (name == "requires") {
+            int value = 0;
+            if (!data.asInt(value)) return false;
+            room.requirements.push_back(value);
+            data.next();
+        } else {
+            const Origin &origin = data.here().origin;
+            logger_log(origin.toString() + "  Unknown property " + name + ".");
+            return false;
+        }
+    }
+
+    data.next(); // skip "}"
+    if (!data.require(TokenType::Semicolon)) return false;
+    data.next(); // skip ";"
+    if (w.getRoomDef(room.ident).ident >= 0) {
+        logger_log(fullOrigin.toString() + "  room ident " + std::to_string(room.ident) + " already used.");
+        return false;
+    }
+    w.addRoomDef(room);
+    return true;
+}
+
 bool parseTile(World &w, TokenData &data) {
     const Origin &fullOrigin = data.here().origin;
     data.next(); // skip "tile"
@@ -312,6 +370,7 @@ bool parseTile(World &w, TokenData &data) {
     tile.doorTo = -1;
     tile.loot = nullptr;
     tile.grantsCrafting = 0;
+    tile.isWall = false;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -321,6 +380,7 @@ bool parseTile(World &w, TokenData &data) {
         if (name == "opaque") tile.opaque = true;
         else if (name == "solid") tile.solid = true;
         else if (name == "ground") tile.ground = true;
+        else if (name == "isWall") tile.isWall = true;
         else if (name == "ident") {
             if (!data.asInt(tile.ident)) return false;
             data.next();
@@ -389,6 +449,7 @@ bool loadGameData(World &w, const std::string &filename) {
     logger_log("Loaded "   + std::to_string(w.itemDefCount()) + " items.");
     logger_log("Loaded "   + std::to_string(w.tileDefCount()) + " tiles.");
     logger_log("Loaded "   + std::to_string(w.recipeDefCount()) + " recipes.");
+    logger_log("Loaded "   + std::to_string(w.roomDefCount()) + " rooms.");
     if (errorCount > 0) {
         logger_log("Found " + std::to_string(errorCount) + " errors in data file.");
         return false;
@@ -422,6 +483,7 @@ int loadGameData_Core(World &w, TokenData &data, const std::string &filename) {
         else if (data.matches("recipe"))    success = parseRecipe(w, data);
         else if (data.matches("define"))    success = parseDefine(w, data);
         else if (data.matches("addfile"))   success = parseAddfile(w, data);
+        else if (data.matches("room"))      success = parseRoom(w, data);
         else {
             const Origin &origin = data.here().origin;
             logger_log(origin.toString() + "  Unknown data type " + data.here().s + ".");

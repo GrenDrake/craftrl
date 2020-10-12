@@ -12,6 +12,7 @@ const ActorDef World::BAD_ACTORDEF = { -1 };
 const ItemDef World::BAD_ITEMDEF = { -1 };
 const TileDef World::BAD_TILEDEF = { -1 };
 const RecipeDef World::BAD_RECIPEDEF = { -1 };
+const RoomDef World::BAD_ROOMDEF = { -1 };
 
 
 bool Inventory::add(const ItemDef *def, int qty) {
@@ -105,6 +106,7 @@ World::~World() {
     for (TileDef &def : mTileDefs) {
         if (def.loot) delete def.loot;
     }
+
 }
 
 void World::allocMap(int width, int height) {
@@ -127,6 +129,10 @@ void World::deallocMap() {
     for (Actor *actor : mActors) {
         if (!actor) logger_log("deallocMap: Found null actor in actor list.");
         else        delete actor;
+    }
+    for (Room *room : mRooms) {
+        if (!room)  logger_log("deallocMap: Found null room in room list.");
+        else        delete room;
     }
     mActors.clear();
     mLog.clear();
@@ -189,6 +195,11 @@ void World::setTerrain(const Point &pos, int toTile) {
     if (!valid(pos)) return;
     int c = pos.x + pos.y * mWidth;
     mTiles[c].terrain = toTile;
+
+    // check for neccesary room updates
+    if (mTiles[c].room) {
+        updateRoom(mTiles[c].room);
+    }
 }
 
 bool World::moveActor(Actor *actor, const Point &to) {
@@ -264,6 +275,104 @@ void World::removeItem(Item *item) {
     if (at(item->pos).item != item) return;
     setItem(item->pos, nullptr);
 }
+
+std::vector<Point> World::findRoomExtents(const Point &pos) const {
+    std::vector<Point> result;
+    std::vector<Point> todo;
+    todo.push_back(pos);
+    while (!todo.empty()) {
+        Point pos = todo.back();
+        todo.pop_back();
+        bool alreadyDone = false;
+        for (const Point &p : result) {
+            if (p == pos) {
+                alreadyDone = true;
+                break;
+            }
+        }
+        if (alreadyDone) continue;
+        result.push_back(pos);
+
+        Dir d = Dir::North;
+        do {
+            Point dest = pos.shift(d);
+            if (valid(dest) && !getTileDef(at(dest).terrain).isWall) {
+                todo.push_back(dest);
+            }
+            d = rotate45(d);
+        } while (d != Dir::North);
+
+        if (result.size() > 100) {
+            return std::vector<Point>{};
+        }
+    }
+    return result;
+}
+
+void World::addRoom(Room *room) {
+    if (!room) return;
+    mRooms.push_back(room);
+    for (const Point &pos : room->points) {
+        if (!valid(pos)) continue;
+        int c = pos.x + pos.y * mWidth;
+        mTiles[c].room = room;
+    }
+}
+
+void World::removeRoom(Room *room) {
+    for (const Point &pos : room->points) {
+        int c = pos.x + pos.y * mWidth;
+        mTiles[c].room = nullptr;
+    }
+
+    auto iter = mRooms.begin();
+    while (iter != mRooms.end()) {
+        if (*iter == room) {
+            iter = mRooms.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
+void World::updateRoom(Room *room) {
+    int typeId = 0;
+    int score = 0;
+    const RoomDef *theDef = nullptr;
+
+    for (const RoomDef &def : mRoomDefs) {
+        if (def.value <= score) continue;
+        bool isMatch = true;
+        for (int tile : def.requirements) {
+            bool met = false;
+            for (const Point &p : room->points) {
+                if (at(p).terrain == tile) {
+                    met = true;
+                    break;
+                }
+            }
+            if (!met) {
+                isMatch = false;
+                break;
+            }
+        }
+
+        if (isMatch) {
+            score = def.value;
+            typeId = def.ident;
+            theDef = &def;
+        }
+    }
+
+    if (theDef == nullptr) {
+        theDef = &getRoomDef(0);
+    }
+    if (room->def == nullptr)   addLogMsg("Created " + theDef->name + ".");
+    else                        addLogMsg("The " + room->def->name + " becomes a " + theDef->name + ".");
+    room->def = theDef;
+    room->type = theDef->ident;
+}
+
 
 Point World::findItemNearest(const Point &to, int itemIdent, int radius) const {
     Point result = nowhere;
@@ -399,6 +508,17 @@ std::vector<const RecipeDef*> World::getRecipeList(unsigned stations) const {
         }
     }
     return list;
+}
+
+void World::addRoomDef(const RoomDef &rd) {
+    mRoomDefs.push_back(rd);
+}
+
+const RoomDef& World::getRoomDef(int ident) const {
+    for (const RoomDef &td : mRoomDefs) {
+        if (td.ident == ident) return td;
+    }
+    return BAD_ROOMDEF;
 }
 
 bool World::tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep) {
@@ -594,6 +714,17 @@ bool World::savegame(const std::string &filename) const {
             PHYSFS_writeULE32(out, row.def->ident);
         }
     }
+    // write rooms
+    write32(out, 0x4D4F4F52);
+    write32(out, mRooms.size());
+    for (const Room *room : mRooms) {
+        write32(out, room->type);
+        write8(out, room->points.size());
+        for (const Point &p : room->points) {
+            write32(out, p.x);
+            write32(out, p.y);
+        }
+    }
     // write log
     PHYSFS_writeULE32(out, 0x00474F4C);
     PHYSFS_writeULE32(out, mLog.size());
@@ -708,6 +839,25 @@ bool World::loadgame(const std::string &filename) {
             const ItemDef &idef = getItemDef(itemIdent);
             actor->inventory.add(&idef, qty);
         }
+    }
+    // read rooms
+    if (read32(inf) != 0x4D4F4F52) {
+        logger_log("loadgame: expected start of room data.");
+        return false;
+    }
+    int roomCount = read32(inf);
+    for (int i = 0; i < roomCount; ++i) {
+        Room *room = new Room;
+        room->type = read32(inf);
+        int pointCount = read8(inf);
+        for (int j = 0; j < pointCount; ++j) {
+            Point p;
+            p.x = read32(inf);
+            p.y = read32(inf);
+            room->points.push_back(p);
+        }
+        addRoom(room);
+        updateRoom(room);
     }
     // read log
     if (read32(inf) != 0x00474F4C) {

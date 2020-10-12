@@ -57,6 +57,9 @@ void redraw_main(World &w) {
         for (int x = 0; x < viewWidth; ++x) {
             const auto &tile = w.at(Point(x + camera.x, y + camera.y));
 
+            if (tile.room)  terminal_bkcolor(tile.room->def->colour);
+            else            terminal_bkcolor(0xFF000000);
+
             if (tile.actor) {
                 terminal_color(tile.actor->def.colour);
                 terminal_put(x, y, tile.actor->def.glyph);
@@ -133,6 +136,9 @@ void gameloop(World &w) {
                 }
                 if (tile.actor) {
                     s << ", " << tile.actor->getName();
+                }
+                if (tile.room) {
+                    s << " in " << tile.room->def->name;
                 }
                 w.addLogMsg(s.str());
             }

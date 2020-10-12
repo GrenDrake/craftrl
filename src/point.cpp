@@ -45,6 +45,10 @@ double Point::distance(const Point &rhs) const {
     return sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));
 }
 
+bool Point::operator==(const Point &rhs) const {
+    return rhs.x == x && rhs.y == y;
+}
+
 Dir rotate45(Dir d) {
     switch(d) {
         case Dir::North:        return Dir::Northeast;
