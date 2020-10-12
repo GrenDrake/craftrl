@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sstream>
-#include "lodepng.h"
 #include "world.h"
 
 Dir getDir(World &w, const std::string &reason);
@@ -218,23 +217,14 @@ bool actionDrop(World &w, Actor *player, const Command &command, bool silent) {
 }
 
 
-bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
-    std::vector<unsigned char> image;
-    for (int y = 0; y < w.height(); ++y) {
-        for (int x = 0; x < w.width(); ++x) {
-            auto tile = w.at(Point(x, y));
-            auto td = w.getTileDef(tile.terrain);
-            image.push_back((td.colour & 0x00FF0000) >> 16);
-            image.push_back((td.colour & 0x0000FF00) >> 8);
-            image.push_back((td.colour & 0x000000FF));
-            image.push_back(255);
-        }
-    }
+void dumpActorMap(World &w);
+void dumpPlantMap(World &w);
+void dumpTerrainMap(World &w);
 
-    unsigned error = lodepng::encode("map.png", image, w.width(), w.height());
-    if (error) {
-        w.addLogMsg("encoder error ");// << error << ": "<< lodepng_error_text(error) << std::endl;
-    }
+bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
+    dumpActorMap(w);
+    dumpPlantMap(w);
+    dumpTerrainMap(w);
     return false;
 }
 

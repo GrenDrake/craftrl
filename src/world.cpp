@@ -601,6 +601,7 @@ bool World::savegame(const std::string &filename) const {
         writeString(out, msg.msg);
     }
 
+    PHYSFS_close(out);
     return true;
 }
 
@@ -638,12 +639,14 @@ bool World::loadgame(const std::string &filename) {
 
     if (read32(inf) != 0x4C5243) {
         logger_log("loadgame: bad magic number.");
+        PHYSFS_close(inf);
         return false;
     }
 
     const unsigned versionNumber = (VER_MAJOR << 16) | VER_MINOR;
     if (read32(inf) != versionNumber) {
         logger_log("loadgame: incompatable save version.");
+        PHYSFS_close(inf);
         return false;
     }
     int width = read32(inf);
@@ -658,6 +661,7 @@ bool World::loadgame(const std::string &filename) {
     // read tiles
     if (read32(inf) != 0x454C4954) {
         logger_log("loadgame: expected start of tile data.");
+        PHYSFS_close(inf);
         return false;
     }
     for (int i = 0; i < mWidth * mHeight; ++i) {
@@ -668,6 +672,7 @@ bool World::loadgame(const std::string &filename) {
     // read items on ground
     if (read32(inf) != 0x4D455449) {
         logger_log("loadgame: expected start of item data.");
+        PHYSFS_close(inf);
         return false;
     }
     int itemCount = read32(inf);
@@ -683,6 +688,7 @@ bool World::loadgame(const std::string &filename) {
     // read actors
     if (read32(inf) != 0x52544341) {
         logger_log("loadgame: expected start of actor data.");
+        PHYSFS_close(inf);
         return false;
     }
     int actorCount = read32(inf);
@@ -706,6 +712,7 @@ bool World::loadgame(const std::string &filename) {
     // read log
     if (read32(inf) != 0x00474F4C) {
         logger_log("loadgame: expected start of log data.");
+        PHYSFS_close(inf);
         return false;
     }
     int logCount = read32(inf);
@@ -714,6 +721,7 @@ bool World::loadgame(const std::string &filename) {
         addLogMsg(msg);
     }
 
+    PHYSFS_close(inf);
     return true;
 }
 

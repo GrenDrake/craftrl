@@ -25,7 +25,8 @@ void logger_setFile(const std::string &filename) {
 
 void logger_close() {
     logger_log("Closing log file.");
-    if (logFile) delete logFile;
+    PHYSFS_close(logFile);
+    logFile = nullptr;
 }
 
 void logger_log(const std::string &msg) {

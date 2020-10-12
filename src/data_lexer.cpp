@@ -214,6 +214,7 @@ std::vector<Token> parseFile(const std::string &filename) {
         }
     }
 
+    PHYSFS_close(inf);
     if (errorCount) return std::vector<Token>{};
     return tokens;
 }
