@@ -336,7 +336,6 @@ void World::removeRoom(Room *room) {
 }
 
 void World::updateRoom(Room *room) {
-    int typeId = 0;
     int score = 0;
     const RoomDef *theDef = nullptr;
 
@@ -359,7 +358,6 @@ void World::updateRoom(Room *room) {
 
         if (isMatch) {
             score = def.value;
-            typeId = def.ident;
             theDef = &def;
         }
     }
@@ -715,14 +713,15 @@ bool World::savegame(const std::string &filename) const {
         }
     }
     // write rooms
-    write32(out, 0x4D4F4F52);
-    write32(out, mRooms.size());
+    PHYSFS_writeULE32(out, 0x4D4F4F52);
+    PHYSFS_writeULE32(out, mRooms.size());
     for (const Room *room : mRooms) {
-        write32(out, room->type);
-        write8(out, room->points.size());
+        PHYSFS_writeULE32(out, room->type);
+        unsigned char size = room->points.size();
+        PHYSFS_writeBytes(out, &size, 1);
         for (const Point &p : room->points) {
-            write32(out, p.x);
-            write32(out, p.y);
+            PHYSFS_writeULE32(out, p.x);
+            PHYSFS_writeULE32(out, p.y);
         }
     }
     // write log
