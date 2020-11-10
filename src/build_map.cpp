@@ -121,18 +121,18 @@ bool buildmap(World &w, unsigned long seed) {
         int size = rng.between(3, 5);
         for (int y = 0; y < size; ++y) {
             Point top(x, y);
-            w.setTerrain(top, 3);
+            w.setTerrain(top, TILE_OCEAN);
             Point bottom(x, w.height() - 1 - y);
-            w.setTerrain(bottom, TILE_WATER);
+            w.setTerrain(bottom, TILE_OCEAN);
         }
     }
     for (int y = 0; y < w.height(); ++y) {
         int size = rng.between(3, 5);
         for (int x = 0; x < size; ++x) {
             Point left(x, y);
-            w.setTerrain(left, 3);
+            w.setTerrain(left, TILE_OCEAN);
             Point right(w.width() - 1 - x, y);
-            w.setTerrain(right, TILE_WATER);
+            w.setTerrain(right, TILE_OCEAN);
         }
     }
 

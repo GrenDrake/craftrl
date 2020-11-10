@@ -12,6 +12,7 @@ define TILE_STONE               1;
 define TILE_GRASS               2;
 define TILE_WATER               3;
 define TILE_SAND                4;
+define TILE_OCEAN               5;
 define TILE_IRON_VEIN           30;
 define TILE_COPPER_VEIN         31;
 define TILE_COAL_VEIN           32;

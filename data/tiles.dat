@@ -2,7 +2,6 @@
 tile {
     ident       TILE_INVALID
     glyph       0xE000
-    colour      0x000000
     name        "nothing"
     solid opaque
 };
@@ -48,6 +47,13 @@ tile {
         ITEM_SAND 100 2 5
     }
     ground
+};
+
+tile {
+    ident       TILE_OCEAN
+    glyph       0xE001
+    name        "ocean"
+    solid
 };
 
 tile {
