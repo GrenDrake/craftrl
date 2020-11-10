@@ -1,34 +1,32 @@
 #include <ctime>
-#include <fstream>
+#include <cstring>
 #include <iostream>
 #include <string>
+#include <physfs.h>
 
 void logger_setFile(const std::string &filename);
 void logger_close();
 void logger_log(const std::string &msg);
 
-static std::ofstream *logFile = nullptr;
+static PHYSFS_file *logFile = nullptr;
 
 void logger_setFile(const std::string &filename) {
-    if (logFile) delete logFile;
-    logFile = new std::ofstream;
+    if (logFile) {
+        PHYSFS_close(logFile);
+        logFile = nullptr;
+    }
+    logFile = PHYSFS_openWrite(filename.c_str());
     if (!logFile) {
         logger_log("Failed to allocate log file.");
         return;
     }
-    logFile->rdbuf()->pubsetbuf(nullptr, 0); // disable output buffering
-    logFile->open(filename);
-    if (!logFile->is_open()) {
-        delete logFile;
-        logger_log("Failed to open log file.");
-    } else {
-        logger_log("Opened log file.");
-    }
+    logger_log("Opened log file.");
 }
 
 void logger_close() {
     logger_log("Closing log file.");
-    if (logFile) delete logFile;
+    PHYSFS_close(logFile);
+    logFile = nullptr;
 }
 
 void logger_log(const std::string &msg) {
@@ -39,8 +37,13 @@ void logger_log(const std::string &msg) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    strftime(buffer, 80, "%Y-%m-%d %H:%M.", timeinfo);
+    strftime(buffer, 80, "%Y-%m-%d %H:%M  ", timeinfo);
 
-    if (logFile)    (*logFile) << buffer << "  " << msg << '\n';
-    else            std::cerr  << buffer << "  " << msg << '\n';
+    if (logFile) {
+        PHYSFS_writeBytes(logFile, buffer, strlen(buffer));
+        PHYSFS_writeBytes(logFile, msg.c_str(), msg.size());
+        PHYSFS_writeBytes(logFile, "\n", 1);
+    } else {
+        std::cerr  << buffer << "  " << msg << '\n';
+    }
 }

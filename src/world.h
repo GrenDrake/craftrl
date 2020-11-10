@@ -25,6 +25,7 @@ const int TYPE_VILLAGER  = 1;
 const int TYPE_PLANT     = 2;
 const int TYPE_ANIMAL    = 3;
 const int TYPE_MONSTER   = 4;
+const int TYPE_INVENTORY = 5;
 
 const int TILE_INVALID          = -1;
 const int TILE_DIRT             = 0;
@@ -375,6 +376,7 @@ ActionHandler commandAction(int command);
 
 // ui.cpp
 void ui_MessageBox(const std::string &title, const std::string &message);
+void ui_MessageBox_Instant(const std::string &message);
 bool ui_prompt(const std::string &title, const std::string &message, std::string &text);
 
 // point.cpp

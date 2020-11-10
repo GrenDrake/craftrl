@@ -1,8 +1,8 @@
-#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <physfs.h>
 
 #include "data.h"
 #include "logger.h"
@@ -126,16 +126,27 @@ bool TokenData::asInt(int &value) const {
     return false;
 }
 
-
+int readLine(PHYSFS_file *file, std::string &line) {
+    if (!file || PHYSFS_eof(file)) return 0;
+    line = "";
+    while (1) {
+        char byte;
+        int len = PHYSFS_readBytes(file, &byte, 1);
+        if (len != 1) return 1;
+        if (byte == '\n') return 1;
+        if (byte == '\r') continue;
+        line += byte;
+    }
+}
 
 std::vector<Token> parseFile(const std::string &filename) {
     std::vector<Token> tokens;
-    std::ifstream inf(filename);
     std::string line;
+    PHYSFS_File *inf = PHYSFS_openRead(filename.c_str());
 
     int errorCount = 0;
     int lineNo = 0;
-    while (std::getline(inf, line)) {
+    while (readLine(inf, line)) {
         ++lineNo;
 
         std::string::size_type pos = 0;
@@ -203,6 +214,7 @@ std::vector<Token> parseFile(const std::string &filename) {
         }
     }
 
+    PHYSFS_close(inf);
     if (errorCount) return std::vector<Token>{};
     return tokens;
 }

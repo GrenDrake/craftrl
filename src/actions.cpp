@@ -1,9 +1,9 @@
 #include <sstream>
-#include "lodepng.h"
 #include "world.h"
 
 Dir getDir(World &w, const std::string &reason);
 void doCrafting(World &w, Actor *player, unsigned craftingStation);
+void doTrading(World &w, Actor *left, Actor *right);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 void viewLog(World &w);
 
@@ -235,23 +235,15 @@ bool actionDrop(World &w, Actor *player, const Command &command, bool silent) {
 }
 
 
-bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
-    std::vector<unsigned char> image;
-    for (int y = 0; y < w.height(); ++y) {
-        for (int x = 0; x < w.width(); ++x) {
-            auto tile = w.at(Point(x, y));
-            auto td = w.getTileDef(tile.terrain);
-            image.push_back((td.colour & 0x00FF0000) >> 16);
-            image.push_back((td.colour & 0x0000FF00) >> 8);
-            image.push_back((td.colour & 0x000000FF));
-            image.push_back(255);
-        }
-    }
+void dumpActorMap(World &w);
+void dumpPlantMap(World &w);
+void dumpTerrainMap(World &w);
 
-    unsigned error = lodepng::encode("map.png", image, w.width(), w.height());
-    if (error) {
-        w.addLogMsg("encoder error ");// << error << ": "<< lodepng_error_text(error) << std::endl;
-    }
+bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
+    ui_MessageBox_Instant("Dumping map images...");
+    dumpActorMap(w);
+    dumpPlantMap(w);
+    dumpTerrainMap(w);
     return false;
 }
 
@@ -326,12 +318,14 @@ bool actionPrevSelect(World &w, Actor *player, const Command &command, bool sile
 
 bool actionQuit(World &w, Actor *player, const Command &command, bool silent) {
     w.wantsToQuit = true;
+    ui_MessageBox_Instant("Saving the game...");
     actionSavegame(w, player, command, silent);
     return false;
 }
 
 
 bool actionSavegame(World &w, Actor *player, const Command &command, bool silent) {
+    ui_MessageBox_Instant("Saving the game...");
     if (w.savegame("game.sav")) {
         w.addLogMsg("Game saved.");
     } else {
@@ -379,6 +373,9 @@ bool actionTalkActor(World &w, Actor *player, const Command &command, bool silen
                 s << upperFirst(tile.actor->getName()) << ": \"Hello!\"";
                 w.addLogMsg(s.str());
                 return false;
+            case TYPE_INVENTORY:
+                doTrading(w, player, tile.actor);
+                return false;
             default:
                 w.addLogMsg("Can't talk to that!");
                 return false;
@@ -415,6 +412,7 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
         player->inventory.remove(def);
         if (actorDef.ident < 0) return false;
         Actor *actor = new Actor(actorDef);
+        actor->reset();
         w.moveActor(actor, dest);
         return true;
     } else if (def->constructs >= 0) {

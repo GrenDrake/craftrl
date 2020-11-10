@@ -1,14 +1,14 @@
 room {
     ident       ROOM_EMPTY
     name        "empty room"
-    colour      0xFF555555
+    colour      0x555555
 };
 
 room {
     ident       ROOM_WORKSHOP
     requires    TILE_BASIC_WORKBENCH
     name        "workshop"
-    colour      0xFF553333
+    colour      0x553333
     value 100
 };
 
@@ -17,7 +17,7 @@ room {
     requires    TILE_STD_WORKBENCH
     requires    TILE_FORGE
     name        "smithy"
-    colour      0xFF553333
+    colour      0x553333
     value 150
 };
 

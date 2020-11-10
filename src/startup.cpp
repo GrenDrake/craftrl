@@ -2,6 +2,7 @@
 #include <ctime>
 #include <sstream>
 #include <BearLibTerminal.h>
+#include <physfs.h>
 
 #include "runmenu.h"
 #include "world.h"
@@ -18,7 +19,35 @@ std::string keyName(int key);
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    if (!PHYSFS_init(argv[0])) {
+        std::cerr << "Failed to initialize PhysicsFS: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        return 1;
+    }
+
+    const char *baseDir = PHYSFS_getBaseDir();
+    if (!baseDir) {
+        std::cerr << "Failed to get base directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+    const char *prefDir = PHYSFS_getPrefDir("grendrake", "craftrl");
+    if (!prefDir) {
+        std::cerr << "Failed to get pref dir directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+    if (!PHYSFS_setWriteDir(prefDir)) {
+        std::cerr << "Failed to set write directory: " << PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()) << ".\n";
+        PHYSFS_deinit();
+        return 1;
+    }
+
+    PHYSFS_mount(baseDir, "/", true);
+    std::cerr << prefDir << '\n';
+    PHYSFS_mount(prefDir, "/save", false);
+
     logger_setFile("game.log");
     World w;
     w.getRandom().seed(time(nullptr));
@@ -44,7 +73,7 @@ int main() {
 
     logger_close();
     terminal_close();
-
+    PHYSFS_deinit();
     return 0;
 }
 
@@ -74,6 +103,7 @@ void mainmenu(World &w) {
                 newgame(w);
                 break;
             case 1: // load game
+                ui_MessageBox_Instant("Loading saved game...");
                 if (w.loadgame("game.sav")) {
                     w.inProgress = true;
                     logger_log("mainmenu (info): loaded game from save.");
@@ -109,6 +139,7 @@ Menu newgameMenu {
     {
         {   "World Name",       0,  false,  MENU_TEXT },
         {   "Seed",             1,  false,  MENU_TEXT },
+        {   "Size",             4,  false,  MENU_INT,   "", 128, 64, 1024 },
         {   "Begin",            2,  false,  MENU_SELECT },
         {   "Cancel",           3,  false,  MENU_SELECT },
     }
@@ -131,7 +162,8 @@ void newgame(World &w) {
                     seed = hashString(newgameMenu.items[1].strValue);
                 }
                 w.inProgress = true;
-                w.allocMap(160, 160);
+                int size = newgameMenu.items[2].intValue;
+                w.allocMap(size, size);
                 buildmap(w, seed);
                 logger_log("newgame (info): created new map (size " + std::to_string(w.width())
                             + "," + std::to_string(w.height()) + ", seed " + std::to_string(seed) + ").");

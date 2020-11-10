@@ -36,6 +36,8 @@ int runMenu(Menu &menu) {
             if (item.type == MENU_TEXT) {
                 terminal_print(25, 6 + i, "______________________________");
                 terminal_print(25, 6 + i, item.strValue.c_str());
+            } else if (item.type == MENU_INT) {
+                terminal_printf(25, 6 + i, "%d", item.intValue);
             }
         }
         terminal_refresh();
@@ -74,9 +76,23 @@ int runMenu(Menu &menu) {
                 if (!menu.items[newItem].disabled) menu.selection = newItem;
                 break; }
 
+            case TK_LEFT:
+                if (currentItem.type == MENU_INT) {
+                    if (currentItem.intValue > currentItem.minValue) --currentItem.intValue;
+                }
+                break;
+            case TK_RIGHT:
+                if (currentItem.type == MENU_INT) {
+                    if (currentItem.intValue < currentItem.maxValue) ++currentItem.intValue;
+                }
+                break;
+
             case TK_BACKSPACE:
                 if (currentItem.type == MENU_TEXT) {
                     if (currentItem.strValue.size() > 0) currentItem.strValue.erase(currentItem.strValue.end() - 1);
+                } else if (currentItem.type == MENU_INT) {
+                    if (currentItem.intValue != 0) currentItem.intValue /= 10;
+                    if (currentItem.intValue < currentItem.minValue) currentItem.intValue = currentItem.minValue;
                 }
                 break;
             default:
@@ -84,6 +100,14 @@ int runMenu(Menu &menu) {
                     int ch = terminal_state(TK_CHAR);
                     if (ch >= 32 && ch <= 127) {
                         currentItem.strValue += static_cast<char>(ch);
+                    }
+                } else if (currentItem.type == MENU_INT) {
+                    int ch = terminal_state(TK_CHAR);
+                    if (ch >= '0' && ch <= '9') {
+                        ch -= '0';
+                        currentItem.intValue *= 10;
+                        currentItem.intValue += ch;
+                        if (currentItem.intValue > currentItem.maxValue) currentItem.intValue = currentItem.maxValue;
                     }
                 }
         }

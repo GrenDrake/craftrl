@@ -268,3 +268,11 @@ item {
     colour      0xC0C0C0
     name        "silver ingot"
 };
+
+item {
+    ident ITEM_CHEST
+    glyph   '='
+    colour  0x855723
+    name    "chest"
+    seedFor ACTOR_CHEST
+};

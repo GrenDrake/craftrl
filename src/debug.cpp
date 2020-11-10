@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "world.h"
@@ -12,15 +13,40 @@ struct DebugCommand {
 
 void debugGive(World &w, Actor *player, const std::vector<std::string> &command);
 void debugHelp(World &w, Actor *player, const std::vector<std::string> &command);
+void debugInfo(World &w, Actor *player, const std::vector<std::string> &command);
 void debugKill(World &w, Actor *player, const std::vector<std::string> &command);
+void debugReset(World &w, Actor *player, const std::vector<std::string> &command);
 void debugSpawn(World &w, Actor *player, const std::vector<std::string> &command);
 void debugTeleport(World &w, Actor *player, const std::vector<std::string> &command);
 
+Dir strToDir(const std::string &s) {
+    if (s == "north")     return Dir::North;
+    if (s == "south")     return Dir::South;
+    if (s == "east")      return Dir::East;
+    if (s == "west")      return Dir::West;
+    if (s == "southeast") return Dir::Southeast;
+    if (s == "southwest") return Dir::Southwest;
+    if (s == "northeast") return Dir::Northeast;
+    if (s == "northwest") return Dir::Northwest;
+
+    if (s == "n")         return Dir::North;
+    if (s == "s")         return Dir::South;
+    if (s == "e")         return Dir::East;
+    if (s == "w")         return Dir::West;
+    if (s == "se")        return Dir::Southeast;
+    if (s == "sw")        return Dir::Southwest;
+    if (s == "ne")        return Dir::Northeast;
+    if (s == "nw")        return Dir::Northwest;
+
+    return Dir::None;
+}
 
 DebugCommand debugCommands[] = {
     {   "give",     debugGive,      2  },
     {   "help",     debugHelp,      0  },
+    {   "info",     debugInfo,      1  },
     {   "kill",     debugKill,      1  },
+    {   "reset",    debugReset,     1  },
     {   "spawn",    debugSpawn,     1  },
     {   "teleport", debugTeleport,  2  },
     {   "", nullptr }
@@ -85,6 +111,25 @@ void debugHelp(World &w, Actor *player, const std::vector<std::string> &command)
     w.addLogMsg(msg.str());
 }
 
+void debugInfo(World &w, Actor *player, const std::vector<std::string> &command) {
+    Dir d = strToDir(command[1]);
+    if (d == Dir::None) {
+        w.addLogMsg("Not a valid direction.");
+        return;
+    }
+    Point dest = player->pos.shift(d);
+    const Tile &tile = w.at(dest);
+    if (!tile.actor) {
+        w.addLogMsg("No actor present.");
+        return;
+    }
+
+    Actor *a = tile.actor;
+    std::stringstream s;
+    s << a->getName() << ": H" << a->health << '/' << a->def.health << " F" << a->faction << " A" << a->age << " T" << a->type << " INV" << a->inventory.size();
+    w.addLogMsg(s.str());
+}
+
 void debugKill(World &w, Actor *player, const std::vector<std::string> &command) {
     int radius = -1;
     if (!strToInt(command[1], radius)) {
@@ -107,6 +152,23 @@ void debugKill(World &w, Actor *player, const std::vector<std::string> &command)
             }
         }
     }
+}
+
+void debugReset(World &w, Actor *player, const std::vector<std::string> &command) {
+    Dir d = strToDir(command[1]);
+    if (d == Dir::None) {
+        w.addLogMsg("Not a valid direction.");
+        return;
+    }
+    Point dest = player->pos.shift(d);
+    const Tile &tile = w.at(dest);
+    if (!tile.actor) {
+        w.addLogMsg("No actor present.");
+        return;
+    }
+
+    tile.actor->reset();
+    w.addLogMsg(tile.actor->getName() + " reset.");
 }
 
 void debugSpawn(World &w, Actor *player, const std::vector<std::string> &command) {

@@ -21,6 +21,15 @@ bool buildmap(World &w, unsigned long seed) {
     Random rng;
     rng.seed(seed);
 
+    const int mapArea = w.width() * w.height();
+    const int lakeCount = mapArea / 1280;
+    const int mountainCount = mapArea / 640;
+    const int dirtCount = mapArea / 640;
+    const int sandCount = mapArea / 640;
+    const int oreCount = mapArea / 32;
+    const int plantCount = mapArea / 16;
+    const int actorCount = mapArea / 340;
+
     // ensure all ground is grass
     for (int y = 0; y < w.height(); ++y) {
         for (int x = 0; x < w.width(); ++x) {
@@ -29,7 +38,7 @@ bool buildmap(World &w, unsigned long seed) {
     }
 
     // add lakes
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < lakeCount; ++i) {
         int radius = rng.between(4, 20);
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
@@ -44,7 +53,7 @@ bool buildmap(World &w, unsigned long seed) {
     }
 
     // add mountains
-    for (int i = 0; i < 40; ++i) {
+    for (int i = 0; i < mountainCount; ++i) {
         int radius = rng.between(2, 12);
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
@@ -60,7 +69,7 @@ bool buildmap(World &w, unsigned long seed) {
 
 
     // add dirt patches
-    for (int i = 0; i < 40; ++i) {
+    for (int i = 0; i < dirtCount; ++i) {
         int radius = rng.between(6, 12);
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
@@ -77,7 +86,7 @@ bool buildmap(World &w, unsigned long seed) {
 
 
     // add sand patches
-    for (int i = 0; i < 40; ++i) {
+    for (int i = 0; i < sandCount; ++i) {
         int radius = rng.between(6, 12);
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
@@ -95,7 +104,7 @@ bool buildmap(World &w, unsigned long seed) {
 
     // add ore veins
     std::vector<int> oreList{ 30, 31, 32, 32, 33, 34 };
-    for (int i = 0; i < 800; ++i) {
+    for (int i = 0; i < oreCount; ++i) {
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
         Point c(cx, cy);
@@ -128,7 +137,7 @@ bool buildmap(World &w, unsigned long seed) {
 
     // add plants
     int plantList[] = { 1000, 1000, 1001, 1005, 1007, 1009 };
-    for (int i = 0; i < 1600; ++i) {
+    for (int i = 0; i < plantCount; ++i) {
         Point p = findOpenTile(w, rng, false, false);
         int plantNum = rng.next32() % 6;
         Actor *actor = new Actor(w.getActorDef(plantList[plantNum]));
@@ -141,7 +150,7 @@ bool buildmap(World &w, unsigned long seed) {
 
     // add NPCs
     int npcList[] = { 2, 3, 3, 4, 4, 4, 5, 5, 6, 3, 3, 4, 4, 4, 5, 5, 6, 2000};
-    for (int i = 0; i < 75; ++i) {
+    for (int i = 0; i < actorCount; ++i) {
         Point p = findOpenTile(w, rng, false, true);
         int npcNum = rng.next32() % 18;
         int type = npcList[npcNum];

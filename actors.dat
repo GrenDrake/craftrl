@@ -222,3 +222,16 @@ actor {
     defaultFaction  2
     baseDamage      2
 };
+
+
+actor {
+    ident           ACTOR_CHEST
+    glyph           '='
+    colour          0x855723
+    name            "chest"
+    health          10
+    type            TYPE_INVENTORY
+    loot {
+        ITEM_CHEST 100 1 1
+    }
+};
