@@ -38,12 +38,12 @@ void doCrafting(World &w, Actor *player, unsigned craftingStation) {
         terminal_color(textFG);
         terminal_clear();
         for (int y = 0; y < screenHeight; ++y) {
-            terminal_put(29, y, '|');
+            terminal_put(29, y, LD_VERTICAL);
         }
         for (int x = 30; x < screenWidth; ++x) {
-            terminal_put(x, inventoryY - 1, '-');
+            terminal_put(x, inventoryY - 1, LD_HORIZONTAL);
         }
-        terminal_put(29, inventoryY - 1, '+');
+        terminal_put(29, inventoryY - 1, LD_TEE_RUD);
 
         int cy = 0;
         for (const auto *row : list) {

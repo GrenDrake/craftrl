@@ -69,18 +69,18 @@ void redraw_main(World &w) {
     const int viewWidth = screenWidth - sidebarWidth - 1;
     const int viewHeight = screenHeight - logHeight - 1;
 
-    terminal_composition(TK_ON);
     terminal_bkcolor(0xFF000000);
     terminal_color(0xFFFFFFFF);
     terminal_clear();
     for (int i = 0; i < logY; ++i) {
-        terminal_put(sidebarX - 1, i, '|');
+        terminal_put(sidebarX - 1, i, LD_VERTICAL);
     }
     for (int i = logX; i < screenWidth; ++i) {
-        terminal_put(i, logY - 1, '-');
+        terminal_put(i, logY - 1, LD_HORIZONTAL);
     }
-    terminal_put(sidebarX - 1, logY - 1, '+');
+    terminal_put(sidebarX - 1, logY - 1, LD_TEE_LRU);
 
+    terminal_composition(TK_ON);
     for (int y = 0; y < viewHeight; ++y) {
         for (int x = 0; x < viewWidth; ++x) {
             const auto &tile = w.at(Point(x + camera.x, y + camera.y));
@@ -103,8 +103,8 @@ void redraw_main(World &w) {
             }
         }
     }
-
     terminal_composition(TK_OFF);
+
     int day = -1, hour = -1, minute = -1;
     w.getTime(&day, &hour, &minute);
     terminal_color(0xFFFFFFFF);

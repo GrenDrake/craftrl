@@ -19,7 +19,7 @@ void doTrading(World &w, Actor *left, Actor *right) {
         terminal_color(textFG);
         terminal_clear();
         for (int y = 0; y < screenHeight; ++y) {
-            terminal_put(39, y, '|');
+            terminal_put(39, y, LD_VERTICAL);
         }
 
         if (side) {

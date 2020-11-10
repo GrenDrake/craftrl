@@ -68,6 +68,11 @@ const int CMD_MAKEROOM          = 24;
 const int CMD_CLEARROOM         = 25;
 const int CMD_VIEWLOG           = 26;
 
+const int LD_VERTICAL   = 0x2502;
+const int LD_HORIZONTAL = 0x2500;
+const int LD_TEE_LRU    = 0x2534;
+const int LD_TEE_RUD    = 0x251C;
+
 enum class Dir {
     North, Northeast, East, Southeast, South, Southwest, West, Northwest,
     None
