@@ -179,6 +179,17 @@ const Tile& World::at(const Point &p) const {
     return mTiles[c];
 }
 
+int World::getTileVariant(const Point &p) const {
+    if (!valid(p) || !getTileDef(at(p).building).connectingTile) return 0;
+
+    int wallGroup = getTileDef(at(p).building).wallGroup;
+    unsigned variant = 0;
+    if (getTileDef(at(p.shift(Dir::North)).building).wallGroup == wallGroup) variant |= 1;
+    if (getTileDef(at(p.shift(Dir::East)).building).wallGroup == wallGroup) variant |= 2;
+    if (getTileDef(at(p.shift(Dir::South)).building).wallGroup == wallGroup) variant |= 4;
+    if (getTileDef(at(p.shift(Dir::West)).building).wallGroup == wallGroup) variant |= 8;
+    return variant;
+}
 
 void World::setActor(const Point &pos, Actor *toActor) {
     if (!valid(pos)) return;

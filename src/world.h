@@ -152,6 +152,8 @@ struct TileDef {
     bool ground;
     unsigned grantsCrafting;
     bool isWall;
+    int wallGroup;
+    bool connectingTile;
 };
 
 struct RecipeRow {
@@ -254,7 +256,7 @@ public:
 
     Point findDropSpace(const Point &near) const;
     const Tile& at(const Point &p) const;
-    // Tile& at(const Point &p);
+    int  getTileVariant(const Point &p) const;
     void setTerrain(const Point &pos, int toTile);
     void setBuilding(const Point &pos, int toTile);
     void setActor(const Point &pos, Actor *toActor);

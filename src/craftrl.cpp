@@ -83,7 +83,8 @@ void redraw_main(World &w) {
     terminal_composition(TK_ON);
     for (int y = 0; y < viewHeight; ++y) {
         for (int x = 0; x < viewWidth; ++x) {
-            const auto &tile = w.at(Point(x + camera.x, y + camera.y));
+            Point here(x + camera.x, y + camera.y);
+            const auto &tile = w.at(here);
 
             if (tile.room)  terminal_bkcolor(tile.room->def->colour);
             else            terminal_bkcolor(0xFF000000);
@@ -91,7 +92,8 @@ void redraw_main(World &w) {
             terminal_color(w.getTileDef(tile.terrain).colour);
             terminal_put(x, y, w.getTileDef(tile.terrain).glyph);
             if (tile.building > 0) {
-                terminal_put(x, y, w.getTileDef(tile.building).glyph);
+                int variant = w.getTileVariant(here);
+                terminal_put(x, y, w.getTileDef(tile.building).glyph + variant);
             }
             if (tile.item) {
                 terminal_color(tile.item->def.colour);

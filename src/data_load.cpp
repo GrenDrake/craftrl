@@ -373,6 +373,8 @@ bool parseTile(World &w, TokenData &data) {
     tile.loot = nullptr;
     tile.grantsCrafting = 0;
     tile.isWall = false;
+    tile.wallGroup = -1;
+    tile.connectingTile = false;
 
     while (!data.matches(TokenType::CloseBrace)) {
         if (!data.require(TokenType::Identifier)) return false;
@@ -383,6 +385,7 @@ bool parseTile(World &w, TokenData &data) {
         else if (name == "solid") tile.solid = true;
         else if (name == "ground") tile.ground = true;
         else if (name == "isWall") tile.isWall = true;
+        else if (name == "connectingTile") tile.connectingTile = true;
         else if (name == "ident") {
             if (!data.asInt(tile.ident)) return false;
             data.next();
@@ -403,6 +406,9 @@ bool parseTile(World &w, TokenData &data) {
             data.next();
         } else if (name == "doorTo") {
             if (!data.asInt(tile.doorTo)) return false;
+            data.next();
+        } else if (name == "wallGroup") {
+            if (!data.asInt(tile.wallGroup)) return false;
             data.next();
         } else if (name == "grantsCrafting") {
             int value = 0;
