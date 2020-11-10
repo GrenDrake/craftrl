@@ -1,15 +1,13 @@
 
 item {
     ident   ITEM_STICK
-    glyph   '/'
-    colour  0x855723
+    glyph   0xE022
     name    "stick"
 };
 
 item {
     ident   ITEM_ROCK
-    glyph   '*'
-    colour  0x777777
+    glyph   0xE023
     name    "rock"
 };
 
@@ -22,8 +20,7 @@ item {
 
 item {
     ident   ITEM_LOG
-    glyph   '='
-    colour  0x855723
+    glyph   0xE021
     name    "log"
 };
 
@@ -162,8 +159,7 @@ item {
 
 item {
     ident       ITEM_MEAT
-    glyph       '%'
-    colour      0xFF7777
+    glyph       0xE01F
     name        "chunk of meat"
     plural      "chunks of meat"
 };

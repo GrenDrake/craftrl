@@ -1,7 +1,7 @@
 
 tile {
     ident       TILE_INVALID
-    glyph       ' '
+    glyph       0xE000
     colour      0x000000
     name        "nothing"
     solid opaque
@@ -9,16 +9,14 @@ tile {
 
 tile {
     ident       TILE_DIRT
-    glyph       '.'
-    colour      0x633a0b
+    glyph       0xE002
     name        "dirt"
     ground
 };
 
 tile {
     ident       TILE_STONE
-    glyph       '#'
-    colour      0xAAAAAA
+    glyph       0xE006
     name        "stone"
     breakTo     TILE_DIRT
     loot {
@@ -29,24 +27,21 @@ tile {
 
 tile {
     ident       TILE_GRASS
-    glyph       ','
-    colour      0x007700
+    glyph       0xE004
     name        "grass"
     ground
 };
 
 tile {
     ident       TILE_WATER
-    glyph       '~'
-    colour      0x0000FF
+    glyph       0xE003
     name        "water"
     solid
 };
 
 tile {
     ident       TILE_SAND
-    glyph       '.'
-    colour      0xFFFF77
+    glyph       0xE005
     name        "sand"
     breakTo     TILE_SAND
     loot {
@@ -56,8 +51,7 @@ tile {
 
 tile {
     ident       TILE_IRON_VEIN
-    glyph       '&'
-    colour      0xB7410E
+    glyph       0xE007
     name        "iron vein"
     breakTo     TILE_DIRT
     loot {
@@ -68,8 +62,7 @@ tile {
 
 tile {
     ident       TILE_COPPER_VEIN
-    glyph       '&'
-    colour      0xB87333
+    glyph       0xE008
     name        "copper vein"
     breakTo     TILE_DIRT
     loot {
@@ -80,8 +73,7 @@ tile {
 
 tile {
     ident       TILE_COAL_VEIN
-    glyph       '&'
-    colour      0x36454F
+    glyph       0xE009
     name        "coal vein"
     breakTo     TILE_DIRT
     loot {
@@ -92,8 +84,7 @@ tile {
 
 tile {
     ident       TILE_GOLD_VEIN
-    glyph       '&'
-    colour      0xFFD700
+    glyph       0xE00A
     name        "gold vein"
     breakTo     TILE_DIRT
     loot {
@@ -104,8 +95,7 @@ tile {
 
 tile {
     ident       TILE_SILVER_VEIN
-    glyph       '&'
-    colour      0xC0C0C0
+    glyph       0xE00B
     name        "silver vein"
     breakTo     TILE_DIRT
     loot {
@@ -163,8 +153,7 @@ tile {
 
 tile {
     ident       TILE_WOOD_DOOR_CLOSED
-    glyph       '+'
-    colour      0x855723
+    glyph       0xE00E
     name        "wood door (closed)"
     breakTo     TILE_DIRT
     doorTo      TILE_WOOD_DOOR_OPEN
@@ -176,8 +165,7 @@ tile {
 
 tile {
     ident       TILE_WOOD_DOOR_OPEN
-    glyph       '/'
-    colour      0x855723
+    glyph       0xE00F
     name        "wood door (open)"
     breakTo     TILE_DIRT
     doorTo      TILE_WOOD_DOOR_CLOSED
@@ -190,8 +178,7 @@ tile {
 
 tile {
     ident       TILE_STONE_DOOR_CLOSED
-    glyph       '+'
-    colour      0x777777
+    glyph       0xE010
     name        "stone door (closed)"
     breakTo     TILE_DIRT
     doorTo      TILE_STONE_DOOR_OPEN
@@ -203,8 +190,7 @@ tile {
 
 tile {
     ident       TILE_STONE_DOOR_OPEN
-    glyph       '/'
-    colour      0x777777
+    glyph       0xE011
     name        "stone door (open)"
     breakTo     TILE_DIRT
     doorTo      TILE_STONE_DOOR_CLOSED
@@ -217,8 +203,7 @@ tile {
 
 tile {
     ident       TILE_WINDOW
-    glyph       '='
-    colour      0x7777FF
+    glyph       0xE012
     name        "window"
     breakTo     TILE_DIRT
     solid isWall
@@ -238,8 +223,7 @@ tile {
 
 tile {
     ident       TILE_BASIC_WORKBENCH
-    glyph       0x2565
-    colour      0x855723
+    glyph       0xE013
     name        "basic workbench"
     breakTo     TILE_DIRT
     loot {
@@ -251,8 +235,7 @@ tile {
 
 tile {
     ident       TILE_STD_WORKBENCH
-    glyph       0x2565
-    colour      0xc36f10
+    glyph       0xE014
     name        "standard workbench"
     breakTo     TILE_DIRT
     loot {
@@ -264,9 +247,8 @@ tile {
 
 tile {
     ident       TILE_FORGE
-    glyph       0x2565
-    colour      0xAAAAAA
-    name        "standard workbench"
+    glyph       0xE015
+    name        "smelter"
     breakTo     TILE_DIRT
     loot {
         ITEM_FORGE 100 1 1

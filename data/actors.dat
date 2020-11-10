@@ -1,8 +1,7 @@
 
 actor {
     ident       ACTOR_PLAYER
-    glyph       '@'
-    colour      0x7777FF
+    glyph       0xE01B
     name        "player"
     health      10
     type        TYPE_PLAYER
@@ -10,8 +9,7 @@ actor {
 
 actor {
     ident       ACTOR_KOBOLD
-    glyph       'k'
-    colour      0xFF77FF
+    glyph       0xE01A
     name        "kobold"
     health      10
     moveChance  333
@@ -20,8 +18,7 @@ actor {
 
 actor {
     ident       ACTOR_PIG
-    glyph       'p'
-    colour      0xFF77FF
+    glyph       0xE017
     name        "pig"
     health      4
     type        TYPE_ANIMAL
@@ -34,8 +31,7 @@ actor {
 
 actor {
     ident       ACTOR_CHICKEN
-    glyph       'c'
-    colour      0xFF77FF
+    glyph       0xE016
     name        "chicken"
     health      2
     type        TYPE_ANIMAL
@@ -48,8 +44,7 @@ actor {
 
 actor {
     ident       ACTOR_GOAT
-    glyph       'g'
-    colour      0xFF77FF
+    glyph       0xE019
     name        "goat"
     health      5
     type        TYPE_ANIMAL
@@ -62,8 +57,7 @@ actor {
 
 actor {
     ident   ACTOR_WOLF
-    glyph   'w'
-    colour  0xFF77FF
+    glyph   0xE018
     name    "wolf"
     health  3
     type    TYPE_ANIMAL
@@ -76,8 +70,7 @@ actor {
 
 actor {
     ident   ACTOR_TREE
-    glyph   'T'
-    colour  0x77FF77
+    glyph   0xE00C
     name    "tree"
     health  10
     type    TYPE_PLANT
@@ -89,8 +82,7 @@ actor {
 
 actor {
     ident   ACTOR_SHRUB
-    glyph   ';'
-    colour  0x77FF77
+    glyph   0xE01C
     name    "shrub"
     ai      0
     type    TYPE_PLANT
@@ -103,8 +95,7 @@ actor {
 
 actor {
     ident       ACTOR_SAPLING
-    glyph       't'
-    colour      0x77FF77
+    glyph       0xE00D
     name        "sapling"
     ai          0
     type        TYPE_PLANT
@@ -117,8 +108,7 @@ actor {
 
 actor {
     ident   ACTOR_SPROUT
-    glyph   ','
-    colour  0x77FF77
+    glyph   0xE01D
     name    "sprout"
     ai      0
     type    TYPE_PLANT
@@ -213,8 +203,7 @@ actor {
 
 actor {
     ident           ACTOR_ZOMBIE
-    glyph           'z'
-    colour          0xFF7777
+    glyph           0xE01E
     name            "zombie"
     health          6
     type            TYPE_MONSTER
@@ -226,8 +215,7 @@ actor {
 
 actor {
     ident           ACTOR_CHEST
-    glyph           '='
-    colour          0x855723
+    glyph           0xE020
     name            "chest"
     health          10
     type            TYPE_INVENTORY

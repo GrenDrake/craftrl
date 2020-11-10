@@ -19,3 +19,4 @@ This makefile will need to be updated to point to the location of your BearLibTe
 
 CraftRL is released under the [GPL v3 License](LICENSE).
 The included font is from the [Fira Typeface](https://github.com/mozilla/Fira) and is used and provided under the terms of the SIL Open Font License.
+The tile graphics incorporate art from the [Kenney 1-Bit Pack](https://kenney.nl/assets/bit-pack).

@@ -68,8 +68,12 @@ int main(int argc, char *argv[]) {
         logger_log("main: failed to set input filter.");
         return 1;
     }
-    if (!terminal_set("font: ./data/font.ttf, size=16x32")) {
+    if (!terminal_set("font: ./data/font.ttf, size=14x28")) {
         logger_log("main: failed to set font.");
+        return 1;
+    }
+    if (!terminal_set("0xE000: ./data/tileset.png, size=14x28")) {
+        logger_log("main: failed to set tileset.");
         return 1;
     }
 

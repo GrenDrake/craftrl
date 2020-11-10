@@ -69,6 +69,7 @@ void redraw_main(World &w) {
     const int viewWidth = screenWidth - sidebarWidth - 1;
     const int viewHeight = screenHeight - logHeight - 1;
 
+    terminal_composition(TK_ON);
     terminal_bkcolor(0xFF000000);
     terminal_color(0xFFFFFFFF);
     terminal_clear();
@@ -87,19 +88,20 @@ void redraw_main(World &w) {
             if (tile.room)  terminal_bkcolor(tile.room->def->colour);
             else            terminal_bkcolor(0xFF000000);
 
+            terminal_color(w.getTileDef(tile.terrain).colour);
+            terminal_put(x, y, w.getTileDef(tile.terrain).glyph);
+            if (tile.item) {
+                terminal_color(tile.item->def.colour);
+                terminal_put(x, y, tile.item->def.glyph);
+            }
             if (tile.actor) {
                 terminal_color(tile.actor->def.colour);
                 terminal_put(x, y, tile.actor->def.glyph);
-            } else if (tile.item) {
-                terminal_color(tile.item->def.colour);
-                terminal_put(x, y, tile.item->def.glyph);
-            } else {
-                terminal_color(w.getTileDef(tile.terrain).colour);
-                terminal_put(x, y, w.getTileDef(tile.terrain).glyph);
             }
         }
     }
 
+    terminal_composition(TK_OFF);
     int day = -1, hour = -1, minute = -1;
     w.getTime(&day, &hour, &minute);
     terminal_color(0xFFFFFFFF);
