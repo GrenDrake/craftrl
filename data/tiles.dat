@@ -47,6 +47,7 @@ tile {
     loot {
         ITEM_SAND 100 2 5
     }
+    ground
 };
 
 tile {

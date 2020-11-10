@@ -100,16 +100,17 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
         }
     }
 
-    const TileDef &td = w.getTileDef(tile.terrain);
-    if (td.breakTo >= 0) {
-        w.setTerrain(dest, td.breakTo);
-        w.addLogMsg("Broken.");
-        makeLootAt(w, td.loot, dest, true);
-    } else {
-        if (!silent) w.addLogMsg("Nothing to attack.");
-        return false;
+    if (tile.building > 0) {
+        const TileDef &td = w.getTileDef(tile.building);
+        if (td.breakTo >= 0) {
+            w.setBuilding(dest, 0);
+            w.addLogMsg("Broken.");
+            makeLootAt(w, td.loot, dest, true);
+            return true;
+        }
     }
-    return true;
+    if (!silent) w.addLogMsg("Nothing to attack.");
+    return false;
 }
 
 
@@ -157,12 +158,15 @@ bool actionContextMove(World &w, Actor *player, const Command &command, bool sil
     const Tile &tile = w.at(dest);
     if (tile.actor) return actionTalkActor(w, player, newCommand, true);
 
-    const TileDef &tdef = w.getTileDef(tile.terrain);
-    if (tdef.grantsCrafting) {
-        doCrafting(w, player, tdef.grantsCrafting);
+    const TileDef &bdef = w.getTileDef(tile.building);
+    if (bdef.grantsCrafting) {
+        doCrafting(w, player, bdef.grantsCrafting);
         return false;
     }
-    if (tdef.solid) return actionDo(w, player, newCommand, true);
+    if (bdef.solid) return actionDo(w, player, newCommand, true);
+
+    const TileDef &tdef = w.getTileDef(tile.terrain);
+    if (tdef.solid) return false;
     return actionMove(w, player, newCommand, true);
 }
 
@@ -196,11 +200,13 @@ bool actionDo(World &w, Actor *player, const Command &command, bool silent) {
         return false;
     }
 
-    const TileDef &td = w.getTileDef(tile.terrain);
-    if (td.doorTo >= 0) {
-        w.setTerrain(dest, td.doorTo);
-        if (!silent) w.addLogMsg("Done.");
-        return true;
+    if(tile.building > 0) {
+        const TileDef &td = w.getTileDef(tile.building);
+        if (td.doorTo >= 0) {
+            w.setBuilding(dest, td.doorTo);
+            if (!silent) w.addLogMsg("Done.");
+            return true;
+        }
     }
     if (!silent) w.addLogMsg("Nothing to do.");
     return false;
@@ -404,7 +410,7 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (!td.ground || t.actor || t.item) {
+        if (!td.ground || t.building > 0 || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
@@ -424,11 +430,11 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (!td.ground || t.actor || t.item) {
+        if (!td.ground || t.building || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
-        w.setTerrain(dest, def->constructs);
+        w.setBuilding(dest, def->constructs);
         player->inventory.remove(def);
         return true;
     } else {

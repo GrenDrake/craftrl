@@ -164,6 +164,7 @@ Point World::findDropSpace(const Point &near) const {
         Point p = near.shift(d);
         const Tile &t = at(p);
         if (getTileDef(t.terrain).solid) continue;
+        if (getTileDef(t.building).solid) continue;
         if (t.item) continue;
         if (t.actor && t.actor->def.type == TYPE_PLANT) continue;
         return p;
@@ -195,6 +196,23 @@ void World::setTerrain(const Point &pos, int toTile) {
     if (!valid(pos)) return;
     int c = pos.x + pos.y * mWidth;
     mTiles[c].terrain = toTile;
+
+    // check for neccesary room updates
+    if (mTiles[c].room) {
+        rescaleRoom(mTiles[c].room);
+    }
+    Dir d = Dir::North;
+    do {
+        Point dest = pos.shift(d);
+        if (at(dest).room) rescaleRoom(at(dest).room);
+        d = rotate45(d);
+    } while (d != Dir::North);
+}
+
+void World::setBuilding(const Point &pos, int toTile) {
+    if (!valid(pos)) return;
+    int c = pos.x + pos.y * mWidth;
+    mTiles[c].building = toTile;
 
     // check for neccesary room updates
     if (mTiles[c].room) {
@@ -302,7 +320,7 @@ std::vector<Point> World::findRoomExtents(const Point &pos) const {
         Dir d = Dir::North;
         do {
             Point dest = pos.shift(d);
-            if (valid(dest) && !getTileDef(at(dest).terrain).isWall) {
+            if (valid(dest) && (at(dest).building == 0 || !getTileDef(at(dest).building).isWall) && !getTileDef(at(dest).terrain).solid) {
                 todo.push_back(dest);
             }
             d = rotate45(d);
@@ -408,7 +426,7 @@ void World::updateRoom(Room *room) {
         for (int tile : def.requirements) {
             bool met = false;
             for (const Point &p : room->points) {
-                if (at(p).terrain == tile) {
+                if (at(p).building == tile) {
                     met = true;
                     break;
                 }
@@ -585,8 +603,16 @@ const RoomDef& World::getRoomDef(int ident) const {
 bool World::tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep) {
     Point dest = actor->pos.shift(baseDir);
 
-    const Tile &tile = at(dest);
-    if (valid(dest) && !tile.actor && !getTileDef(tile.terrain).solid) {
+    bool blocked = false;
+    if (!valid(dest)) blocked = true;
+    else {
+        const Tile &tile = at(dest);
+        if (tile.actor) blocked = true;
+        else if (getTileDef(tile.terrain).solid) blocked = true;
+        else if (tile.building > 0 && getTileDef(tile.building).solid) blocked = true;
+    }
+
+    if (!blocked) {
         moveActor(actor, dest);
         return true;
     }
@@ -748,6 +774,7 @@ bool World::savegame(const std::string &filename) const {
     PHYSFS_writeULE32(out, 0x454C4954);
     for (int i = 0; i < mWidth * mHeight; ++i) {
         PHYSFS_writeULE32(out, mTiles[i].terrain);
+        PHYSFS_writeULE32(out, mTiles[i].building);
         if (mTiles[i].item) ++itemCount;
     }
     // write items on ground
@@ -860,6 +887,8 @@ bool World::loadgame(const std::string &filename) {
     for (int i = 0; i < mWidth * mHeight; ++i) {
         int t = read32(inf);
         mTiles[i].terrain = t;
+        t = read32(inf);
+        mTiles[i].building = t;
     }
 
     // read items on ground

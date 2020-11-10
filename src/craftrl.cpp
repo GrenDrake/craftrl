@@ -90,6 +90,9 @@ void redraw_main(World &w) {
 
             terminal_color(w.getTileDef(tile.terrain).colour);
             terminal_put(x, y, w.getTileDef(tile.terrain).glyph);
+            if (tile.building > 0) {
+                terminal_put(x, y, w.getTileDef(tile.building).glyph);
+            }
             if (tile.item) {
                 terminal_color(tile.item->def.colour);
                 terminal_put(x, y, tile.item->def.glyph);
@@ -160,6 +163,9 @@ void gameloop(World &w) {
             } else {
                 std::stringstream s;
                 s << "You see: " << w.getTileDef(tile.terrain).name;
+                if (tile.building) {
+                    s << ", " << w.getTileDef(tile.building).name;
+                }
                 if (tile.item) {
                     s << ", " << tile.item->getName(false);
                 }

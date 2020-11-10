@@ -9,6 +9,7 @@ Point findOpenTile(World &w, Random &rng, bool allowActor, bool allowItem) {
         p.y = rng.next32() % w.height();
         bool valid = true;
         const auto &t = w.at(p);
+        if (t.building > 0) valid = false;
         if (w.getTileDef(t.terrain).solid) valid = false;
         if (!allowActor && t.actor) continue;
         if (valid) break;
@@ -61,7 +62,8 @@ bool buildmap(World &w, unsigned long seed) {
             for (int x = cx - radius; x <= cx + radius; ++x) {
                 int dist = sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
                 if (dist <= radius) {
-                    w.setTerrain(Point(x, y), TILE_STONE);
+                    w.setTerrain(Point(x, y), TILE_DIRT);
+                    w.setBuilding(Point(x, y), TILE_STONE);
                 }
             }
         }
@@ -108,9 +110,9 @@ bool buildmap(World &w, unsigned long seed) {
         int cx = rng.next32() % w.width();
         int cy = rng.next32() % w.height();
         Point c(cx, cy);
-        if (w.at(c).terrain == TILE_STONE) {
+        if (w.at(c).building == TILE_STONE) {
             int oreNum = rng.next32() % oreList.size();
-            w.setTerrain(c, oreList[oreNum]);
+            w.setBuilding(c, oreList[oreNum]);
         }
     }
 

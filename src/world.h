@@ -215,10 +215,11 @@ struct Room {
 };
 
 struct Tile {
-    Tile() : terrain(0), room(nullptr), actor(nullptr), item(0) { }
+    Tile() : terrain(0), building(0), room(nullptr), actor(nullptr), item(0) { }
     Tile(int tile) : terrain(tile), room(nullptr), actor(nullptr), item(0) { }
 
     int terrain;
+    int building;
     Room *room;
     Actor *actor;
     Item *item;
@@ -248,6 +249,7 @@ public:
     const Tile& at(const Point &p) const;
     // Tile& at(const Point &p);
     void setTerrain(const Point &pos, int toTile);
+    void setBuilding(const Point &pos, int toTile);
     void setActor(const Point &pos, Actor *toActor);
     void setItem(const Point &pos, Item *toItem);
 
