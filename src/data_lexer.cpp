@@ -142,7 +142,7 @@ int readLine(PHYSFS_file *file, std::string &line) {
 std::vector<Token> parseFile(const std::string &filename) {
     std::vector<Token> tokens;
     std::string line;
-    PHYSFS_File *inf = PHYSFS_openRead(filename.c_str());
+    PHYSFS_File *inf = PHYSFS_openRead(("/data/" + filename).c_str());
 
     int errorCount = 0;
     int lineNo = 0;
