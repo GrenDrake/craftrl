@@ -430,11 +430,22 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
         Point dest = player->pos.shift(d);
         const Tile &t = w.at(dest);
         const TileDef &td = w.getTileDef(t.terrain);
-        if (!td.ground || t.building || t.actor || t.item) {
+        if (!td.ground || t.actor || t.item) {
             w.addLogMsg("The space isn't clear.");
             return false;
         }
-        w.setBuilding(dest, def->constructs);
+        if (def->makeFloor) {
+            if (td.ident == def->constructs) {
+                w.addLogMsg("That's already there.");
+                return false;
+            }
+            w.setTerrain(dest, def->constructs);
+        } else if (t.building == 0) {
+            w.setBuilding(dest, def->constructs);
+        } else {
+            w.addLogMsg("There's already something there.");
+            return false;
+        }
         player->inventory.remove(def);
         return true;
     } else {

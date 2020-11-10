@@ -69,6 +69,7 @@ item {
     colour  0x855723
     name    "wood floor kit"
     constructs  TILE_WOOD_FLOOR
+    makeFloor
 };
 
 item {
@@ -77,6 +78,7 @@ item {
     colour  0x777777
     name    "stone floor kit"
     constructs  TILE_STONE_FLOOR
+    makeFloor
 };
 
 item {

@@ -130,6 +130,7 @@ struct ItemDef {
     std::string name, plural;
     int seedFor;
     int constructs;
+    bool makeFloor;
 };
 
 struct TileDef {

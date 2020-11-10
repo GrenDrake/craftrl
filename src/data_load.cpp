@@ -161,6 +161,7 @@ bool parseItem(World &w, TokenData &data) {
     item.seedFor = -1;
     item.constructs = -1;
     item.glyph = '?';
+    item.makeFloor = false;
     item.colour = 0xFFFFFFFF;
     item.name = "unnamed item";
 
@@ -169,7 +170,8 @@ bool parseItem(World &w, TokenData &data) {
         const std::string &name = data.here().s;
         data.next();
 
-        if (name == "ident") {
+        if (name == "makeFloor") item.makeFloor = true;
+        else if (name == "ident") {
             if (!data.asInt(item.ident)) return false;
             data.next();
         } else if (name == "glyph") {
