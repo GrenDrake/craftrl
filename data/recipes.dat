@@ -62,6 +62,13 @@ recipe {
 };
 
 recipe {
+    makeIdent   ITEM_GATE_KIT
+    makeQty     1
+    part        2 ITEM_PLANK
+    craftingStation 1
+};
+
+recipe {
     makeIdent   ITEM_BASIC_WORKBENCH_KIT
     makeQty     1
     part        1 ITEM_LOG

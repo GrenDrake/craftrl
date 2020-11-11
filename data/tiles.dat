@@ -119,7 +119,7 @@ tile {
 
 tile {
     ident       TILE_WOOD_WALL
-    glyph       0xE029
+    glyph       0xE030
     name        "wood wall"
     breakTo     TILE_DIRT
     wallGroup   1
@@ -131,7 +131,7 @@ tile {
 
 tile {
     ident       TILE_STONE_WALL
-    glyph       0xE039
+    glyph       0xE040
     name        "stone wall"
     breakTo     TILE_DIRT
     wallGroup   1
@@ -217,19 +217,44 @@ tile {
     isWall
 };
 
-
 tile {
-    ident       TILE_WINDOW
-    glyph       0xE012
-    name        "window"
+    ident       TILE_GATE_CLOSED
+    glyph       0xE024
+    name        "gate (closed)"
     breakTo     TILE_DIRT
-    wallGroup   1
+    doorTo      TILE_GATE_OPEN
+    wallGroup   2
+    loot {
+        ITEM_PLANK 100 1 1
+    }
     solid isWall
 };
 
 tile {
+    ident       TILE_GATE_OPEN
+    glyph       0xE025
+    name        "gate (open)"
+    breakTo     TILE_DIRT
+    doorTo      TILE_GATE_CLOSED
+    wallGroup   2
+    loot {
+        ITEM_PLANK 100 1 1
+    }
+    isWall
+};
+
+tile {
+    ident       TILE_WINDOW
+    glyph       0xE060
+    name        "window"
+    breakTo     TILE_DIRT
+    wallGroup   1
+    solid isWall connectingTile
+};
+
+tile {
     ident       TILE_FENCE
-    glyph       0xE049
+    glyph       0xE050
     name        "fence"
     breakTo     TILE_DIRT
     wallGroup   2

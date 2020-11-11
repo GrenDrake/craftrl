@@ -98,6 +98,14 @@ item {
 };
 
 item {
+    ident       ITEM_GATE_KIT
+    glyph       '*'
+    colour      0x855723
+    name        "gate kit"
+    constructs  TILE_GATE_CLOSED
+};
+
+item {
     ident       ITEM_WINDOW_KIT
     glyph       '*'
     colour      0x7777FF

@@ -28,6 +28,8 @@ define TILE_STONE_DOOR_CLOSED   110;
 define TILE_STONE_DOOR_OPEN     111;
 define TILE_WINDOW              112;
 define TILE_FENCE               113;
+define TILE_GATE_CLOSED         114;
+define TILE_GATE_OPEN           115;
 define TILE_BASIC_WORKBENCH     500;
 define TILE_STD_WORKBENCH       501;
 define TILE_FORGE               502;
@@ -87,6 +89,7 @@ define ITEM_COPPER_INGOT        32;
 define ITEM_SILVER_INGOT        33;
 define ITEM_GOLD_INGOT          34;
 define ITEM_CHEST               35;
+define ITEM_GATE_KIT            36;
 
 define ROOM_EMPTY               0;
 define ROOM_WORKSHOP            1;
