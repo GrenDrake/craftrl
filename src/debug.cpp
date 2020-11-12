@@ -11,6 +11,7 @@ struct DebugCommand {
     unsigned arguments;
 };
 
+void debugDumpMap(World &w, Actor *player, const std::vector<std::string> &command);
 void debugGive(World &w, Actor *player, const std::vector<std::string> &command);
 void debugHelp(World &w, Actor *player, const std::vector<std::string> &command);
 void debugInfo(World &w, Actor *player, const std::vector<std::string> &command);
@@ -42,6 +43,7 @@ Dir strToDir(const std::string &s) {
 }
 
 DebugCommand debugCommands[] = {
+    {   "dumpmap",  debugDumpMap,   0  },
     {   "give",     debugGive,      2  },
     {   "help",     debugHelp,      0  },
     {   "info",     debugInfo,      1  },
@@ -75,6 +77,17 @@ void doDebug(World &w, Actor *player) {
     w.addLogMsg("Unknown debug command " + parts[0] + ". \"help\" to get list of commands.");
 }
 
+void dumpActorMap(World &w);
+void dumpPlantMap(World &w);
+void dumpTerrainMap(World &w);
+
+void debugDumpMap(World &w, Actor *player, const std::vector<std::string> &command) {
+    ui_MessageBox_Instant("Dumping map images...");
+    dumpActorMap(w);
+    dumpPlantMap(w);
+    dumpTerrainMap(w);
+    w.addLogMsg("Maps dumped to write directory.");
+}
 
 void debugGive(World &w, Actor *player, const std::vector<std::string> &command) {
     int qty = 0, ident = -1;

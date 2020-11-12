@@ -41,7 +41,6 @@ const int TILE_SILVER_VEIN      = 33;
 const int TILE_GOLD_VEIN        = 34;
 
 const int CMD_NONE              = -1;
-const int CMD_DUMPMAP           = 0;
 const int CMD_TAKE              = 1;
 const int CMD_BREAK             = 2;
 const int CMD_MOVE              = 3;
@@ -350,7 +349,6 @@ bool actionCraft(World &w, Actor *player, const Command &command, bool silent);
 bool actionDebug(World &w, Actor *player, const Command &command, bool silent);
 bool actionDo(World &w, Actor *player, const Command &command, bool silent);
 bool actionDrop(World &w, Actor *player, const Command &command, bool silent);
-bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent);
 bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent);
 bool actionMove(World &w, Actor *player, const Command &command, bool silent);
 bool actionNextSelect(World &w, Actor *player, const Command &command, bool silent);

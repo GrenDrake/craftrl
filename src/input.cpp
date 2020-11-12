@@ -6,7 +6,6 @@
 const Command gameCommands[] = {
     {   CMD_QUIT,           Dir::None,      { { TK_Q,        }, { TK_ESCAPE } } },
     {   CMD_CANCEL,         Dir::None,      { { TK_Z,        },  } },
-    {   CMD_DUMPMAP,        Dir::None,      { { TK_F5,       },  } },
     {   CMD_TAKE,           Dir::None,      { { TK_G,        },  } },
     {   CMD_BREAK,          Dir::None,      { { TK_A,        },  } },
     {   CMD_DO,             Dir::None,      { { TK_E,        },  } },
@@ -67,7 +66,6 @@ const Command& findCommand(int key, const Command *commandList) {
 std::string commandName(int command) {
     switch(command) {
         case CMD_NONE:          return "None";
-        case CMD_DUMPMAP:       return "Dump map to file";
         case CMD_TAKE:          return "Take";
         case CMD_BREAK:         return "Break";
         case CMD_MOVE:          return "Move";
@@ -103,7 +101,6 @@ std::string commandName(int command) {
 
 ActionHandler commandAction(int command) {
     switch (command) {
-        case CMD_DUMPMAP:       return actionDumpMap;
         case CMD_TAKE:          return actionTake;
         case CMD_BREAK:         return actionAttack;
         case CMD_MOVE:          return actionMove;

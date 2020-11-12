@@ -241,18 +241,6 @@ bool actionDrop(World &w, Actor *player, const Command &command, bool silent) {
 }
 
 
-void dumpActorMap(World &w);
-void dumpPlantMap(World &w);
-void dumpTerrainMap(World &w);
-
-bool actionDumpMap(World &w, Actor *player, const Command &command, bool silent) {
-    ui_MessageBox_Instant("Dumping map images...");
-    dumpActorMap(w);
-    dumpPlantMap(w);
-    dumpTerrainMap(w);
-    return false;
-}
-
 bool actionMakeRoom(World &w, Actor *player, const Command &command, bool silent) {
     if (w.at(player->pos).room) {
         w.addLogMsg("Already in a room.");
