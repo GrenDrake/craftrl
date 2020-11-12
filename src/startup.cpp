@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
         logger_log("main: failed to set font.");
         return 1;
     }
-    if (!terminal_set("0xE000: ./data/tileset.png, size=14x28")) {
+    if (!terminal_set("0xE000: ./data/tileset.png, size=28x28")) {
         logger_log("main: failed to set tileset.");
         return 1;
     }

@@ -37,7 +37,6 @@ bool parseActor(World &w, TokenData &data) {
     ActorDef actor;
     actor.ident = -1;
     actor.glyph = '?';
-    actor.colour = 0xFFFFFFFF;
     actor.name = "unnamed actor";
     actor.aiType = AI_NONE;
     actor.health = 1;
@@ -59,11 +58,6 @@ bool parseActor(World &w, TokenData &data) {
             data.next();
         } else if (name == "glyph") {
             if (!data.asInt(actor.glyph)) return false;
-            data.next();
-        } else if (name == "colour") {
-            int value = 0;
-            if (!data.asInt(value)) return false;
-            actor.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
@@ -162,7 +156,6 @@ bool parseItem(World &w, TokenData &data) {
     item.constructs = -1;
     item.glyph = '?';
     item.makeFloor = false;
-    item.colour = 0xFFFFFFFF;
     item.name = "unnamed item";
 
     while (!data.matches(TokenType::CloseBrace)) {
@@ -176,11 +169,6 @@ bool parseItem(World &w, TokenData &data) {
             data.next();
         } else if (name == "glyph") {
             if (!data.asInt(item.glyph)) return false;
-            data.next();
-        } else if (name == "colour") {
-            int value = 0;
-            if (!data.asInt(value)) return false;
-            item.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "seedFor") {
             if (!data.asInt(item.seedFor)) return false;
@@ -363,7 +351,6 @@ bool parseTile(World &w, TokenData &data) {
     TileDef tile;
     tile.ident = -1;
     tile.glyph = '?';
-    tile.colour = 0xFFFFFFFF;
     tile.name = "unnamed tile";
     tile.opaque = false;
     tile.solid = false;
@@ -391,11 +378,6 @@ bool parseTile(World &w, TokenData &data) {
             data.next();
         } else if (name == "glyph") {
             if (!data.asInt(tile.glyph)) return false;
-            data.next();
-        } else if (name == "colour") {
-            int value = 0;
-            if (!data.asInt(value)) return false;
-            tile.colour = static_cast<unsigned>(value) | 0xFF000000;
             data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;

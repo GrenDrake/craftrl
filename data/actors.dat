@@ -121,8 +121,7 @@ actor {
 
 actor {
     ident   ACTOR_WHEAT_SEEDLING
-    glyph   ','
-    colour  0xFFDF00
+    glyph   0xE070
     name    "wheat seedling"
     ai      0
     type    TYPE_PLANT
@@ -135,8 +134,7 @@ actor {
 
 actor {
     ident   ACTOR_GROWN_WHEAT
-    glyph   ';'
-    colour  0xFFDF00
+    glyph   0xE071
     name    "grown wheat"
     ai      0
     type    TYPE_PLANT
@@ -148,8 +146,7 @@ actor {
 
 actor {
     ident   ACTOR_CARROT_SEEDLING
-    glyph   ','
-    colour  0xED9121
+    glyph   0xE072
     name    "carrot seedling"
     ai      0
     type    TYPE_PLANT
@@ -162,8 +159,7 @@ actor {
 
 actor {
     ident   ACTOR_GROWN_CARROT
-    glyph   ';'
-    colour  0xED9121
+    glyph   0xE073
     name    "grown carrot"
     ai      0
     type    TYPE_PLANT
@@ -176,8 +172,7 @@ actor {
 
 actor {
     ident   ACTOR_TURNIP_SEEDLING
-    glyph   ','
-    colour  0xEEEEEE
+    glyph   0xE074
     name    "turnip seedling"
     ai      0
     type    TYPE_PLANT
@@ -190,8 +185,7 @@ actor {
 
 actor {
     ident   ACTOR_GROWN_TURNIP
-    glyph   ';'
-    colour  0xEEEEEE
+    glyph   0xE075
     name    "grown turnip"
     ai      0
     type    TYPE_PLANT

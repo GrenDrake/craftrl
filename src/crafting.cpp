@@ -53,7 +53,7 @@ void doCrafting(World &w, Actor *player, unsigned craftingStation) {
                 terminal_color(highlightFG);
                 terminal_bkcolor(highlightBG);
                 terminal_clear_area(0, cy, 29, 1);
-                terminal_put(2, cy, '>');
+                terminal_put(0, cy, '>');
                 current = row;
             } else {
                 terminal_color(textFG);
@@ -61,11 +61,11 @@ void doCrafting(World &w, Actor *player, unsigned craftingStation) {
             }
             if (canMakeRecipe(w, row, count, player->inventory))  {
                 terminal_color(0xFFAAFFAA);
-                terminal_put(0, cy, '+');
             } else {
                 terminal_color(0xFFFFAAAA);
             }
             if (makeDef.ident >= 0) {
+                terminal_put(2, cy, makeDef.glyph);
                 terminal_printf(4, cy, "%d %s", row->makeQty * count, makeDef.name.c_str());
             } else {
                 terminal_printf(4, cy, "Bad item ident: %s", row->makeIdent);

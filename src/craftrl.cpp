@@ -66,7 +66,7 @@ void redraw_main(World &w) {
     const int logHeight = 3;
     const int logX = 0;
     const int logY = screenHeight - logHeight;
-    const int viewWidth = screenWidth - sidebarWidth - 1;
+    const int viewWidth = (screenWidth - sidebarWidth) / 2;
     const int viewHeight = screenHeight - logHeight - 1;
 
     terminal_bkcolor(0xFF000000);
@@ -89,19 +89,16 @@ void redraw_main(World &w) {
             if (tile.room)  terminal_bkcolor(tile.room->def->colour);
             else            terminal_bkcolor(0xFF000000);
 
-            terminal_color(w.getTileDef(tile.terrain).colour);
-            terminal_put(x, y, w.getTileDef(tile.terrain).glyph);
+            terminal_put(x * 2, y, w.getTileDef(tile.terrain).glyph);
             if (tile.building > 0) {
                 int variant = w.getTileVariant(here);
-                terminal_put(x, y, w.getTileDef(tile.building).glyph + variant);
+                terminal_put(x * 2, y, w.getTileDef(tile.building).glyph + variant);
             }
             if (tile.item) {
-                terminal_color(tile.item->def.colour);
-                terminal_put(x, y, tile.item->def.glyph);
+                terminal_put(x * 2, y, tile.item->def.glyph);
             }
             if (tile.actor) {
-                terminal_color(tile.actor->def.colour);
-                terminal_put(x, y, tile.actor->def.glyph);
+                terminal_put(x * 2, y, tile.actor->def.glyph);
             }
         }
     }
@@ -119,7 +116,8 @@ void redraw_main(World &w) {
         const InventoryRow &row = player->inventory.mContents[i];
         if (i == w.selection)   terminal_color(0xFFFFFFFF);
         else                    terminal_color(0xFF777777);
-        terminal_print(sidebarX, i, (row.def->name + "  x" + std::to_string(row.qty)).c_str());
+        terminal_put(sidebarX + 1, i, row.def->glyph);
+        terminal_print(sidebarX + 3, i, (row.def->name + "  x" + std::to_string(row.qty)).c_str());
     }
 
     terminal_color(0xFFFFFFFF);
@@ -159,7 +157,7 @@ void gameloop(World &w) {
             const Point &camera = w.getCamera();
             int mx = terminal_state(TK_MOUSE_X);
             int my = terminal_state(TK_MOUSE_Y);
-            const Tile &tile = w.at(Point(mx + camera.x, my + camera.y));
+            const Tile &tile = w.at(Point(mx / 2 + camera.x, my + camera.y));
             if (tile.terrain < 0) {
                 w.addLogMsg("Invalid position.");
             } else {

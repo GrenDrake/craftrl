@@ -13,8 +13,7 @@ item {
 
 item {
     ident   ITEM_CORD
-    glyph   '&'
-    colour  0xFFFFFFFF
+    glyph   0xE012
     name    "cord"
 };
 
@@ -26,144 +25,126 @@ item {
 
 item {
     ident ITEM_SAPLING
-    glyph   '/'
-    colour  0x00FF00
+    glyph   0xE026
     name    "sapling"
     seedFor ACTOR_SAPLING
 };
 
 item {
-    ident ITEM_SHRUB_SEED
-    glyph   '.'
-    colour  0x00FF00
-    name    "shrub seed"
-    seedFor ACTOR_SPROUT
+    ident       ITEM_SHRUB_SEED
+    glyph       0xE029
+    name        "shrub seed"
+    seedFor     ACTOR_SPROUT
 };
 
 item {
-    ident   ITEM_PLANK
-    glyph   '-'
-    colour  0x855723
-    name    "plank"
+    ident       ITEM_PLANK
+    glyph       0xE077
+    name        "plank"
 };
 
 item {
-    ident   ITEM_WOOD_WALL_KIT
-    glyph   '*'
-    colour  0x855723
-    name    "wood wall kit"
+    ident       ITEM_WOOD_WALL_KIT
+    glyph       0xE076
+    name        "wood wall kit"
     constructs  TILE_WOOD_WALL
 };
 
 item {
-    ident   ITEM_STONE_WALL_KIT
-    glyph   '*'
-    colour  0x777777
-    name    "stone wall kit"
+    ident       ITEM_STONE_WALL_KIT
+    glyph       0xE076
+    name        "stone wall kit"
     constructs  TILE_STONE_WALL
 };
 
 item {
-    ident   ITEM_WOOD_FLOOR_KIT
-    glyph   '*'
-    colour  0x855723
-    name    "wood floor kit"
+    ident       ITEM_WOOD_FLOOR_KIT
+    glyph       0xE076
+    name        "wood floor kit"
     constructs  TILE_WOOD_FLOOR
     makeFloor
 };
 
 item {
-    ident   ITEM_STONE_FLOOR_KIT
-    glyph   '*'
-    colour  0x777777
-    name    "stone floor kit"
+    ident       ITEM_STONE_FLOOR_KIT
+    glyph       0xE076
+    name        "stone floor kit"
     constructs  TILE_STONE_FLOOR
     makeFloor
 };
 
 item {
     ident       ITEM_WOOD_DOOR_KIT
-    glyph       '*'
-    colour      0x855723
+    glyph       0xE076
     name        "wood door kit"
     constructs  TILE_WOOD_DOOR_CLOSED
 };
 
 item {
     ident       ITEM_STONE_DOOR_KIT
-    glyph       '*'
-    colour      0x855723
+    glyph       0xE076
     name        "stone door kit"
     constructs  TILE_STONE_DOOR_CLOSED
 };
 
 item {
     ident       ITEM_GATE_KIT
-    glyph       '*'
-    colour      0x855723
+    glyph       0xE076
     name        "gate kit"
     constructs  TILE_GATE_CLOSED
 };
 
 item {
     ident       ITEM_WINDOW_KIT
-    glyph       '*'
-    colour      0x7777FF
+    glyph       0xE076
     name        "window kit"
     constructs  TILE_WINDOW
 };
 
 item {
     ident       ITEM_FENCE_KIT
-    glyph       '*'
-    colour      0x855723
+    glyph       0xE076
     name        "fence kit"
     constructs  TILE_FENCE
 };
 
 item {
     ident       ITEM_WHEAT_SEED
-    glyph       '.'
-    colour      0xFFDF00
+    glyph       0xE02A
     name        "wheat seed"
     seedFor     ACTOR_WHEAT_SEEDLING
 };
 
 item {
     ident       ITEM_CARROT_SEED
-    glyph       '.'
-    colour      0xED9121
+    glyph       0xE02B
     name        "carrot seed"
     seedFor     ACTOR_CARROT_SEEDLING
 };
 
 item {
     ident       ITEM_SHEAF_OF_WHEAT
-    glyph       '/'
-    colour      0xFFDF00
+    glyph       0xE02D
     name        "sheaf of wheat"
     plural      "sheafs of wheat"
 };
 
 item {
     ident       ITEM_CARROT
-    glyph       '/'
-    colour      0xED9121
+    glyph       0xE02E
     name        "carrot"
 };
 
 item {
     ident       ITEM_TURNIP_SEED
-    glyph       '.'
-    colour      0xEEEEEE
+    glyph       0xE02C
     name        "turnip seed"
     seedFor     ACTOR_TURNIP_SEEDLING
 };
 
 item {
     ident       ITEM_TURNIP
-    glyph       '/'
-    colour      0xEEEEEE
+    glyph       0xE02F
     name        "turnip"
 };
 
@@ -176,64 +157,56 @@ item {
 
 item {
     ident       ITEM_BASIC_WORKBENCH_KIT
-    glyph       '*'
-    colour      0x855723
+    glyph       0xE076
     name        "basic workbench kit"
     constructs  TILE_BASIC_WORKBENCH
 };
 
 item {
     ident       ITEM_STD_WORKBENCH_KIT
-    glyph       '*'
-    colour      0xc36f10
+    glyph       0xE076
     name        "standard workbench kit"
     constructs  TILE_STD_WORKBENCH
 };
 
 item {
     ident       ITEM_SAND
-    glyph       '*'
-    colour      0xFFFF77
+    glyph       0xE078
     name        "handful of sand"
     plural      "handfuls of sand"
 };
 
 item {
     ident       ITEM_IRON_ORE
-    glyph       '*'
-    colour      0xB7410E
+    glyph       0xE079
     name        "piece of iron ore"
     plural      "pieces of iron ore"
 };
 
 item {
     ident       ITEM_COPPER_ORE
-    glyph       '*'
-    colour      0xB87333
+    glyph       0xE07A
     name        "piece of copper ore"
     plural      "pieces of copper ore"
 };
 
 item {
     ident       ITEM_COAL
-    glyph       '*'
-    colour      0x36454F
+    glyph       0xE07B
     name        "piece of coal"
     plural      "pieces of coal"
 };
 
 item {
     ident       ITEM_GOLD_ORE
-    glyph       '*'
-    colour      0xFFD700
+    glyph       0xE07C
     name        "piece of gold ore"
     plural      "pieces of gold ore"
 };
 
 item {
     ident       ITEM_SILVER_ORE
-    glyph       '*'
-    colour      0xC0C0C0
+    glyph       0xE07D
     name        "piece of silver ore"
     plural      "pieces of silver ore"
 };
@@ -241,44 +214,38 @@ item {
 
 item {
     ident       ITEM_FORGE
-    glyph       '*'
-    colour      0xAAAAAA
+    glyph       0xE076
     name        "forge"
     constructs  TILE_FORGE
 };
 
 item {
     ident       ITEM_IRON_INGOT
-    glyph       '*'
-    colour      0xB7410E
+    glyph       0xE07E
     name        "iron ingot"
 };
 
 item {
     ident       ITEM_COPPER_INGOT
-    glyph       '*'
-    colour      0xB87333
+    glyph       0xE07F
     name        "copper ingot"
 };
 
 item {
     ident       ITEM_GOLD_INGOT
-    glyph       '*'
-    colour      0xFFD700
+    glyph       0xE080
     name        "gold ingot"
 };
 
 item {
     ident       ITEM_SILVER_INGOT
-    glyph       '*'
-    colour      0xC0C0C0
+    glyph       0xE081
     name        "silver ingot"
 };
 
 item {
-    ident ITEM_CHEST
-    glyph   '='
-    colour  0x855723
-    name    "chest"
-    seedFor ACTOR_CHEST
+    ident       ITEM_CHEST
+    glyph       0xE076
+    name        "chest"
+    seedFor     ACTOR_CHEST
 };

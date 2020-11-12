@@ -115,7 +115,6 @@ struct LootTable {
 struct ActorDef {
     int ident;
     int glyph;
-    unsigned colour;
     std::string name;
     int aiType;
     int type;
@@ -132,7 +131,6 @@ struct ActorDef {
 struct ItemDef {
     int ident;
     int glyph;
-    unsigned colour;
     std::string name, plural;
     int seedFor;
     int constructs;
@@ -142,7 +140,6 @@ struct ItemDef {
 struct TileDef {
     int ident;
     int glyph;
-    unsigned colour;
     std::string name;
     int breakTo;
     int doorTo;

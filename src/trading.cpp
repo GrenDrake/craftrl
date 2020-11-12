@@ -45,11 +45,12 @@ void doTrading(World &w, Actor *left, Actor *right) {
                 terminal_color(highlightFG);
                 terminal_bkcolor(highlightBG);
                 terminal_clear_area(0, cy, 29, 1);
-                terminal_put(2, cy, '>');
+                terminal_put(0, cy, '>');
             } else {
                 terminal_color(textFG);
                 terminal_bkcolor(textBG);
             }
+            terminal_put(2, cy, row.def->glyph);
             terminal_printf(4, cy, "%d %s", row.qty, row.def->name.c_str());
             ++cy;
         }
@@ -65,7 +66,8 @@ void doTrading(World &w, Actor *left, Actor *right) {
                 terminal_color(textFG);
                 terminal_bkcolor(textBG);
             }
-            terminal_printf(42, cy, "%d %s", row.qty, row.def->name.c_str());
+            terminal_put(42, cy, row.def->glyph);
+            terminal_printf(44, cy, "%d %s", row.qty, row.def->name.c_str());
             ++cy;
         }
 

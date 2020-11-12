@@ -9,10 +9,17 @@ void dumpActorMap(World &w) {
         for (int x = 0; x < w.width(); ++x) {
             auto tile = w.at(Point(x, y));
             if (tile.actor && tile.actor->def.type != TYPE_PLANT) {
-                image.push_back((tile.actor->def.colour & 0x00FF0000) >> 16);
-                image.push_back((tile.actor->def.colour & 0x0000FF00) >> 8);
-                image.push_back((tile.actor->def.colour & 0x000000FF));
-                image.push_back(255);
+                if (tile.actor->faction == 0) {
+                    image.push_back(0);
+                    image.push_back(255);
+                    image.push_back(0);
+                    image.push_back(255);
+                } else {
+                    image.push_back(255);
+                    image.push_back(0);
+                    image.push_back(0);
+                    image.push_back(255);
+                }
             } else {
                 image.push_back(0);
                 image.push_back(0);
@@ -42,9 +49,9 @@ void dumpPlantMap(World &w) {
         for (int x = 0; x < w.width(); ++x) {
             auto tile = w.at(Point(x, y));
             if (tile.actor && tile.actor->def.type == TYPE_PLANT) {
-                image.push_back((tile.actor->def.colour & 0x00FF0000) >> 16);
-                image.push_back((tile.actor->def.colour & 0x0000FF00) >> 8);
-                image.push_back((tile.actor->def.colour & 0x000000FF));
+                image.push_back(127);
+                image.push_back(255);
+                image.push_back(127);
                 image.push_back(255);
             } else {
                 image.push_back(0);
@@ -72,11 +79,37 @@ void dumpTerrainMap(World &w) {
     for (int y = 0; y < w.height(); ++y) {
         for (int x = 0; x < w.width(); ++x) {
             auto tile = w.at(Point(x, y));
-            auto td = w.getTileDef(tile.terrain);
-            image.push_back((td.colour & 0x00FF0000) >> 16);
-            image.push_back((td.colour & 0x0000FF00) >> 8);
-            image.push_back((td.colour & 0x000000FF));
-            image.push_back(255);
+            if (tile.terrain == TILE_OCEAN || tile.terrain == TILE_WATER) {
+                image.push_back(0);
+                image.push_back(0);
+                image.push_back(255);
+                image.push_back(255);
+            } else if (tile.building == TILE_STONE) {
+                image.push_back(127);
+                image.push_back(127);
+                image.push_back(127);
+                image.push_back(255);
+            } else if (tile.terrain == TILE_GRASS) {
+                image.push_back(0);
+                image.push_back(255);
+                image.push_back(0);
+                image.push_back(255);
+            } else if (tile.terrain == TILE_DIRT) {
+                image.push_back(160);
+                image.push_back(102);
+                image.push_back(39);
+                image.push_back(255);
+            } else if (tile.terrain == TILE_SAND) {
+                image.push_back(255);
+                image.push_back(255);
+                image.push_back(0);
+                image.push_back(255);
+            } else {
+                image.push_back(255);
+                image.push_back(0);
+                image.push_back(255);
+                image.push_back(255);
+            }
         }
     }
 

@@ -63,13 +63,13 @@ void shiftCameraForMove(World &w, Actor *player) {
     const int screenHeight = 25;
     const int sidebarWidth = 30;
     const int logHeight = 3;
-    const int viewWidth = screenWidth - sidebarWidth - 1;
+    const int viewWidth = (screenWidth - sidebarWidth - 1) / 2;
     const int viewHeight = screenHeight - logHeight - 1;
     Point dest = player->pos;
     Point p = w.getCamera();
-    if (dest.x < p.x + 10) p.x -= 10;
+    if (dest.x < p.x + 5) p.x -= 5;
     if (dest.y < p.y + 5)  p.y -= 5;
-    if (dest.x > p.x + viewWidth - 10) p.x += 10;
+    if (dest.x > p.x + viewWidth - 5) p.x += 5;
     if (dest.y > p.y + viewHeight - 5) p.y += 5;
     w.setCamera(p);
 
@@ -115,7 +115,7 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
 
 
 bool actionCentrePan(World &w, Actor *player, const Command &command, bool silent) {
-    const int viewWidth = 50;
+    const int viewWidth = 25;
     const int viewHeight = 25;
 
     Point dest(player->pos.x - viewWidth / 2, player->pos.y - viewHeight / 2);
