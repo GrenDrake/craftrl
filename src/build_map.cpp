@@ -122,8 +122,10 @@ bool buildmap(World &w, unsigned long seed) {
         for (int y = 0; y < size; ++y) {
             Point top(x, y);
             w.setTerrain(top, TILE_OCEAN);
+            w.setBuilding(top, 0);
             Point bottom(x, w.height() - 1 - y);
             w.setTerrain(bottom, TILE_OCEAN);
+            w.setBuilding(bottom, 0);
         }
     }
     for (int y = 0; y < w.height(); ++y) {
@@ -131,8 +133,10 @@ bool buildmap(World &w, unsigned long seed) {
         for (int x = 0; x < size; ++x) {
             Point left(x, y);
             w.setTerrain(left, TILE_OCEAN);
+            w.setBuilding(left, 0);
             Point right(w.width() - 1 - x, y);
             w.setTerrain(right, TILE_OCEAN);
+            w.setBuilding(right, 0);
         }
     }
 
