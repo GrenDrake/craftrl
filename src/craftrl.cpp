@@ -80,16 +80,30 @@ void redraw_main(World &w) {
     }
     terminal_put(sidebarX - 1, logY - 1, LD_TEE_LRU);
 
+    terminal_color(0xFFFFFFFF);
     terminal_composition(TK_ON);
     for (int y = 0; y < viewHeight; ++y) {
         for (int x = 0; x < viewWidth; ++x) {
             Point here(x + camera.x, y + camera.y);
             const auto &tile = w.at(here);
 
-            if (tile.room)  terminal_bkcolor(tile.room->def->colour);
-            else            terminal_bkcolor(0xFF000000);
-
             terminal_put(x * 2, y, w.getTileDef(tile.terrain).glyph);
+            if (tile.room) {
+                terminal_color(tile.room->def->colour);
+                if (w.at(here.shift(Dir::West)).room != tile.room) {
+                    terminal_put(x * 2, y, 0xE082);
+                }
+                if (w.at(here.shift(Dir::North)).room != tile.room) {
+                    terminal_put(x * 2, y, 0xE083);
+                }
+                if (w.at(here.shift(Dir::East)).room != tile.room) {
+                    terminal_put(x * 2, y, 0xE084);
+                }
+                if (w.at(here.shift(Dir::South)).room != tile.room) {
+                    terminal_put(x * 2, y, 0xE085);
+                }
+                terminal_color(0xFFFFFFFF);
+            }
             if (tile.building > 0) {
                 int variant = w.getTileVariant(here);
                 terminal_put(x * 2, y, w.getTileDef(tile.building).glyph + variant);
