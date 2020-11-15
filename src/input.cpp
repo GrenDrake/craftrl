@@ -25,6 +25,7 @@ const Command gameCommands[] = {
     {   CMD_SELECT_HOME,    Dir::None,      { { TK_HOME      } } },
     {   CMD_SELECT_END,     Dir::None,      { { TK_END       } } },
     {   CMD_SORT_INV_NAME,  Dir::None,      { { TK_O         } } },
+    {   CMD_SORT_INV_TYPE,  Dir::None,      { { TK_SEMICOLON } } },
     {   CMD_DEBUG,          Dir::None,      { { TK_F7        } } },
     {   CMD_MAKEROOM,       Dir::None,      { { TK_V         } } },
     {   CMD_CLEARROOM,      Dir::None,      { { TK_X         } } },
@@ -88,6 +89,7 @@ std::string commandName(int command) {
         case CMD_SELECT_HOME:   return "Inventory First";
         case CMD_SELECT_END:    return "Inventory Last";
         case CMD_SORT_INV_NAME: return "Sort Inventory by Name";
+        case CMD_SORT_INV_TYPE: return "Sort Inventory by Type";
         case CMD_DEBUG:         return "Debug Command";
         case CMD_MAKEROOM:      return "Make Room";
         case CMD_CLEARROOM:     return "Clear Room";
@@ -122,6 +124,7 @@ ActionHandler commandAction(int command) {
         case CMD_SELECT_HOME:   return actionSelectHome;
         case CMD_SELECT_END:    return actionSelectEnd;
         case CMD_SORT_INV_NAME: return actionSortInvByName;
+        case CMD_SORT_INV_TYPE: return actionSortInvByType;
         case CMD_DEBUG:         return actionDebug;
         case CMD_MAKEROOM:      return actionMakeRoom;
         case CMD_CLEARROOM:     return actionClearRoom;

@@ -487,6 +487,11 @@ bool actionSortInvByName(World &w, Actor *player, const Command &command, bool s
     return false;
 }
 
+bool actionSortInvByType(World &w, Actor *player, const Command &command, bool silent) {
+    player->inventory.sort(SORT_TYPE);
+    return false;
+}
+
 bool actionViewLog(World &w, Actor *player, const Command &command, bool silent) {
     viewLog(w);
     return false;

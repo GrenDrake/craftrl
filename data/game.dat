@@ -5,6 +5,11 @@ define TYPE_ANIMAL              3;
 define TYPE_MONSTER             4;
 define TYPE_INVENTORY           5;
 
+define TYPE_TOOL                1;
+define TYPE_CROP                2;
+define TYPE_SEED                3;
+define TYPE_CRAFTING            4;
+define TYPE_KIT                 5;
 
 define TILE_INVALID             -1;
 define TILE_DIRT                0;
@@ -91,6 +96,10 @@ define ITEM_CHEST               35;
 define ITEM_GATE_KIT            36;
 define ITEM_STONE_FILL_KIT      37;
 define ITEM_BED_KIT             38;
+define ITEM_SHOVEL              39;
+define ITEM_AXE                 40;
+define ITEM_PICKAXE             41;
+define ITEM_SPEAR               42;
 
 define ROOM_EMPTY               0;
 define ROOM_WORKSHOP            1;

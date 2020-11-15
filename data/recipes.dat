@@ -127,3 +127,35 @@ recipe {
     part            2 ITEM_CORD
     craftingStation 1
 };
+
+recipe {
+    makeIdent       ITEM_SHOVEL
+    makeQty         1
+    part            1 ITEM_STICK
+    part            1 ITEM_IRON_INGOT
+    craftingStation 1
+};
+
+recipe {
+    makeIdent       ITEM_AXE
+    makeQty         1
+    part            1 ITEM_STICK
+    part            1 ITEM_IRON_INGOT
+    craftingStation 1
+};
+
+recipe {
+    makeIdent       ITEM_PICKAXE
+    makeQty         1
+    part            1 ITEM_STICK
+    part            1 ITEM_IRON_INGOT
+    craftingStation 1
+};
+
+recipe {
+    makeIdent       ITEM_SPEAR
+    makeQty         1
+    part            1 ITEM_STICK
+    part            1 ITEM_IRON_INGOT
+    craftingStation 1
+};

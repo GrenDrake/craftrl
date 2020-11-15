@@ -67,6 +67,7 @@ const int CMD_DEBUG             = 23;
 const int CMD_MAKEROOM          = 24;
 const int CMD_CLEARROOM         = 25;
 const int CMD_VIEWLOG           = 26;
+const int CMD_SORT_INV_TYPE     = 27;
 
 const int LD_VERTICAL   = 0x2502;
 const int LD_HORIZONTAL = 0x2500;
@@ -134,6 +135,8 @@ struct ItemDef {
     int seedFor;
     int constructs;
     bool makeFloor;
+    unsigned tool;
+    int type;
 };
 
 struct TileDef {
@@ -361,6 +364,7 @@ bool actionSelectHome(World &w, Actor *player, const Command &command, bool sile
 bool actionSelectPagedown(World &w, Actor *player, const Command &command, bool silent);
 bool actionSelectPageup(World &w, Actor *player, const Command &command, bool silent);
 bool actionSortInvByName(World &w, Actor *player, const Command &command, bool silent);
+bool actionSortInvByType(World &w, Actor *player, const Command &command, bool silent);
 bool actionTake(World &w, Actor *player, const Command &command, bool silent);
 bool actionTalkActor(World &w, Actor *player, const Command &command, bool silent);
 bool actionUse(World &w, Actor *player, const Command &command, bool silent);

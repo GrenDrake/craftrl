@@ -176,6 +176,14 @@ bool parseItem(World &w, TokenData &data) {
         } else if (name == "constructs") {
             if (!data.asInt(item.constructs)) return false;
             data.next();
+        } else if (name == "type") {
+            if (!data.asInt(item.type)) return false;
+            data.next();
+        } else if (name == "tool") {
+            int value;
+            if (!data.asInt(value)) return false;
+            item.tool = value;
+            data.next();
         } else if (name == "name") {
             if (!data.require(TokenType::String)) return false;
             item.name = data.here().s;

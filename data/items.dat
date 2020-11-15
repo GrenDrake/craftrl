@@ -3,24 +3,28 @@ item {
     ident   ITEM_STICK
     glyph   0xE022
     name    "stick"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident   ITEM_ROCK
     glyph   0xE023
     name    "rock"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident   ITEM_CORD
     glyph   0xE012
     name    "cord"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident   ITEM_LOG
     glyph   0xE021
     name    "log"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -28,6 +32,7 @@ item {
     glyph   0xE026
     name    "sapling"
     seedFor ACTOR_SAPLING
+    type        TYPE_SEED
 };
 
 item {
@@ -35,12 +40,14 @@ item {
     glyph       0xE029
     name        "shrub seed"
     seedFor     ACTOR_SPROUT
+    type        TYPE_SEED
 };
 
 item {
     ident       ITEM_PLANK
     glyph       0xE077
     name        "plank"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -48,6 +55,7 @@ item {
     glyph       0xE076
     name        "wood wall kit"
     constructs  TILE_WOOD_WALL
+    type        TYPE_KIT
 };
 
 item {
@@ -55,6 +63,7 @@ item {
     glyph       0xE076
     name        "stone wall kit"
     constructs  TILE_STONE_WALL
+    type        TYPE_KIT
 };
 
 item {
@@ -63,6 +72,7 @@ item {
     name        "wood floor kit"
     constructs  TILE_WOOD_FLOOR
     makeFloor
+    type        TYPE_KIT
 };
 
 item {
@@ -71,6 +81,7 @@ item {
     name        "stone floor kit"
     constructs  TILE_STONE_FLOOR
     makeFloor
+    type        TYPE_KIT
 };
 
 item {
@@ -78,6 +89,7 @@ item {
     glyph       0xE076
     name        "wood door kit"
     constructs  TILE_WOOD_DOOR_CLOSED
+    type        TYPE_KIT
 };
 
 item {
@@ -85,6 +97,7 @@ item {
     glyph       0xE076
     name        "stone door kit"
     constructs  TILE_STONE_DOOR_CLOSED
+    type        TYPE_KIT
 };
 
 item {
@@ -92,6 +105,7 @@ item {
     glyph       0xE076
     name        "gate kit"
     constructs  TILE_GATE_CLOSED
+    type        TYPE_KIT
 };
 
 item {
@@ -99,6 +113,7 @@ item {
     glyph       0xE076
     name        "window kit"
     constructs  TILE_WINDOW
+    type        TYPE_KIT
 };
 
 item {
@@ -106,6 +121,7 @@ item {
     glyph       0xE076
     name        "fence kit"
     constructs  TILE_FENCE
+    type        TYPE_KIT
 };
 
 item {
@@ -113,6 +129,7 @@ item {
     glyph       0xE02A
     name        "wheat seed"
     seedFor     ACTOR_WHEAT_SEEDLING
+    type        TYPE_SEED
 };
 
 item {
@@ -120,6 +137,7 @@ item {
     glyph       0xE02B
     name        "carrot seed"
     seedFor     ACTOR_CARROT_SEEDLING
+    type        TYPE_SEED
 };
 
 item {
@@ -127,12 +145,14 @@ item {
     glyph       0xE02D
     name        "sheaf of wheat"
     plural      "sheafs of wheat"
+    type        TYPE_CROP
 };
 
 item {
     ident       ITEM_CARROT
     glyph       0xE02E
     name        "carrot"
+    type        TYPE_CROP
 };
 
 item {
@@ -140,12 +160,14 @@ item {
     glyph       0xE02C
     name        "turnip seed"
     seedFor     ACTOR_TURNIP_SEEDLING
+    type        TYPE_SEED
 };
 
 item {
     ident       ITEM_TURNIP
     glyph       0xE02F
     name        "turnip"
+    type        TYPE_CROP
 };
 
 item {
@@ -153,6 +175,7 @@ item {
     glyph       0xE01F
     name        "chunk of meat"
     plural      "chunks of meat"
+    type        TYPE_CROP
 };
 
 item {
@@ -160,6 +183,7 @@ item {
     glyph       0xE076
     name        "workbench kit"
     constructs  TILE_BASIC_WORKBENCH
+    type        TYPE_KIT
 };
 
 item {
@@ -167,6 +191,7 @@ item {
     glyph       0xE078
     name        "handful of sand"
     plural      "handfuls of sand"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -174,6 +199,7 @@ item {
     glyph       0xE079
     name        "piece of iron ore"
     plural      "pieces of iron ore"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -181,6 +207,7 @@ item {
     glyph       0xE07A
     name        "piece of copper ore"
     plural      "pieces of copper ore"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -188,6 +215,7 @@ item {
     glyph       0xE07B
     name        "piece of coal"
     plural      "pieces of coal"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -195,6 +223,7 @@ item {
     glyph       0xE07C
     name        "piece of gold ore"
     plural      "pieces of gold ore"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -202,6 +231,7 @@ item {
     glyph       0xE07D
     name        "piece of silver ore"
     plural      "pieces of silver ore"
+    type        TYPE_CRAFTING
 };
 
 
@@ -210,30 +240,35 @@ item {
     glyph       0xE076
     name        "forge"
     constructs  TILE_FORGE
+    type        TYPE_KIT
 };
 
 item {
     ident       ITEM_IRON_INGOT
     glyph       0xE07E
     name        "iron ingot"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident       ITEM_COPPER_INGOT
     glyph       0xE07F
     name        "copper ingot"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident       ITEM_GOLD_INGOT
     glyph       0xE080
     name        "gold ingot"
+    type        TYPE_CRAFTING
 };
 
 item {
     ident       ITEM_SILVER_INGOT
     glyph       0xE081
     name        "silver ingot"
+    type        TYPE_CRAFTING
 };
 
 item {
@@ -241,6 +276,7 @@ item {
     glyph       0xE076
     name        "chest"
     seedFor     ACTOR_CHEST
+    type        TYPE_KIT
 };
 
 item {
@@ -248,6 +284,7 @@ item {
     glyph       0xE076
     name        "stone fill kit"
     constructs  TILE_STONE
+    type        TYPE_KIT
 };
 
 item {
@@ -255,4 +292,37 @@ item {
     glyph       0xE076
     name        "bed kit"
     constructs  TILE_BED
+    type        TYPE_KIT
+};
+
+item {
+    ident       ITEM_SHOVEL
+    glyph       0xE087
+    name        "shovel"
+    tool        1
+    type        TYPE_TOOL
+};
+
+item {
+    ident       ITEM_AXE
+    glyph       0xE088
+    name        "axe"
+    tool        2
+    type        TYPE_TOOL
+};
+
+item {
+    ident       ITEM_PICKAXE
+    glyph       0xE089
+    name        "pickaxe"
+    tool        4
+    type        TYPE_TOOL
+};
+
+item {
+    ident       ITEM_SPEAR
+    glyph       0xE08A
+    name        "spear"
+    tool        8
+    type        TYPE_TOOL
 };

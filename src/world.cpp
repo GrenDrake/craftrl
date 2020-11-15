@@ -70,8 +70,23 @@ void Inventory::cleanup() {
 bool sortByName(const InventoryRow &lhs, const InventoryRow &rhs) {
     return lhs.def->name < rhs.def->name;
 }
+bool sortByType(const InventoryRow &lhs, const InventoryRow &rhs) {
+    if (lhs.def->type != rhs.def->type) {
+        return lhs.def->type < rhs.def->type;
+    }
+    return lhs.def->name < rhs.def->name;
+}
 void Inventory::sort(int sortType) {
-    std::sort(mContents.begin(), mContents.end(), sortByName);
+    switch(sortType) {
+        case SORT_NAME:
+            std::sort(mContents.begin(), mContents.end(), sortByName);
+            return;
+        case SORT_TYPE:
+            std::sort(mContents.begin(), mContents.end(), sortByType);
+            return;
+        default:
+            logger_log("Tried to sort inventory by unknown key " + std::to_string(sortType));
+    }
 }
 
 
