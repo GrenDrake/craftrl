@@ -9,15 +9,23 @@ room {
     requires    TILE_BASIC_WORKBENCH
     name        "workshop"
     colour      0xAA6666
-    value 100
+    value       100
 };
 
 room {
     ident       ROOM_SMITHY
-    requires    TILE_STD_WORKBENCH
+    requires    TILE_BASIC_WORKBENCH
     requires    TILE_FORGE
     name        "smithy"
     colour      0xAA6666
-    value 150
+    value       150
 };
 
+
+room {
+    ident       ROOM_BEDROOM
+    requires    TILE_BED
+    name        "basic bedroom"
+    colour      0x66AA66
+    value       100
+};

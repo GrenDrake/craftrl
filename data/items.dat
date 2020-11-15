@@ -158,15 +158,8 @@ item {
 item {
     ident       ITEM_BASIC_WORKBENCH_KIT
     glyph       0xE076
-    name        "basic workbench kit"
+    name        "workbench kit"
     constructs  TILE_BASIC_WORKBENCH
-};
-
-item {
-    ident       ITEM_STD_WORKBENCH_KIT
-    glyph       0xE076
-    name        "standard workbench kit"
-    constructs  TILE_STD_WORKBENCH
 };
 
 item {
@@ -248,4 +241,18 @@ item {
     glyph       0xE076
     name        "chest"
     seedFor     ACTOR_CHEST
+};
+
+item {
+    ident       ITEM_STONE_FILL_KIT
+    glyph       0xE076
+    name        "stone fill kit"
+    constructs  TILE_STONE
+};
+
+item {
+    ident       ITEM_BED_KIT
+    glyph       0xE076
+    name        "bed kit"
+    constructs  TILE_BED
 };

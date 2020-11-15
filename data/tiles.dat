@@ -124,7 +124,7 @@ tile {
     breakTo     TILE_DIRT
     wallGroup   1
     loot {
-        ITEM_PLANK 100 2 2
+        ITEM_WOOD_WALL_KIT 100 1 1
     }
     solid opaque isWall connectingTile
 };
@@ -136,7 +136,7 @@ tile {
     breakTo     TILE_DIRT
     wallGroup   1
     loot {
-        ITEM_ROCK 100 2 2
+        ITEM_STONE_WALL_KIT 100 1 1
     }
     solid opaque isWall connectingTile
 };
@@ -148,7 +148,7 @@ tile {
     name        "wood floor"
     breakTo     TILE_DIRT
     loot {
-        ITEM_PLANK 100 1 1
+        ITEM_WOOD_FLOOR_KIT 100 1 1
     }
     ground
 };
@@ -159,7 +159,7 @@ tile {
     name        "stone floor"
     breakTo     TILE_DIRT
     loot {
-        ITEM_ROCK 100 1 1
+        ITEM_STONE_FLOOR_KIT 100 1 1
     }
     ground
 };
@@ -172,7 +172,7 @@ tile {
     doorTo      TILE_WOOD_DOOR_OPEN
     wallGroup   1
     loot {
-        ITEM_PLANK 100 2 2
+        ITEM_WOOD_DOOR_KIT 100 1 1
     }
     solid opaque isWall
 };
@@ -185,7 +185,7 @@ tile {
     doorTo      TILE_WOOD_DOOR_CLOSED
     wallGroup   1
     loot {
-        ITEM_PLANK 100 2 2
+        ITEM_WOOD_DOOR_KIT 100 1 1
     }
     isWall
 };
@@ -199,7 +199,7 @@ tile {
     doorTo      TILE_STONE_DOOR_OPEN
     wallGroup   1
     loot {
-        ITEM_ROCK 100 1 1
+        ITEM_STONE_DOOR_KIT 100 1 1
     }
     solid opaque isWall
 };
@@ -212,7 +212,7 @@ tile {
     doorTo      TILE_STONE_DOOR_CLOSED
     wallGroup   1
     loot {
-        ITEM_ROCK 100 1 1
+        ITEM_STONE_DOOR_KIT 100 1 1
     }
     isWall
 };
@@ -225,7 +225,7 @@ tile {
     doorTo      TILE_GATE_OPEN
     wallGroup   2
     loot {
-        ITEM_PLANK 100 1 1
+        ITEM_GATE_KIT 100 1 1
     }
     solid isWall
 };
@@ -238,7 +238,7 @@ tile {
     doorTo      TILE_GATE_CLOSED
     wallGroup   2
     loot {
-        ITEM_PLANK 100 1 1
+        ITEM_GATE_KIT 100 1 1
     }
     isWall
 };
@@ -249,6 +249,9 @@ tile {
     name        "window"
     breakTo     TILE_DIRT
     wallGroup   1
+    loot {
+        ITEM_WINDOW_KIT 100 1 1
+    }
     solid isWall connectingTile
 };
 
@@ -259,33 +262,21 @@ tile {
     breakTo     TILE_DIRT
     wallGroup   2
     loot {
-        ITEM_PLANK 100 1 1
+        ITEM_FENCE_KIT 100 1 1
     }
     solid isWall connectingTile
 };
 
 tile {
     ident       TILE_BASIC_WORKBENCH
-    glyph       0xE013
-    name        "basic workbench"
+    glyph       0xE014
+    name        "workbench"
     breakTo     TILE_DIRT
     loot {
         ITEM_BASIC_WORKBENCH_KIT 100 1 1
     }
     solid
     grantsCrafting  1
-};
-
-tile {
-    ident       TILE_STD_WORKBENCH
-    glyph       0xE014
-    name        "standard workbench"
-    breakTo     TILE_DIRT
-    loot {
-        ITEM_STD_WORKBENCH_KIT 100 1 1
-    }
-    solid
-    grantsCrafting  3
 };
 
 tile {
@@ -298,4 +289,14 @@ tile {
     }
     solid
     grantsCrafting  4
+};
+
+tile {
+    ident       TILE_BED
+    glyph       0xE086
+    name        "bed"
+    loot {
+        ITEM_BED_KIT 100 1 1
+    }
+    solid
 };

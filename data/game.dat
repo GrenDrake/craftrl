@@ -31,8 +31,8 @@ define TILE_FENCE               113;
 define TILE_GATE_CLOSED         114;
 define TILE_GATE_OPEN           115;
 define TILE_BASIC_WORKBENCH     500;
-define TILE_STD_WORKBENCH       501;
 define TILE_FORGE               502;
+define TILE_BED                 503;
 
 define ACTOR_PLAYER             1;
 define ACTOR_KOBOLD             2;
@@ -76,7 +76,6 @@ define ITEM_TURNIP_SEED         19;
 define ITEM_TURNIP              20;
 define ITEM_MEAT                21;
 define ITEM_BASIC_WORKBENCH_KIT 22;
-define ITEM_STD_WORKBENCH_KIT   23;
 define ITEM_SAND                24;
 define ITEM_IRON_ORE            25;
 define ITEM_COPPER_ORE          26;
@@ -90,10 +89,13 @@ define ITEM_SILVER_INGOT        33;
 define ITEM_GOLD_INGOT          34;
 define ITEM_CHEST               35;
 define ITEM_GATE_KIT            36;
+define ITEM_STONE_FILL_KIT      37;
+define ITEM_BED_KIT             38;
 
 define ROOM_EMPTY               0;
 define ROOM_WORKSHOP            1;
 define ROOM_SMITHY              2;
+define ROOM_BEDROOM             3;
 
 addfile "actors.dat";
 addfile "items.dat";
