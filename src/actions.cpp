@@ -91,7 +91,10 @@ bool actionAttack(World &w, Actor *player, const Command &command, bool silent) 
     const Tile &tile = w.at(dest);
 
     if (tile.actor) {
-        if (tile.actor->def.type != TYPE_VILLAGER) {
+        if (tile.actor->def.type == TYPE_INVENTORY && !tile.actor->inventory.mContents.empty()) {
+            w.addLogMsg("Empty " + tile.actor->getName() + " first.");
+            return false;
+        } else if (tile.actor->def.type != TYPE_VILLAGER) {
             w.doDamage(player, tile.actor);
             return true;
         } else {
