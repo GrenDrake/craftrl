@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "logger.h"
 #include "random.h"
 
 const unsigned VER_MAJOR             = 0;
@@ -410,8 +411,5 @@ std::string readFile(const std::string &filename);
 bool strToInt(const std::string &str, int &number);
 std::string trim(std::string s);
 std::string upperFirst(std::string text);
-
-#include "logger.h"
-
 
 #endif
