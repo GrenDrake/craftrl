@@ -17,6 +17,7 @@ void newgame(World &w);
 void keybinds();
 std::string keyName(int key);
 
+ConfigData configRead(const std::string &filename);
 
 
 int main(int argc, char *argv[]) {
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]) {
     World w;
     w.getRandom().seed(time(nullptr));
 
+    w.configData = configRead("config.txt");
     if (!loadGameData(w, "game.dat")) return 1;
 
     std::stringstream nameString;
@@ -60,7 +62,7 @@ int main(int argc, char *argv[]) {
         logger_log("main: Failed to initialize BearLibTerm.");
         return 1;
     }
-    if (!terminal_set(("window: size=80x25; window.title='" + nameString.str() + "'").c_str())) {
+    if (!terminal_setf("window: size=%dx%d; window.title='CraftRL'", w.configData.screenWidth, w.configData.screenHeight)) {
         logger_log("main: failed to set window properties.");
         return 1;
     }

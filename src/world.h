@@ -237,6 +237,9 @@ struct LogMessage {
     std::string msg;
 };
 
+struct ConfigData {
+    int screenWidth, screenHeight;
+};
 
 class World {
 public:
@@ -311,6 +314,7 @@ public:
 
     bool inProgress, wantsToQuit;
     int mode, selection;
+    ConfigData configData;
 
 private:
     const static LogMessage BAD_LOGMESSAGE;
