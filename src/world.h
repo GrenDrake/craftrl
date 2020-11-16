@@ -406,6 +406,7 @@ extern const Point nowhere;
 // utility.cpp
 unsigned long long hashString(const std::string &str);
 std::vector<std::string> explode(const std::string &text);
+std::string readFile(const std::string &filename);
 bool strToInt(const std::string &str, int &number);
 std::string trim(std::string s);
 std::string upperFirst(std::string text);

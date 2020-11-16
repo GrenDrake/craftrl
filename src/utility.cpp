@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <physfs.h>
 
 unsigned long long hashString(const std::string &str);
 std::vector<std::string> explode(const std::string &text);
@@ -38,6 +39,28 @@ std::vector<std::string> explode(const std::string &text) {
     return parts;
 }
 
+std::string readFile(const std::string &filename) {
+    PHYSFS_File *fp = PHYSFS_openRead(filename.c_str());
+    if (!fp) {
+#ifdef LOGGER_H
+        logger_log("Failed to open file " + filename + ".");
+#endif
+        return "";
+    }
+    auto filesize = PHYSFS_fileLength(fp);
+    char *buffer = new char[filesize];
+    buffer[0] = 0;
+    auto bytesRead = PHYSFS_readBytes(fp, buffer, filesize);
+    if (bytesRead < filesize) {
+#ifdef LOGGER_H
+        logger_log("Incomplete read of file " + filename + ".");
+#endif
+    }
+    std::string text = buffer;
+    delete[] buffer;
+    return text;
+}
+
 bool strToInt(const std::string &str, int &number) {
     std::string work = trim(str);
     if (work.empty()) return false;
@@ -66,3 +89,4 @@ std::string upperFirst(std::string text) {
     }
     return text;
 }
+

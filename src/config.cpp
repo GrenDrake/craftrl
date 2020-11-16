@@ -2,30 +2,8 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <physfs.h>
 
 #include "world.h"
-#include "logger.h"
-
-std::string trim(std::string s);
-
-std::string readFile(const std::string &filename) {
-    PHYSFS_File *fp = PHYSFS_openRead(filename.c_str());
-    if (!fp) {
-        logger_log("Failed to open file " + filename + ".");
-        return "";
-    }
-    auto filesize = PHYSFS_fileLength(fp);
-    char *buffer = new char[filesize];
-    buffer[0] = 0;
-    auto bytesRead = PHYSFS_readBytes(fp, buffer, filesize);
-    if (bytesRead < filesize) {
-        logger_log("Incomplete read of file " + filename + ".");
-    }
-    std::string text = buffer;
-    delete[] buffer;
-    return text;
-}
 
 ConfigData configRead(const std::string &filename) {
     std::stringstream filetext(readFile(filename));

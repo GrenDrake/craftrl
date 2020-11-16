@@ -15,7 +15,7 @@ $(TARGET): $(OBJS)
 tests: tests/test_utility
 
 tests/test_utility: tests/test.o tests/test_utility.o src/utility.o
-	$(CXX) tests/test.o tests/test_utility.o src/utility.o -o tests/test_utility
+	$(CXX) tests/test.o tests/test_utility.o src/utility.o -L$(PHYSICFS)/build -lphysfs -o tests/test_utility
 	tests/test_utility
 
 clean:
