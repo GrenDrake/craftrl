@@ -11,6 +11,11 @@ define TYPE_SEED                3;
 define TYPE_CRAFTING            4;
 define TYPE_KIT                 5;
 
+define TOOL_SHOVEL              1;
+define TOOL_AXE                 2;
+define TOOL_PICKAXE             4;
+define TOOL_WEAPON              8;
+
 define TILE_INVALID             -1;
 define TILE_DIRT                0;
 define TILE_STONE               1;
@@ -100,6 +105,7 @@ define ITEM_SHOVEL              39;
 define ITEM_AXE                 40;
 define ITEM_PICKAXE             41;
 define ITEM_SPEAR               42;
+define ITEM_SAND_FLOOR_KIT      43;
 
 define ROOM_EMPTY               0;
 define ROOM_WORKSHOP            1;

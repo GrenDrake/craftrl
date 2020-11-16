@@ -392,7 +392,28 @@ bool actionUse(World &w, Actor *player, const Command &command, bool silent) {
     }
 
     const ItemDef *def = player->inventory.mContents[w.selection].def;
-    if (def->seedFor >= 0) {
+    if (def->tool & TOOL_SHOVEL) {
+        Dir d = getDir(w, "Dig");
+        if (d == Dir::None) {
+            w.addLogMsg("Canceled.");
+            return false;
+        }
+        Point dest = player->pos.shift(d);
+        const Tile &t = w.at(dest);
+        const TileDef &td = w.getTileDef(t.terrain);
+        if (t.building || t.actor) {
+            w.addLogMsg("There's something in the way.");
+            return false;
+        } else if (td.breakTo >= 0) {
+            w.setTerrain(dest, td.breakTo);
+            w.addLogMsg("Dug in " + td.name + ".");
+            makeLootAt(w, td.loot, dest, true);
+            return true;
+        } else {
+            w.addLogMsg("Can't dig there.");
+            return false;
+        }
+    } else if (def->seedFor >= 0) {
         Dir d = getDir(w, "Plant");
         if (d == Dir::None) {
             w.addLogMsg("Canceled.");

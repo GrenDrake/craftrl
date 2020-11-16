@@ -43,7 +43,7 @@ tile {
     ident       TILE_SAND
     glyph       0xE005
     name        "sand"
-    breakTo     TILE_SAND
+    breakTo     TILE_DIRT
     loot {
         ITEM_SAND 100 2 5
     }

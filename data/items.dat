@@ -299,7 +299,7 @@ item {
     ident       ITEM_SHOVEL
     glyph       0xE087
     name        "shovel"
-    tool        1
+    tool        TOOL_SHOVEL
     type        TYPE_TOOL
 };
 
@@ -307,7 +307,7 @@ item {
     ident       ITEM_AXE
     glyph       0xE088
     name        "axe"
-    tool        2
+    tool        TOOL_AXE
     type        TYPE_TOOL
 };
 
@@ -315,7 +315,7 @@ item {
     ident       ITEM_PICKAXE
     glyph       0xE089
     name        "pickaxe"
-    tool        4
+    tool        TOOL_PICKAXE
     type        TYPE_TOOL
 };
 
@@ -323,6 +323,15 @@ item {
     ident       ITEM_SPEAR
     glyph       0xE08A
     name        "spear"
-    tool        8
+    tool        TOOL_WEAPON
     type        TYPE_TOOL
+};
+
+item {
+    ident       ITEM_SAND_FLOOR_KIT
+    glyph       0xE076
+    name        "sand floor kit"
+    constructs  TILE_SAND
+    type        TYPE_KIT
+    makeFloor
 };
