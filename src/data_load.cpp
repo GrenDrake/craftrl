@@ -1,5 +1,4 @@
 #include <map>
-#include <iostream>
 #include "data.h"
 #include "world.h"
 

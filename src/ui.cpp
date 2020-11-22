@@ -1,6 +1,4 @@
-#include <iostream>
 #include <BearLibTerminal.h>
-
 
 
 void ui_MessageBox(const std::string &title, const std::string &message) {
