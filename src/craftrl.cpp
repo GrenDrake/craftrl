@@ -1,4 +1,4 @@
-#include <iostream>
+#include <chrono>
 #include <map>
 #include <string>
 #include <vector>
@@ -69,6 +69,7 @@ void redraw_main(World &w) {
     const int viewWidth = (screenWidth - sidebarWidth) / 2;
     const int viewHeight = screenHeight - logHeight - 1;
 
+    auto renderStart = std::chrono::high_resolution_clock::now();
     terminal_bkcolor(0xFF000000);
     terminal_color(0xFFFFFFFF);
     terminal_clear();
@@ -126,6 +127,8 @@ void redraw_main(World &w) {
     terminal_printf(30, logY - 1, " %2d:%02d Day:%d ", hour, minute, day);
     terminal_printf(screenWidth - 15, logY - 1, " Turn: %u ", w.getTurn());
 
+    terminal_printf(screenWidth - 15, logY,     " Tick: %u ", w.tickTime);
+
     for (int i = 0; i < player->inventory.size(); ++i) {
         const InventoryRow &row = player->inventory.mContents[i];
         if (i == w.selection)   terminal_color(0xFFFFFFFF);
@@ -143,6 +146,10 @@ void redraw_main(World &w) {
         terminal_print_ext(logX, screenHeight - i - size.height, 80, 3, TK_ALIGN_LEFT, msg.msg.c_str());
         i += size.height;
     }
+
+    auto renderEnd = std::chrono::high_resolution_clock::now();
+    w.renderTime = std::chrono::duration_cast<std::chrono::microseconds>(renderEnd - renderStart).count();
+    terminal_printf(screenWidth - 15, logY + 1, " Draw: %u ", w.renderTime);
 }
 
 

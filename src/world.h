@@ -318,6 +318,7 @@ public:
     bool savegame(const std::string &filename) const;
     bool loadgame(const std::string &filename);
 
+    unsigned tickTime, renderTime;
     bool inProgress, wantsToQuit;
     int mode, selection;
     ConfigData configData;

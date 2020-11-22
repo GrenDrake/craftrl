@@ -1,6 +1,6 @@
 #include <algorithm>
+#include <chrono>
 #include <cmath>
-#include <iostream>
 #include <sstream>
 #include <physfs.h>
 #include "world.h"
@@ -110,7 +110,7 @@ std::string Item::getName(bool forPural) const {
 
 
 World::World()
-: inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0), day(1), hour(12), minute(0) {
+: tickTime(0), renderTime(0), inProgress(false), mTiles(nullptr), mPlayer(nullptr), turn(0), day(1), hour(12), minute(0) {
 }
 
 World::~World() {
@@ -652,6 +652,7 @@ bool World::tryMoveActor(Actor *actor, Dir baseDir, bool allowSidestep) {
 }
 
 void World::tick() {
+    auto tickStart = std::chrono::high_resolution_clock::now();
     ++turn;
     minute += 3;
     while (minute >= 60) {
@@ -758,6 +759,9 @@ void World::tick() {
         selection = mPlayer->inventory.size() - 1;
     }
     if (selection < 0) selection = 0;
+
+    auto tickEnd = std::chrono::high_resolution_clock::now();
+    tickTime = std::chrono::duration_cast<std::chrono::microseconds>(tickEnd - tickStart).count();
 
 }
 
